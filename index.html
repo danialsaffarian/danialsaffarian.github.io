@@ -863,6 +863,7 @@
     <div id="orderSuccess" style="display:none;text-align:center;padding:20px 0;">
       <p style="font-size:17px;font-weight:700;color:var(--coffee);margin-bottom:8px;">سفارش شما ثبت شد ✓</p>
       <p style="font-size:14px;color:var(--coffee-70);">به‌زودی برای هماهنگی پرداخت و ارسال با شما تماس می‌گیریم.</p>
+      <p id="orderTrackingCodeText" style="font-size:14px;font-weight:700;color:var(--coffee);margin-top:12px;direction:ltr;unicode-bidi:isolate;"></p>
       <button class="hero-btn" style="display:inline-block;margin-top:18px;color:var(--coffee);border-color:var(--coffee);" id="backToShopBtn">بازگشت به فروشگاه</button>
     </div>
   </div>
@@ -1562,6 +1563,13 @@ document.getElementById('checkoutBackBtn').addEventListener('click', () => { clo
 document.getElementById('backToShopBtn').addEventListener('click', closeCheckoutPage);
 
 // ثبت سفارش مستقیم داخل سایت (بدون نیاز به اینستاگرام)
+function generateTrackingCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = 'HG-';
+  for(let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
 document.getElementById('submitOrderBtn').addEventListener('click', async () => {
   const errorEl = document.getElementById('formError');
   errorEl.classList.remove('show');
@@ -1584,6 +1592,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   const items = cart.map(i => ({ id:i.id, name:i.name, qty:i.qty, price:i.price, variant:i.variant || null }));
+  const trackingCode = generateTrackingCode();
 
   const btn = document.getElementById('submitOrderBtn');
   btn.disabled = true;
@@ -1596,6 +1605,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     customer_address: address,
     customer_note: note || null,
     user_id: currentUser ? currentUser.id : null,
+    tracking_code: trackingCode,
   }]);
 
   if(!error && currentUser){
@@ -1619,14 +1629,15 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     return;
   }
 
-  // اطلاع‌رسانی پیامکی به مالک فروشگاه (اگه به هر دلیلی پیامک نره، مشکلی برای ثبت سفارش مشتری پیش نمیاد)
-  db.functions.invoke('notify-order', { body: { customerName: name, customerPhone: phone, total } }).catch(() => {});
+  // اطلاع‌رسانی پیامکی به مالک فروشگاه و تاییدیه به مشتری (اگه به هر دلیلی پیامک نره، مشکلی برای ثبت سفارش مشتری پیش نمیاد)
+  db.functions.invoke('notify-order', { body: { customerName: name, customerPhone: phone, total, trackingCode } }).catch(() => {});
 
   cart = [];
   updateCart();
   document.getElementById('checkoutForm').style.display = 'none';
   document.getElementById('checkoutSummary').style.display = 'none';
   document.getElementById('orderSuccess').style.display = 'block';
+  document.getElementById('orderTrackingCodeText').textContent = 'کد پیگیری سفارش شما: ' + trackingCode;
   document.getElementById('custName').value = '';
   document.getElementById('custPhone').value = '';
   document.getElementById('custAddress').value = '';
@@ -1914,6 +1925,7 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
     return `<div class="order-item">
       <div class="oi-top"><span>${toFa(o.total)} تومان</span><span>${date}</span></div>
       <div class="oi-items">${itemsText}</div>
+      ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
       <span class="oi-status">${o.status || 'جدید'}</span>
     </div>`;
   }).join('');
