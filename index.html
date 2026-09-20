@@ -310,6 +310,13 @@
   .admin-prod-row b{font-size:14px;color:var(--coffee);}
   .admin-prod-row span{font-size:12.5px;color:var(--coffee-70);}
   .admin-prod-actions button{font-size:12.5px;padding:7px 14px;border:1px solid var(--coffee-70);color:var(--coffee-70);background:transparent;margin-inline-start:6px;}
+  .admin-img-preview{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+  .admin-img-thumb{position:relative;width:72px;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
+  .admin-img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .admin-img-thumb button{position:absolute;top:2px;left:2px;width:18px;height:18px;line-height:16px;padding:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;cursor:pointer;}
+  .admin-img-upload-label{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:1px dashed var(--coffee-70);border-radius:6px;font-size:13px;color:var(--coffee);cursor:pointer;background:var(--cream-soft);}
+  .admin-img-upload-label input{display:none;}
+  .admin-img-upload-status{font-size:12px;color:var(--coffee-70);margin-top:6px;}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
   .stat-item{border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;}
   .stat-item b{display:block;font-size:24px;color:var(--coffee);margin-bottom:6px;}
@@ -704,7 +711,16 @@
         <div class="form-field"><label>قیمت (تومان)</label><input type="number" id="adminProdPrice"></div>
         <div class="form-field"><label>قیمت تخفیف‌خورده (اختیاری)</label><input type="number" id="adminProdSalePrice"></div>
         <div class="form-field"><label>موجودی</label><input type="number" id="adminProdStock"></div>
-        <div class="form-field"><label>لینک عکس (چند عکس با کاما جدا کن)</label><input type="text" id="adminProdImage"></div>
+        <div class="form-field">
+          <label>عکس‌های محصول</label>
+          <div class="admin-img-preview" id="adminProdImagePreview"></div>
+          <label class="admin-img-upload-label" for="adminProdImageFile">
+            📷 افزودن عکس از گالری
+            <input type="file" id="adminProdImageFile" accept="image/*" multiple>
+          </label>
+          <p class="admin-img-upload-status" id="adminProdImageUploadStatus"></p>
+          <input type="text" id="adminProdImage" placeholder="یا لینک عکس رو دستی بچسبون (با کاما جدا کن)" style="margin-top:10px;">
+        </div>
         <div class="form-field"><label>رنگ/مدل‌ها (اختیاری — مثل: آبی:4,صورتی:0)</label><input type="text" id="adminProdVariants"></div>
         <div class="form-field"><label>توضیحات (اختیاری)</label><textarea id="adminProdDesc" rows="2"></textarea></div>
         <div class="form-field"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="adminProdIsNew" style="width:auto;"> نشان «تازه» داشته باشه</label></div>
@@ -1742,7 +1758,54 @@ function resetAdminProductForm(){
   document.getElementById('adminProdDesc').value = '';
   document.getElementById('adminProdIsNew').checked = false;
   document.getElementById('adminProdError').classList.remove('show');
+  renderAdminProdImagePreview();
 }
+
+function getAdminProdImages(){
+  return document.getElementById('adminProdImage').value.split(',').map(s => s.trim()).filter(Boolean);
+}
+function setAdminProdImages(arr){
+  document.getElementById('adminProdImage').value = arr.join(',');
+  renderAdminProdImagePreview();
+}
+function renderAdminProdImagePreview(){
+  const imgs = getAdminProdImages();
+  document.getElementById('adminProdImagePreview').innerHTML = imgs.map((url, i) => `
+    <div class="admin-img-thumb">
+      <img src="${url}" loading="lazy">
+      <button type="button" onclick="removeAdminProdImage(${i})">×</button>
+    </div>
+  `).join('');
+}
+function removeAdminProdImage(i){
+  const imgs = getAdminProdImages();
+  imgs.splice(i, 1);
+  setAdminProdImages(imgs);
+}
+document.getElementById('adminProdImage').addEventListener('input', renderAdminProdImagePreview);
+
+document.getElementById('adminProdImageFile').addEventListener('change', async (e) => {
+  const files = Array.from(e.target.files || []);
+  if(!files.length) return;
+  const statusEl = document.getElementById('adminProdImageUploadStatus');
+  const imgs = getAdminProdImages();
+  for(const file of files){
+    statusEl.textContent = `در حال آپلود ${file.name}...`;
+    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await db.storage.from('image').upload(path, file, { cacheControl: '3600', upsert: false });
+    if(error){
+      console.error('خطا در آپلود عکس:', error);
+      statusEl.textContent = `آپلود ${file.name} ناموفق بود.`;
+      continue;
+    }
+    const { data: pub } = db.storage.from('image').getPublicUrl(path);
+    imgs.push(pub.publicUrl);
+  }
+  statusEl.textContent = '';
+  setAdminProdImages(imgs);
+  e.target.value = '';
+});
 
 document.getElementById('adminAddProductBtn').addEventListener('click', () => {
   resetAdminProductForm();
@@ -1765,6 +1828,7 @@ async function editAdminProduct(id){
   document.getElementById('adminProdVariants').value = p.variants || '';
   document.getElementById('adminProdDesc').value = p.description || '';
   document.getElementById('adminProdIsNew').checked = !!p.is_new;
+  renderAdminProdImagePreview();
   document.getElementById('adminProductForm').style.display = 'block';
   document.getElementById('adminProductForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
