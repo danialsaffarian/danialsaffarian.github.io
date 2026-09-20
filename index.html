@@ -85,7 +85,7 @@
   .mobile-nav a:last-child{border-bottom:none;}
 
   /* ---------- Hero ---------- */
-  .hero{position:relative;min-height:640px;display:flex;align-items:center;justify-content:center;overflow:hidden;
+  .hero{position:relative;min-height:640px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
     background:radial-gradient(ellipse at 30% 30%, #A88968 0%, #8E6E58 55%, #5F4838 100%);
   }
   .hero-deco{position:absolute;inset:0;opacity:0.5;}
@@ -103,6 +103,18 @@
   .hero-stat b{display:block;font-size:24px;font-weight:700;color:var(--cream);}
   .hero-stat span{font-size:12.5px;color:#C9BAA8;}
   @media(max-width:560px){.hero-stats{gap:26px;}}
+  .hero-trust{position:relative;z-index:2;width:100%;max-width:640px;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(247,242,234,.2);margin-top:44px;}
+  .hero-trust-item{display:flex;align-items:center;justify-content:center;gap:8px;padding:18px 6px;border-inline-end:1px solid rgba(247,242,234,.2);}
+  .hero-trust-item:last-child{border-inline-end:none;}
+  .hero-trust-item svg{flex-shrink:0;}
+  .hero-trust-item span{font-size:11.5px;color:var(--cream);}
+  @media(max-width:700px){.hero-trust-item span{display:none;}}
+  .reveal-on-scroll{opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.16,.84,.44,1),transform .8s cubic-bezier(.16,.84,.44,1);}
+  .reveal-on-scroll.revealed{opacity:1;transform:translateY(0);}
+  .card-shine{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+  .card-shine::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:35%;background:linear-gradient(75deg,transparent 0%,rgba(255,255,255,.55) 50%,transparent 100%);transform:skewX(-18deg);opacity:0;}
+  .card:hover .card-shine::after{animation:cardShineSweep 1s ease;}
+  @keyframes cardShineSweep{0%{left:-60%;opacity:1;}100%{left:130%;opacity:0;}}
 
   /* ---------- Section heading ---------- */
   .section{padding:100px 0;}
@@ -158,6 +170,10 @@
   .badge-col.badge-right{right:14px;align-items:flex-end;}
   .badge-col.badge-left{left:14px;align-items:flex-start;}
   .badge-col .tag-new, .badge-col .tag-sale, .badge-col .tag-stock, .badge-col .tag-soldout{position:static;}
+  .wish-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .15s;flex-shrink:0;}
+  .wish-btn:hover{transform:scale(1.12);}
+  .wish-btn svg{width:14px;height:14px;fill:none;stroke:var(--coffee);stroke-width:1.8;}
+  .wish-btn.active svg{fill:#8B3A3A;stroke:#8B3A3A;}
   .card.soldout .card-visual{opacity:0.5;}
   .buy-btn:disabled{opacity:0.5;cursor:not-allowed;}
   .buy-btn:disabled:hover{background:transparent;color:var(--coffee);}
@@ -302,6 +318,26 @@
   .detail-price .price-sale{font-size:19px;}
   .detail-desc{font-size:14.5px;line-height:2;color:var(--coffee-70);margin:24px 0;white-space:pre-line;}
   .detail-desc-title{font-size:14px;font-weight:700;color:var(--coffee);margin-bottom:8px;}
+  .reviews-section{margin-top:28px;padding-top:24px;border-top:1px solid var(--line);}
+  .reviews-summary{font-size:13px;color:var(--coffee-70);margin-bottom:16px;}
+  .review-item{border:1px solid var(--line);padding:14px;margin-bottom:10px;}
+  .review-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .review-item-name{font-size:13px;font-weight:700;color:var(--coffee);}
+  .review-item-date{font-size:11.5px;color:var(--coffee-70);}
+  .review-item-stars{margin-bottom:6px;}
+  .review-item-comment{font-size:13px;color:var(--coffee-70);line-height:1.8;}
+  .review-star-picker{display:flex;gap:4px;margin-bottom:12px;}
+  .review-star-picker button{background:none;border:none;cursor:pointer;padding:2px;}
+  .review-star-picker svg{width:22px;height:22px;fill:none;stroke:var(--coffee-70);stroke-width:1.5;}
+  .review-star-picker button.active svg{fill:var(--gold);stroke:var(--gold);}
+  .review-form textarea{width:100%;padding:11px 12px;border:1px solid var(--line);background:var(--cream-soft);color:var(--coffee);font-family:'Vazirmatn',sans-serif;font-size:13.5px;margin-bottom:10px;resize:vertical;}
+  .review-status-note{font-size:12.5px;color:var(--coffee-70);background:var(--cream-soft);padding:10px 12px;border:1px solid var(--line);}
+  .testimonial-card{background:var(--card);padding:22px;box-shadow:0 1px 3px rgba(142,110,88,0.08);}
+  .testimonial-card .review-item-stars{margin-bottom:12px;}
+  .testimonial-card p{font-size:13px;color:var(--coffee-70);line-height:1.9;margin:0 0 12px;}
+  .testimonial-card .t-author{font-size:12px;color:var(--gold);}
+  .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media(max-width:860px){.testimonials-grid{grid-template-columns:1fr;}}
   .admin-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px;}
   .admin-tab{padding:12px 18px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;}
   .admin-tab.active{color:var(--coffee);border-color:var(--gold);}
@@ -403,7 +439,7 @@
 
 <section class="section" id="shop" style="padding-top:52px;">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal-on-scroll">
       <h2 class="section-title">Hana Gallery</h2>
       <div class="section-eyebrow" style="margin-top:14px;margin-bottom:0;">COLLECTION</div>
     </div>
@@ -434,7 +470,7 @@
   </div>
 </section>
 <section class="hero">
-  <div class="hero-deco">
+  <div class="hero-deco" id="heroDeco">
     <svg viewBox="0 0 900 640" width="100%" height="100%" preserveAspectRatio="xMidYMid slice">
       <path d="M-50 120 Q250 280 550 160 T1000 260" fill="none" stroke="#E8D4B0" stroke-width="1.4" opacity="0.55"/>
       <circle cx="550" cy="160" r="4" fill="#E8D4B0" opacity="0.7"/>
@@ -442,19 +478,42 @@
       <circle cx="620" cy="500" r="10" fill="none" stroke="#E8D4B0" stroke-width="1.4" opacity="0.6"/>
     </svg>
   </div>
-  <div class="hero-content">
+  <div class="hero-content reveal-on-scroll">
     <div class="hero-eyebrow">HANDCRAFTED JEWELRY</div>
     <h1 class="hero-title">Hana Gallery</h1>
     <p class="hero-sub">اکسسوری‌های دست‌ساز، ساده و اصیل؛ برای لحظه‌هایی که ارزش زیبا بودن دارند.</p>
     <a href="#shop" class="hero-btn">مشاهده‌ی کارها</a>
-    <div class="hero-stats">
-      <div class="hero-stat"><b>+۲۰۰</b><span>سفارش تکمیل‌شده</span></div>
-      <div class="hero-stat"><b>۴.۹ / ۵</b><span>رضایت مشتریان</span></div>
-      <div class="hero-stat"><b>۱۰۰٪</b><span>دست‌ساز</span></div>
+    <div class="hero-stats" id="heroStats">
+      <div class="hero-stat"><b id="heroStatOrders">+۰</b><span>سفارش تکمیل‌شده</span></div>
+      <div class="hero-stat"><b id="heroStatRating">۰ / ۵</b><span>رضایت مشتریان</span></div>
+      <div class="hero-stat"><b id="heroStatHandmade">۰٪</b><span>دست‌ساز</span></div>
+    </div>
+  </div>
+  <div class="hero-trust">
+    <div class="hero-trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4B98F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="18" r="1.6"/><circle cx="17.5" cy="18" r="1.6"/></svg>
+      <span>ارسال به سراسر ایران</span>
+    </div>
+    <div class="hero-trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4B98F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span>ضمانت اصالت کالا</span>
+    </div>
+    <div class="hero-trust-item">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4B98F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 1 1 2.3 5.7"/><path d="M4 4v5h5"/></svg>
+      <span>مرجوعی در صورت مغایرت محصول</span>
     </div>
   </div>
 </section>
 
+<section class="section" id="testimonials" style="display:none;padding:80px 0;">
+  <div class="wrap">
+    <div class="section-head reveal-on-scroll">
+      <div class="section-eyebrow">REVIEWS</div>
+      <h2 class="section-title">نظر خریداران</h2>
+    </div>
+    <div id="testimonialsGrid" class="testimonials-grid"></div>
+  </div>
+</section>
 
 <section class="section about" id="about">
   <div class="wrap about-grid">
@@ -466,7 +525,7 @@
         <path d="M20 160 L40 110 L60 160 Z"/>
       </svg>
     </div>
-    <div class="about-text">
+    <div class="about-text reveal-on-scroll">
       <span class="kicker brand-font">Our Story</span>
       <p>حنا گالری از یک علاقه‌ی ساده شروع شد: ساختن چیزهایی کوچک که حس خوبی می‌دهند.</p>
       <p>هر قطعه در این مجموعه با دست و با دقت زیاد ساخته می‌شود؛ از انتخاب متریال تا آخرین پرداخت. هدف ما این نیست که تعداد زیادی اکسسوری بسازیم، بلکه می‌خواهیم تعداد کمی را خیلی خوب بسازیم.</p>
@@ -477,7 +536,7 @@
 
 <section class="section">
   <div class="wrap">
-    <div class="why-grid">
+    <div class="why-grid reveal-on-scroll">
       <div class="why-card">
         <div class="why-icon"><svg viewBox="0 0 100 100" fill="none" style="stroke:var(--gold)" stroke-width="2.4"><path d="M50 15 L61 40 L88 44 L68 62 L73 89 L50 75 L27 89 L32 62 L12 44 L39 40 Z"/></svg></div>
         <h3>اصالت و کیفیت</h3>
@@ -499,7 +558,7 @@
 
 <section class="section testimonials-section">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal-on-scroll">
       <div class="section-eyebrow">TESTIMONIALS</div>
       <h2 class="section-title fa">حرف مشتری‌های حنا گالری</h2>
     </div>
@@ -522,7 +581,7 @@
 
 <section class="section" style="background:var(--cream-soft);">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal-on-scroll">
       <div class="section-eyebrow">SHIPPING & CARE</div>
       <h2 class="section-title fa">ارسال، مرجوعی و نگهداری</h2>
     </div>
@@ -548,7 +607,7 @@
 
 <section class="section" id="faq">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head reveal-on-scroll">
       <div class="section-eyebrow">FAQ</div>
       <h2 class="section-title fa">سوالات پرتکرار</h2>
     </div>
@@ -684,8 +743,10 @@
     <p id="accountPhoneText" style="font-size:14px;color:var(--coffee-70);margin-bottom:20px;direction:ltr;text-align:right;unicode-bidi:isolate;"></p>
     <button class="hero-btn" style="display:none;width:100%;text-align:center;color:var(--gold);border-color:var(--gold);margin-bottom:12px;" id="adminPanelBtn">پنل مدیریت</button>
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewOrdersBtn">سفارش‌های من</button>
+    <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewWishlistBtn">علاقه‌مندی‌های من</button>
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:#8B3A3A;border-color:#8B3A3A;" id="logoutBtn">خروج از حساب</button>
     <div id="myOrdersList" style="margin-top:22px;"></div>
+    <div id="myWishlistList" style="margin-top:22px;"></div>
   </div>
 </div>
 
@@ -699,6 +760,7 @@
       <button class="admin-tab active" data-tab="orders">سفارش‌ها</button>
       <button class="admin-tab" data-tab="products">محصولات</button>
       <button class="admin-tab" data-tab="stats">آمار</button>
+      <button class="admin-tab" data-tab="reviews">نظرات</button>
     </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
@@ -744,6 +806,10 @@
 
     <div id="adminTabStats" class="admin-tab-panel" style="display:none;">
       <div id="adminStatsBox"></div>
+    </div>
+
+    <div id="adminTabReviews" class="admin-tab-panel" style="display:none;">
+      <div id="adminReviewsList"></div>
     </div>
   </div>
 </div>
@@ -934,7 +1000,9 @@ function productCardHtml(p){
   else if(lowStock) leftBadges += `<span class="tag-stock">فقط ${toFa(p.stock)} عدد باقی مانده</span>`;
   let rightBadges = '';
   if(onSale && !soldOut) rightBadges += `<span class="tag-sale">${toFa(discountPct)}٪ تخفیف</span>`;
-  const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '') + (rightBadges ? `<div class="badge-col badge-right">${rightBadges}</div>` : '');
+  const wishActive = wishlistIds.has(p.id);
+  const heartBtn = `<button class="wish-btn${wishActive ? ' active' : ''}" onclick="toggleWishlist(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
+  const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '') + `<div class="badge-col badge-right">${rightBadges}${heartBtn}</div>`;
   const priceHtml = onSale
     ? `<span class="card-price"><span class="price-old">${toFa(p.price)} تومان</span><span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
     : `<span class="card-price">${toFa(p.price)} تومان</span>`;
@@ -953,6 +1021,7 @@ function productCardHtml(p){
   return `
   <div class="card${soldOut?' soldout':''}" data-id="${p.id}">
     <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
+      <div class="card-shine"></div>
       ${badge}
       ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
       ${hasMultiImages ? `
@@ -1062,7 +1131,114 @@ function renderProductDetail(){
     ${variantSelect}
     <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${p.description}</div>` : ''}
+    <div class="reviews-section">
+      <div class="detail-desc-title">نظر خریداران</div>
+      <div id="reviewsSummary" class="reviews-summary"></div>
+      <div id="reviewsList"><p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p></div>
+      <div id="reviewFormWrap" style="margin-top:16px;"></div>
+    </div>
   `;
+}
+
+function starsHtml(rating){
+  let out = '';
+  for(let i = 1; i <= 5; i++){
+    out += `<svg width="14" height="14" viewBox="0 0 24 24" style="fill:${i<=Math.round(rating)?'var(--gold)':'none'};stroke:var(--gold);stroke-width:1.4;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>`;
+  }
+  return `<span class="review-item-stars" style="display:inline-flex;gap:2px;">${out}</span>`;
+}
+
+let selectedReviewRating = 0;
+function renderReviewStarPicker(){
+  const wrap = document.getElementById('reviewStarPicker');
+  if(!wrap) return;
+  wrap.innerHTML = [1,2,3,4,5].map(i => `
+    <button type="button" class="${i<=selectedReviewRating?'active':''}" onclick="pickReviewStar(${i})">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg>
+    </button>
+  `).join('');
+}
+function pickReviewStar(i){
+  selectedReviewRating = i;
+  renderReviewStarPicker();
+}
+
+async function loadProductReviews(productId){
+  const listEl = document.getElementById('reviewsList');
+  const summaryEl = document.getElementById('reviewsSummary');
+  const formWrapEl = document.getElementById('reviewFormWrap');
+  if(!listEl) return;
+
+  const { data: approved } = await db.from('reviews').select('*').eq('product_id', productId).eq('approved', true).order('created_at', { ascending: false });
+  const reviews = approved || [];
+
+  if(reviews.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز نظری برای این محصول ثبت نشده.</p>';
+    summaryEl.textContent = '';
+  } else {
+    const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+    summaryEl.innerHTML = `${starsHtml(avg)} <b style="color:var(--coffee);">${avg.toFixed(1)}</b> از ۵ (${toFa(reviews.length)} نظر)`;
+    listEl.innerHTML = reviews.map(r => `
+      <div class="review-item">
+        <div class="review-item-top">
+          <span class="review-item-name">${escapeHtml(r.author_name)}</span>
+          <span class="review-item-date">${new Date(r.created_at).toLocaleDateString('fa-IR')}</span>
+        </div>
+        ${starsHtml(r.rating)}
+        <div class="review-item-comment">${escapeHtml(r.comment)}</div>
+      </div>
+    `).join('');
+  }
+
+  if(!currentUser){
+    formWrapEl.innerHTML = `<p class="review-status-note">برای ثبت نظر <a href="#" onclick="openAuthModal(); return false;" style="color:var(--coffee);">وارد حساب کاربری‌ات</a> شو.</p>`;
+    return;
+  }
+
+  const { data: own } = await db.from('reviews').select('*').eq('product_id', productId).eq('user_id', currentUser.id).maybeSingle();
+  if(own){
+    formWrapEl.innerHTML = own.approved
+      ? `<p class="review-status-note">نظر شما ثبت و نمایش داده شده.</p>`
+      : `<p class="review-status-note">نظر شما ثبت شد و پس از تایید مدیر نمایش داده می‌شه.</p>`;
+    return;
+  }
+
+  selectedReviewRating = 0;
+  formWrapEl.innerHTML = `
+    <div class="review-form">
+      <div class="review-star-picker" id="reviewStarPicker"></div>
+      <textarea id="reviewCommentInput" rows="3" placeholder="نظرت رو درباره‌ی این محصول بنویس..."></textarea>
+      <p class="form-error" id="reviewFormError"></p>
+      <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" onclick="submitReview(${productId})">ثبت نظر</button>
+    </div>
+  `;
+  renderReviewStarPicker();
+}
+
+async function submitReview(productId){
+  const errorEl = document.getElementById('reviewFormError');
+  errorEl.classList.remove('show');
+  const comment = document.getElementById('reviewCommentInput').value.trim();
+  if(!selectedReviewRating || !comment){
+    errorEl.textContent = 'امتیاز و متن نظر رو کامل کن.';
+    errorEl.classList.add('show');
+    return;
+  }
+  const authorName = (currentProfile && currentProfile.full_name) ? currentProfile.full_name : 'کاربر حنا گالری';
+  const { error } = await db.from('reviews').insert({
+    product_id: productId,
+    user_id: currentUser.id,
+    author_name: authorName,
+    rating: selectedReviewRating,
+    comment,
+  });
+  if(error){
+    errorEl.textContent = 'مشکلی پیش اومد، دوباره امتحان کن.';
+    errorEl.classList.add('show');
+    return;
+  }
+  showToast('نظر شما ثبت شد');
+  loadProductReviews(productId);
 }
 
 function openProductDetail(id){
@@ -1071,6 +1247,7 @@ function openProductDetail(id){
   currentDetailProduct = p;
   detailImageIndex = 0;
   renderProductDetail();
+  loadProductReviews(id);
   productPage.classList.add('open');
   productPage.scrollTop = 0;
 }
@@ -1183,6 +1360,74 @@ paginationEl.addEventListener('click', e => {
   document.getElementById('shop').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 fetchProducts();
+
+const scrollRevealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('revealed');
+      scrollRevealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+document.querySelectorAll('.reveal-on-scroll').forEach(el => scrollRevealObserver.observe(el));
+
+const heroDecoEl = document.getElementById('heroDeco');
+if(heroDecoEl){
+  const heroSectionEl = heroDecoEl.closest('.hero');
+  const onHeroScroll = () => {
+    const rect = heroSectionEl.getBoundingClientRect();
+    const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+    heroDecoEl.style.transform = `translateY(${(progress - 0.5) * 60}px)`;
+  };
+  window.addEventListener('scroll', onHeroScroll, { passive: true });
+  onHeroScroll();
+}
+
+function toFaDigits(str){
+  const map = { '0':'۰','1':'۱','2':'۲','3':'۳','4':'۴','5':'۵','6':'۶','7':'۷','8':'۸','9':'۹' };
+  return String(str).replace(/[0-9]/g, d => map[d]);
+}
+async function loadTestimonials(){
+  const section = document.getElementById('testimonials');
+  const { data } = await db.from('reviews').select('*, products(name)').eq('approved', true).order('created_at', { ascending: false }).limit(3);
+  if(!data || data.length === 0){
+    section.style.display = 'none';
+    return;
+  }
+  section.style.display = 'block';
+  document.getElementById('testimonialsGrid').innerHTML = data.map(r => `
+    <div class="testimonial-card reveal-on-scroll revealed">
+      ${starsHtml(r.rating)}
+      <p>${escapeHtml(r.comment)}</p>
+      <div class="t-author">${escapeHtml(r.author_name)}${r.products ? ' · ' + escapeHtml(r.products.name) : ''}</div>
+    </div>
+  `).join('');
+}
+loadTestimonials();
+
+const heroStatsEl = document.getElementById('heroStats');
+if(heroStatsEl){
+  const statsObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        const start = performance.now();
+        const duration = 1400;
+        const targets = { orders: 200, rating: 4.9, handmade: 100 };
+        const step = (now) => {
+          const t = Math.min(1, (now - start) / duration);
+          const eased = 1 - Math.pow(1 - t, 3);
+          document.getElementById('heroStatOrders').textContent = '+' + toFaDigits(Math.round(targets.orders * eased));
+          document.getElementById('heroStatRating').textContent = toFaDigits((targets.rating * eased).toFixed(1)) + ' / ۵';
+          document.getElementById('heroStatHandmade').textContent = toFaDigits(Math.round(targets.handmade * eased)) + '٪';
+          if(t < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  statsObserver.observe(heroStatsEl);
+}
 
 let currentCat = 'all';
 document.getElementById('filterRow').addEventListener('click', e=>{
@@ -1391,6 +1636,33 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 /* ================= حساب کاربری (ورود / ثبت‌نام) ================= */
 let currentUser = null;
 let currentProfile = null;
+
+let wishlistIds = new Set();
+async function loadWishlist(){
+  wishlistIds = new Set();
+  if(!currentUser) return;
+  const { data } = await db.from('wishlists').select('product_id').eq('user_id', currentUser.id);
+  (data || []).forEach(r => wishlistIds.add(r.product_id));
+}
+function refreshAllProductGrids(){
+  renderNewest();
+  renderSaleProducts();
+  renderProducts(currentCat);
+}
+async function toggleWishlist(id){
+  if(!currentUser){ openAuthModal(); return; }
+  const has = wishlistIds.has(id);
+  if(has){
+    wishlistIds.delete(id);
+    refreshAllProductGrids();
+    await db.from('wishlists').delete().eq('user_id', currentUser.id).eq('product_id', id);
+  } else {
+    wishlistIds.add(id);
+    refreshAllProductGrids();
+    const { error } = await db.from('wishlists').insert({ user_id: currentUser.id, product_id: id });
+    if(error){ wishlistIds.delete(id); refreshAllProductGrids(); }
+  }
+}
 let authOtpPurpose = 'login'; // 'login' یا 'forgot' — تعیین می‌کنه بعد از تایید کد چیکار کنیم
 
 const authOverlay = document.getElementById('authOverlay');
@@ -1647,6 +1919,23 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
   }).join('');
 });
 
+document.getElementById('viewWishlistBtn').addEventListener('click', async () => {
+  const listEl = document.getElementById('myWishlistList');
+  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  const { data, error } = await db.from('wishlists').select('product_id, products(id, name, price, sale_price)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  if(error || !data || data.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز محصولی به علاقه‌مندی‌ها اضافه نکردی.</p>';
+    return;
+  }
+  listEl.innerHTML = data.filter(r => r.products).map(r => {
+    const pr = r.products;
+    const price = (pr.sale_price && pr.sale_price > 0 && pr.sale_price < pr.price) ? pr.sale_price : pr.price;
+    return `<div class="order-item" style="cursor:pointer;" onclick="closeAccountPanel(); openProductDetail(${pr.id});">
+      <div class="oi-top"><span>${escapeHtml(pr.name)}</span><span>${toFa(price)} تومان</span></div>
+    </div>`;
+  }).join('');
+});
+
 async function loadProfile(){
   if(!currentUser) { currentProfile = null; return; }
   const { data } = await db.from('profiles').select('*').eq('id', currentUser.id).maybeSingle();
@@ -1676,12 +1965,14 @@ db.auth.getSession().then(({ data }) => {
   currentUser = data.session ? data.session.user : null;
   refreshAuthUI();
   if(currentUser) loadProfile().then(() => checkAdmin()).then(refreshAuthUI);
+  loadWishlist().then(refreshAllProductGrids);
 });
 
 db.auth.onAuthStateChange((_event, session) => {
   currentUser = session ? session.user : null;
   refreshAuthUI();
   if(currentUser) loadProfile().then(() => checkAdmin()).then(refreshAuthUI); else { currentProfile = null; isAdmin = false; }
+  loadWishlist().then(refreshAllProductGrids);
 });
 
 // شمارش بازدید سایت (هر بار که صفحه باز بشه، یه واحد اضافه می‌شه)
@@ -1706,9 +1997,11 @@ function switchAdminTab(tab){
   document.getElementById('adminTabOrders').style.display = tab === 'orders' ? 'block' : 'none';
   document.getElementById('adminTabProducts').style.display = tab === 'products' ? 'block' : 'none';
   document.getElementById('adminTabStats').style.display = tab === 'stats' ? 'block' : 'none';
+  document.getElementById('adminTabReviews').style.display = tab === 'reviews' ? 'block' : 'none';
   if(tab === 'orders') loadAdminOrders();
   if(tab === 'products') loadAdminProducts();
   if(tab === 'stats') loadAdminStats();
+  if(tab === 'reviews') loadAdminReviews();
 }
 document.querySelectorAll('.admin-tab').forEach(btn => {
   btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab));
@@ -1957,6 +2250,49 @@ async function deleteAdminProduct(id){
   loadAdminProducts();
   fetchProducts();
   showToast('محصول حذف شد');
+}
+
+async function loadAdminReviews(){
+  const listEl = document.getElementById('adminReviewsList');
+  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  const { data, error } = await db.from('reviews').select('*, products(name)').order('created_at', { ascending: false });
+  if(error || !data){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">مشکلی تو بارگذاری نظرات پیش اومد.</p>';
+    return;
+  }
+  if(data.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز نظری ثبت نشده.</p>';
+    return;
+  }
+  listEl.innerHTML = data.map(r => `
+    <div class="admin-card">
+      <div class="admin-card-top">
+        <b>${escapeHtml(r.author_name)} — ${r.products ? escapeHtml(r.products.name) : 'محصول حذف‌شده'}</b>
+        <span style="font-size:11.5px;padding:3px 10px;background:${r.approved ? 'var(--tan)' : '#F3D9D9'};color:var(--coffee);">${r.approved ? 'تاییدشده' : 'در انتظار تایید'}</span>
+      </div>
+      ${starsHtml(r.rating)}
+      <div class="admin-card-items">${escapeHtml(r.comment)}</div>
+      <div class="admin-prod-actions" style="margin-top:8px;">
+        ${!r.approved ? `<button onclick="approveAdminReview(${r.id})">تایید</button>` : ''}
+        <button onclick="deleteAdminReview(${r.id})">حذف</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function approveAdminReview(id){
+  await db.from('reviews').update({ approved: true }).eq('id', id);
+  loadAdminReviews();
+  loadTestimonials();
+  showToast('نظر تایید شد');
+}
+
+async function deleteAdminReview(id){
+  if(!confirm('مطمئنی می‌خوای این نظر رو حذف کنی؟')) return;
+  await db.from('reviews').delete().eq('id', id);
+  loadAdminReviews();
+  loadTestimonials();
+  showToast('نظر حذف شد');
 }
 
 async function loadAdminStats(){
