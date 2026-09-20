@@ -128,6 +128,11 @@
   .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;}
   @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:560px){.product-grid{grid-template-columns:repeat(2,1fr);gap:14px;}}
+  .skeleton-visual,.skeleton-line{background-image:linear-gradient(90deg,var(--tan) 25%,var(--cream-soft) 37%,var(--tan) 63%);background-size:400px 100%;animation:skeletonShimmer 1.4s ease infinite;}
+  .skeleton-visual{aspect-ratio:1;}
+  .skeleton-line{height:11px;margin-top:16px;}
+  .skeleton-line.short{width:45%;margin-top:8px;}
+  @keyframes skeletonShimmer{0%{background-position:-400px 0;}100%{background-position:400px 0;}}
   .pagination{display:flex;justify-content:center;gap:10px;margin-top:44px;flex-wrap:wrap;}
   .page-btn{width:38px;height:38px;border:1px solid var(--line);color:var(--coffee-70);
     font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;transition:.2s;}
@@ -314,9 +319,15 @@
   .admin-img-thumb{position:relative;width:72px;height:72px;border-radius:6px;overflow:hidden;border:1px solid var(--line);}
   .admin-img-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
   .admin-img-thumb button{position:absolute;top:2px;left:2px;width:18px;height:18px;line-height:16px;padding:0;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:none;font-size:12px;cursor:pointer;}
-  .admin-img-upload-label{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:1px dashed var(--coffee-70);border-radius:6px;font-size:13px;color:var(--coffee);cursor:pointer;background:var(--cream-soft);}
+  .admin-img-upload-label{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:1px dashed var(--coffee-70);border-radius:6px;font-size:13px;color:var(--coffee);cursor:pointer;background:var(--cream-soft);transition:border-color .2s,background .2s;}
   .admin-img-upload-label input{display:none;}
+  .admin-img-upload-label.dragover{border-color:var(--coffee);background:var(--tan);}
   .admin-img-upload-status{font-size:12px;color:var(--coffee-70);margin-top:6px;}
+  .admin-img-thumb-pending{display:flex;align-items:center;justify-content:center;background:var(--tan);}
+  .admin-img-spinner{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(142,110,88,.25);border-top-color:var(--coffee);animation:adminSpin .8s linear infinite;}
+  @keyframes adminSpin{to{transform:rotate(360deg);}}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
   .stat-item{border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;}
   .stat-item b{display:block;font-size:24px;color:var(--coffee);margin-bottom:6px;}
@@ -714,8 +725,8 @@
         <div class="form-field">
           <label>عکس‌های محصول</label>
           <div class="admin-img-preview" id="adminProdImagePreview"></div>
-          <label class="admin-img-upload-label" for="adminProdImageFile">
-            📷 افزودن عکس از گالری
+          <label class="admin-img-upload-label" for="adminProdImageFile" id="adminImgDropZone">
+            📷 افزودن عکس از گالری یا بکشید و اینجا رها کنید
             <input type="file" id="adminProdImageFile" accept="image/*" multiple>
           </label>
           <p class="admin-img-upload-status" id="adminProdImageUploadStatus"></p>
@@ -813,7 +824,12 @@ const BG_CYCLE = ['var(--blush)','var(--tan)'];
 
 let products = [];
 
+function skeletonCardHtml(){
+  return `<div class="card"><div class="skeleton-visual"></div><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>`;
+}
+
 async function fetchProducts(){
+  grid.innerHTML = Array(PAGE_SIZE).fill(skeletonCardHtml()).join('');
   const { data, error } = await db.from('products').select('*').order('id');
   if(error){
     console.error('خطا در خواندن محصولات از Supabase:', error);
@@ -874,6 +890,21 @@ const icons = {
 };
 
 const toFa = n => n.toLocaleString('fa-IR');
+
+let toastTimer = null;
+function showToast(msg){
+  let el = document.getElementById('siteToast');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'siteToast';
+    el.className = 'toast';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
+}
 let cart = [];
 
 const grid = document.getElementById('productGrid');
@@ -1723,6 +1754,7 @@ async function loadAdminOrders(){
 
 async function updateOrderStatus(orderId, status){
   await db.from('orders').update({ status }).eq('id', orderId);
+  showToast('وضعیت سفارش به‌روزرسانی شد');
 }
 
 async function loadAdminProducts(){
@@ -1758,8 +1790,11 @@ function resetAdminProductForm(){
   document.getElementById('adminProdDesc').value = '';
   document.getElementById('adminProdIsNew').checked = false;
   document.getElementById('adminProdError').classList.remove('show');
+  adminPendingUploads = [];
   renderAdminProdImagePreview();
 }
+
+let adminPendingUploads = [];
 
 function getAdminProdImages(){
   return document.getElementById('adminProdImage').value.split(',').map(s => s.trim()).filter(Boolean);
@@ -1770,12 +1805,16 @@ function setAdminProdImages(arr){
 }
 function renderAdminProdImagePreview(){
   const imgs = getAdminProdImages();
-  document.getElementById('adminProdImagePreview').innerHTML = imgs.map((url, i) => `
+  const doneHtml = imgs.map((url, i) => `
     <div class="admin-img-thumb">
       <img src="${url}" loading="lazy">
       <button type="button" onclick="removeAdminProdImage(${i})">×</button>
     </div>
   `).join('');
+  const pendingHtml = adminPendingUploads.map(() => `
+    <div class="admin-img-thumb admin-img-thumb-pending"><div class="admin-img-spinner"></div></div>
+  `).join('');
+  document.getElementById('adminProdImagePreview').innerHTML = doneHtml + pendingHtml;
 }
 function removeAdminProdImage(i){
   const imgs = getAdminProdImages();
@@ -1784,27 +1823,50 @@ function removeAdminProdImage(i){
 }
 document.getElementById('adminProdImage').addEventListener('input', renderAdminProdImagePreview);
 
-document.getElementById('adminProdImageFile').addEventListener('change', async (e) => {
-  const files = Array.from(e.target.files || []);
+async function handleAdminImageFiles(files){
   if(!files.length) return;
   const statusEl = document.getElementById('adminProdImageUploadStatus');
-  const imgs = getAdminProdImages();
   for(const file of files){
-    statusEl.textContent = `در حال آپلود ${file.name}...`;
+    const pendingId = Math.random().toString(36).slice(2);
+    adminPendingUploads.push(pendingId);
+    renderAdminProdImagePreview();
     const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const { error } = await db.storage.from('image').upload(path, file, { cacheControl: '3600', upsert: false });
+    adminPendingUploads = adminPendingUploads.filter(id => id !== pendingId);
     if(error){
       console.error('خطا در آپلود عکس:', error);
       statusEl.textContent = `آپلود ${file.name} ناموفق بود.`;
+      renderAdminProdImagePreview();
       continue;
     }
     const { data: pub } = db.storage.from('image').getPublicUrl(path);
+    const imgs = getAdminProdImages();
     imgs.push(pub.publicUrl);
+    setAdminProdImages(imgs);
   }
   statusEl.textContent = '';
-  setAdminProdImages(imgs);
+}
+
+document.getElementById('adminProdImageFile').addEventListener('change', (e) => {
+  handleAdminImageFiles(Array.from(e.target.files || []));
   e.target.value = '';
+});
+
+const adminImgDropZone = document.getElementById('adminImgDropZone');
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => e.preventDefault());
+['dragenter', 'dragover'].forEach(evt => adminImgDropZone.addEventListener(evt, e => {
+  e.preventDefault();
+  adminImgDropZone.classList.add('dragover');
+}));
+['dragleave', 'drop'].forEach(evt => adminImgDropZone.addEventListener(evt, e => {
+  e.preventDefault();
+  adminImgDropZone.classList.remove('dragover');
+}));
+adminImgDropZone.addEventListener('drop', e => {
+  const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
+  handleAdminImageFiles(files);
 });
 
 document.getElementById('adminAddProductBtn').addEventListener('click', () => {
@@ -1886,6 +1948,7 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
   document.getElementById('adminProductForm').style.display = 'none';
   loadAdminProducts();
   fetchProducts();
+  showToast(id ? 'محصول ویرایش شد' : 'محصول جدید اضافه شد');
 });
 
 async function deleteAdminProduct(id){
@@ -1893,6 +1956,7 @@ async function deleteAdminProduct(id){
   await db.from('products').delete().eq('id', id);
   loadAdminProducts();
   fetchProducts();
+  showToast('محصول حذف شد');
 }
 
 async function loadAdminStats(){
