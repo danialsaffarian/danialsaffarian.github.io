@@ -1564,10 +1564,8 @@ document.getElementById('backToShopBtn').addEventListener('click', closeCheckout
 
 // ثبت سفارش مستقیم داخل سایت (بدون نیاز به اینستاگرام)
 function generateTrackingCode(){
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'HG-';
-  for(let i = 0; i < 6; i++) code += chars[Math.floor(Math.random() * chars.length)];
-  return code;
+  // فقط عدد، چون پترن پیامک فراز فقط مقدار عددی برای کد پیگیری قبول می‌کنه
+  return String(Math.floor(100000 + Math.random() * 900000));
 }
 
 document.getElementById('submitOrderBtn').addEventListener('click', async () => {
