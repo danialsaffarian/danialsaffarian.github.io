@@ -1025,7 +1025,7 @@ function productCardHtml(p){
   const hasMultiImages = images.length > 1;
   return `
   <div class="card${soldOut?' soldout':''}" data-id="${p.id}">
-    <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}" onmouseenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
+    <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}" onpointerenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
       <div class="card-shine"></div>
       ${badge}
       ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
@@ -1069,12 +1069,20 @@ function preloadProductImages(productId){
   const p = products.find(p => p.id === productId);
   if(p) preloadImages(p.images);
 }
+function swapImageSrc(img, url){
+  if(img.src === url) return;
+  const loader = new Image();
+  loader.onload = () => { img.src = url; };
+  loader.onerror = () => { img.src = url; };
+  loader.src = url;
+  if(loader.complete) img.src = url;
+}
 function setCardImage(productId, idx){
   const p = products.find(p => p.id === productId);
   if(!p || !p.images || !p.images.length) return;
   cardImageIndex[productId] = idx;
   const img = document.getElementById('card-img-' + productId);
-  if(img) img.src = p.images[idx];
+  if(img) swapImageSrc(img, p.images[idx]);
   const visual = document.getElementById('visual-' + productId);
   if(visual){
     visual.querySelectorAll('.img-dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
@@ -1270,7 +1278,7 @@ function setDetailImage(idx){
   if(!currentDetailProduct || !currentDetailProduct.images) return;
   detailImageIndex = idx;
   const img = document.getElementById('detailImg');
-  if(img) img.src = currentDetailProduct.images[idx];
+  if(img) swapImageSrc(img, currentDetailProduct.images[idx]);
   const visual = document.getElementById('detailVisual');
   if(visual) visual.querySelectorAll('.img-dot').forEach((dot,i) => dot.classList.toggle('active', i===idx));
 }
