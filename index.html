@@ -192,9 +192,10 @@
   .variant-select:focus{outline:none;border-color:var(--gold);}
   .variant-status{color:#8B3A3A;font-size:12px;margin:-2px 0 8px;}
   .variant-status.low{color:var(--coffee);}
-  .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--coffee);cursor:pointer;z-index:2;opacity:0;transition:opacity .2s;padding:0;}
-  .card:hover .img-nav{opacity:1;}
-  .img-nav.right{right:8px;}
+  .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.92);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:none;display:flex;align-items:center;justify-content:center;color:var(--coffee);cursor:pointer;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,.16);transition:transform .15s,box-shadow .15s;padding:0;}
+  .img-nav svg{width:16px;height:16px;}
+  .img-nav:hover{transform:translateY(-50%) scale(1.1);box-shadow:0 4px 12px rgba(0,0,0,.24);}
+  .img-nav.right{right:10px;}
   .img-dots{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:2;}
   .img-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.15);cursor:pointer;transition:background .2s;}
   .img-dot.active{background:var(--coffee);border-color:var(--coffee);}
@@ -310,7 +311,8 @@
   .detail-visual{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:26px;background:var(--tan);}
   .detail-visual svg{width:32%;}
   .detail-photo{width:100%;height:100%;object-fit:cover;display:block;min-height:0;min-width:0;}
-  .detail-visual .img-nav{opacity:1;width:34px;height:34px;font-size:18px;}
+  .detail-visual .img-nav{width:40px;height:40px;}
+  .detail-visual .img-nav svg{width:20px;height:20px;}
   .detail-cat{font-size:12.5px;color:var(--gold);font-weight:600;letter-spacing:0.5px;}
   .detail-name{font-size:24px;font-weight:700;color:var(--coffee);margin:6px 0 10px;}
   .detail-price{font-size:18px;color:var(--coffee-70);margin-bottom:20px;display:block;}
@@ -1028,7 +1030,7 @@ function productCardHtml(p){
       ${badge}
       ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
       ${hasMultiImages ? `
-        <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)">›</button>
+        <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===0?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
       ` : ''}
     </div>
@@ -1130,7 +1132,7 @@ function renderProductDetail(){
       ${badge}
       ${hasImages ? `<img src="${images[detailImageIndex]}" alt="${p.name}" class="detail-photo" id="detailImg">` : icons[p.icon]}
       ${hasMultiImages ? `
-        <button class="img-nav right" onclick="changeDetailImage(1)">›</button>
+        <button class="img-nav right" onclick="changeDetailImage(1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===detailImageIndex?' active':''}" onclick="setDetailImage(${i})"></span>`).join('')}</div>
       ` : ''}
     </div>
