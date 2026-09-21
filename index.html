@@ -1021,10 +1021,9 @@ function productCardHtml(p){
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
   const hasMultiImages = images.length > 1;
-  if(hasMultiImages) preloadImages(images);
   return `
   <div class="card${soldOut?' soldout':''}" data-id="${p.id}">
-    <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
+    <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}" onmouseenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
       <div class="card-shine"></div>
       ${badge}
       ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
@@ -1063,6 +1062,10 @@ let cardImageIndex = {};
 function preloadImages(urls){
   if(!urls) return;
   urls.forEach(url => { const img = new Image(); img.src = url; });
+}
+function preloadProductImages(productId){
+  const p = products.find(p => p.id === productId);
+  if(p) preloadImages(p.images);
 }
 function setCardImage(productId, idx){
   const p = products.find(p => p.id === productId);
