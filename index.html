@@ -879,6 +879,14 @@
   <div class="product-body" id="productBody"></div>
 </div>
 
+<div class="product-page" id="orderDetailPage">
+  <div class="product-head">
+    <button class="product-back" id="orderDetailBackBtn">→</button>
+    <h3 class="brand-font">جزئیات سفارش</h3>
+  </div>
+  <div class="product-body" id="orderDetailBody"></div>
+</div>
+
 <script>
 const SUPABASE_URL = 'https://goykyskctygnciwttfqj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
@@ -1951,6 +1959,8 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
   closeAccountPanel();
 });
 
+let myOrdersCache = [];
+
 document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
   const listEl = document.getElementById('myOrdersList');
   listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
@@ -1959,10 +1969,11 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نکردی.</p>';
     return;
   }
+  myOrdersCache = data;
   listEl.innerHTML = data.map(o => {
     const itemsText = (o.items || []).map(i => `${i.name}${i.variant ? ` (${i.variant})` : ''} × ${i.qty}`).join('، ');
     const date = new Date(o.created_at).toLocaleDateString('fa-IR');
-    return `<div class="order-item">
+    return `<div class="order-item" onclick="openOrderDetail(${o.id})" style="cursor:pointer;">
       <div class="oi-top"><span>${toFa(o.total)} تومان</span><span>${date}</span></div>
       <div class="oi-items">${itemsText}</div>
       ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
@@ -1970,6 +1981,54 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
     </div>`;
   }).join('');
 });
+
+async function openOrderDetail(orderId){
+  const order = myOrdersCache.find(o => o.id === orderId);
+  if(!order) return;
+  const bodyEl = document.getElementById('orderDetailBody');
+  bodyEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  document.getElementById('orderDetailPage').classList.add('open');
+
+  const ids = [...new Set((order.items || []).map(i => i.id))];
+  let productMap = {};
+  if(ids.length){
+    const { data } = await db.from('products').select('id, image_url').in('id', ids);
+    (data || []).forEach(p => { productMap[p.id] = p; });
+  }
+
+  const date = new Date(order.created_at).toLocaleDateString('fa-IR');
+  const itemsHtml = (order.items || []).map(i => {
+    const prod = productMap[i.id];
+    const img = prod && prod.image_url ? prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0] : null;
+    return `
+      <div class="drawer-item" style="padding:14px 0;border-bottom:1px solid var(--line);align-items:center;">
+        <div class="mini-visual" style="width:70px;height:70px;">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;">` : icons.necklace}</div>
+        <div class="drawer-item-info">
+          <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
+          <div class="price">${toFa(i.price)} تومان × ${toFa(i.qty)}</div>
+        </div>
+        <div style="font-weight:700;color:var(--coffee);white-space:nowrap;">${toFa(i.price * i.qty)} تومان</div>
+      </div>`;
+  }).join('');
+
+  bodyEl.innerHTML = `
+    <div style="text-align:center;border:1px solid var(--line);padding:18px;margin-bottom:22px;">
+      <div style="font-size:12px;color:var(--coffee-70);margin-bottom:6px;">کد پیگیری سفارش</div>
+      <div style="font-size:24px;font-weight:800;color:var(--coffee);direction:ltr;unicode-bidi:isolate;">${order.tracking_code ? escapeHtml(order.tracking_code) : '—'}</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);margin-bottom:8px;">
+      <span>${date}</span>
+      <span class="oi-status">${escapeHtml(order.status || 'جدید')}</span>
+    </div>
+    <div>${itemsHtml}</div>
+    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin-top:18px;padding-top:18px;border-top:2px solid var(--coffee);">
+      <span>جمع کل</span><span>${toFa(order.total)} تومان</span>
+    </div>
+    ${order.customer_address ? `<div style="margin-top:22px;font-size:13px;color:var(--coffee-70);"><b style="color:var(--coffee);">آدرس تحویل:</b> ${escapeHtml(order.customer_address)}</div>` : ''}
+  `;
+}
+function closeOrderDetail(){ document.getElementById('orderDetailPage').classList.remove('open'); }
+document.getElementById('orderDetailBackBtn').addEventListener('click', closeOrderDetail);
 
 document.getElementById('viewWishlistBtn').addEventListener('click', async () => {
   const listEl = document.getElementById('myWishlistList');
