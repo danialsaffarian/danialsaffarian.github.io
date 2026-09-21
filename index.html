@@ -169,6 +169,7 @@
   .badge-col{position:absolute;top:14px;display:flex;flex-direction:column;gap:6px;z-index:2;}
   .badge-col.badge-right{right:14px;align-items:flex-end;}
   .badge-col.badge-left{left:14px;align-items:flex-start;}
+  .badge-col.badge-bottom{top:auto;bottom:14px;}
   .badge-col .tag-new, .badge-col .tag-sale, .badge-col .tag-stock, .badge-col .tag-soldout{position:static;}
   .wish-btn{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.85);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .15s;flex-shrink:0;}
   .wish-btn:hover{transform:scale(1.12);}
@@ -1003,7 +1004,9 @@ function productCardHtml(p){
   if(onSale && !soldOut) rightBadges += `<span class="tag-sale">${toFa(discountPct)}٪ تخفیف</span>`;
   const wishActive = wishlistIds.has(p.id);
   const heartBtn = `<button class="wish-btn${wishActive ? ' active' : ''}" onclick="toggleWishlist(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
-  const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '') + `<div class="badge-col badge-right">${rightBadges}${heartBtn}</div>`;
+  const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '')
+    + `<div class="badge-col badge-right">${heartBtn}</div>`
+    + (rightBadges ? `<div class="badge-col badge-right badge-bottom">${rightBadges}</div>` : '');
   const priceHtml = onSale
     ? `<span class="card-price"><span class="price-old">${toFa(p.price)} تومان</span><span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
     : `<span class="card-price">${toFa(p.price)} تومان</span>`;
@@ -1089,7 +1092,7 @@ function detailBadgeHtml(p, soldOut, lowStock, onSale, discountPct){
   else if(lowStock) leftBadges += `<span class="tag-stock">فقط ${toFa(p.stock)} عدد باقی مانده</span>`;
   let rightBadges = '';
   if(onSale && !soldOut) rightBadges += `<span class="tag-sale">${toFa(discountPct)}٪ تخفیف</span>`;
-  return (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '') + (rightBadges ? `<div class="badge-col badge-right">${rightBadges}</div>` : '');
+  return (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '') + (rightBadges ? `<div class="badge-col badge-right badge-bottom">${rightBadges}</div>` : '');
 }
 
 function renderProductDetail(){
