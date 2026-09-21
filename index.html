@@ -136,6 +136,16 @@
   .filter-btn:hover{background:var(--brown-deep,#7A5C47);}
   .filter-btn.active{background:var(--gold);border-color:var(--gold);color:var(--coffee);}
 
+  /* ---------- بنر تمرکز روی دسته ---------- */
+  .category-focus-banner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;background:var(--cream-soft);border:1px solid var(--line);padding:18px 24px;margin-bottom:36px;animation:fadeUp .35s ease;}
+  .cfb-info{display:flex;align-items:center;gap:12px;}
+  .cfb-count{width:38px;height:38px;border-radius:50%;background:var(--gold);color:var(--cream-soft);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;flex-shrink:0;}
+  .cfb-label{font-size:11.5px;color:var(--coffee-70);margin-bottom:2px;}
+  .cfb-name{font-size:19px;font-weight:700;color:var(--coffee);}
+  .cfb-back{background:none;border:1px solid var(--coffee);color:var(--coffee);padding:10px 20px;font-size:13px;font-weight:500;transition:.2s;}
+  .cfb-back:hover{background:var(--coffee);color:var(--cream);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
   /* ---------- Product grid ---------- */
   .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;scroll-margin-top:100px;}
   @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr);}}
@@ -455,7 +465,7 @@
       <button class="filter-btn" data-cat="all">همه محصولات</button>
     </div>
 
-    <div class="newest-section">
+    <div class="newest-section" id="newestSection">
       <h3 class="newest-title">جدیدترین محصولات</h3>
       <div class="product-grid" id="newestGrid"></div>
     </div>
@@ -463,6 +473,17 @@
     <div class="newest-section" id="saleSection" style="display:none;">
       <h3 class="newest-title">محصولات تخفیف‌خورده</h3>
       <div class="product-grid" id="saleGrid"></div>
+    </div>
+
+    <div class="category-focus-banner" id="categoryFocusBanner" style="display:none;">
+      <div class="cfb-info">
+        <span class="cfb-count" id="cfbCount"></span>
+        <div>
+          <div class="cfb-label">در حال مشاهده‌ی دسته</div>
+          <div class="cfb-name" id="cfbName"></div>
+        </div>
+      </div>
+      <button class="cfb-back" id="cfbBackBtn">بازگشت به صفحه اصلی</button>
     </div>
 
     <div id="categoryResults" style="display:none;">
@@ -1486,20 +1507,52 @@ if(heroStatsEl){
   statsObserver.observe(heroStatsEl);
 }
 
-let currentCat = 'all';
+let currentCat = null; // null یعنی هنوز دسته‌ای انتخاب نشده (حالت صفحه اصلی)
 document.getElementById('filterRow').addEventListener('click', e=>{
   const btn = e.target.closest('.filter-btn');
   if(!btn) return;
-  setActiveFilter(btn.dataset.cat);
+  enterCategoryFocus(btn.dataset.cat);
 });
-function setActiveFilter(cat){
+
+function isCategoryFocused(){
+  return document.getElementById('categoryResults').style.display !== 'none';
+}
+function updateCategoryBanner(cat){
+  const normedCat = normCat(cat);
+  const count = products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || p.name.includes(currentSearch))).length;
+  const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
+  document.getElementById('cfbCount').textContent = toFa(count);
+  document.getElementById('cfbName').textContent = btn ? btn.textContent : '';
+}
+function enterCategoryFocus(cat){
+  const wasFocused = isCategoryFocused();
   currentCat = cat;
   currentPage = 1;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat));
+  document.getElementById('newestSection').style.display = 'none';
+  saleSection.style.display = 'none';
+  document.getElementById('categoryFocusBanner').style.display = 'flex';
   document.getElementById('categoryResults').style.display = 'block';
   renderProducts(cat);
-  document.getElementById('categoryResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  updateCategoryBanner(cat);
+  if(!wasFocused) document.getElementById('categoryFocusBanner').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+function showHomeSections(){
+  document.getElementById('categoryFocusBanner').style.display = 'none';
+  document.getElementById('categoryResults').style.display = 'none';
+  document.getElementById('newestSection').style.display = 'block';
+  renderSaleProducts();
+}
+function exitCategoryFocus(){
+  currentCat = null;
+  currentSearch = '';
+  searchInput.value = '';
+  searchBar.classList.remove('open');
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  showHomeSections();
+  document.getElementById('shop').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+document.getElementById('cfbBackBtn').addEventListener('click', exitCategoryFocus);
 
 // منو (موبایل)
 const menuToggleBtn = document.getElementById('menuToggleBtn');
@@ -1522,8 +1575,12 @@ searchToggleBtn.addEventListener('click', () => {
 searchInput.addEventListener('input', () => {
   currentSearch = searchInput.value.trim();
   currentPage = 1;
-  if(currentSearch) document.getElementById('categoryResults').style.display = 'block';
-  renderProducts(currentCat === 'all' ? 'all' : currentCat);
+  if(currentSearch || currentCat){
+    enterCategoryFocus(currentCat || 'all');
+  } else {
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    showHomeSections();
+  }
 });
 
 function addToCart(id){
@@ -1712,8 +1769,8 @@ async function loadWishlist(){
 }
 function refreshAllProductGrids(){
   renderNewest();
-  renderSaleProducts();
-  renderProducts(currentCat);
+  if(!isCategoryFocused()) renderSaleProducts();
+  if(currentCat) renderProducts(currentCat);
 }
 async function toggleWishlist(id){
   if(!currentUser){ openAuthModal(); return; }
