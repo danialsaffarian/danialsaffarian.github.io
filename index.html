@@ -194,7 +194,6 @@
   .variant-status.low{color:var(--coffee);}
   .img-nav{position:absolute;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.9);border:none;display:flex;align-items:center;justify-content:center;font-size:15px;line-height:1;color:var(--coffee);cursor:pointer;z-index:2;opacity:0;transition:opacity .2s;padding:0;}
   .card:hover .img-nav{opacity:1;}
-  .img-nav.left{left:8px;}
   .img-nav.right{right:8px;}
   .img-dots{position:absolute;bottom:8px;left:0;right:0;display:flex;justify-content:center;gap:5px;z-index:2;}
   .img-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.15);cursor:pointer;transition:background .2s;}
@@ -1022,6 +1021,7 @@ function productCardHtml(p){
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
   const hasMultiImages = images.length > 1;
+  if(hasMultiImages) preloadImages(images);
   return `
   <div class="card${soldOut?' soldout':''}" data-id="${p.id}">
     <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
@@ -1029,7 +1029,6 @@ function productCardHtml(p){
       ${badge}
       ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
       ${hasMultiImages ? `
-        <button class="img-nav left" onclick="event.stopPropagation(); changeCardImage(${p.id}, -1)">‹</button>
         <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)">›</button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===0?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
       ` : ''}
@@ -1061,6 +1060,10 @@ function onVariantChange(productId){
 }
 
 let cardImageIndex = {};
+function preloadImages(urls){
+  if(!urls) return;
+  urls.forEach(url => { const img = new Image(); img.src = url; });
+}
 function setCardImage(productId, idx){
   const p = products.find(p => p.id === productId);
   if(!p || !p.images || !p.images.length) return;
@@ -1124,7 +1127,6 @@ function renderProductDetail(){
       ${badge}
       ${hasImages ? `<img src="${images[detailImageIndex]}" alt="${p.name}" class="detail-photo" id="detailImg">` : icons[p.icon]}
       ${hasMultiImages ? `
-        <button class="img-nav left" onclick="changeDetailImage(-1)">‹</button>
         <button class="img-nav right" onclick="changeDetailImage(1)">›</button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===detailImageIndex?' active':''}" onclick="setDetailImage(${i})"></span>`).join('')}</div>
       ` : ''}
@@ -1250,6 +1252,7 @@ function openProductDetail(id){
   if(!p) return;
   currentDetailProduct = p;
   detailImageIndex = 0;
+  preloadImages(p.images);
   renderProductDetail();
   loadProductReviews(id);
   productPage.classList.add('open');
