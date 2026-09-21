@@ -796,7 +796,7 @@
           <p class="admin-img-upload-status" id="adminProdImageUploadStatus"></p>
           <input type="text" id="adminProdImage" placeholder="یا لینک عکس رو دستی بچسبون (با کاما جدا کن)" style="margin-top:10px;">
         </div>
-        <div class="form-field"><label>رنگ/مدل‌ها (اختیاری — مثل: آبی:4,صورتی:0)</label><input type="text" id="adminProdVariants"></div>
+        <div class="form-field"><label>رنگ/مدل‌ها (اختیاری — فرمت: نام:موجودی:قیمت — قیمت اختیاریه و اگه ننویسی، قیمت خودِ محصول رو می‌گیره. مثل: آبی:4:250000,صورتی:0,سفید:10)</label><input type="text" id="adminProdVariants"></div>
         <div class="form-field"><label>توضیحات (اختیاری)</label><textarea id="adminProdDesc" rows="2"></textarea></div>
         <div class="form-field"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="adminProdIsNew" style="width:auto;"> نشان «تازه» داشته باشه</label></div>
         <p class="form-error" id="adminProdError"></p>
@@ -935,7 +935,12 @@ async function fetchProducts(){
           if(!isNaN(n)){ qty = n; available = n > 0; }
         }
       }
-      return { name, qty, available };
+      let price = null; // null یعنی این گزینه قیمت مخصوص نداره و از قیمت خود محصول استفاده می‌شه
+      if(parts[2] !== undefined && parts[2].trim() !== ''){
+        const priceNum = Number(parts[2].trim());
+        if(!isNaN(priceNum) && priceNum > 0) price = priceNum;
+      }
+      return { name, qty, available, price };
     }) : [],
     icon: (ICON_BY_CAT[normCat(p.category)] || ['necklace'])[p.id % 2],
     bg: BG_CYCLE[i % 2],
@@ -992,6 +997,20 @@ function variantStatusHtml(v){
   if(v.qty !== null && v.qty <= LOW_STOCK_THRESHOLD) return { text: `فقط ${toFa(v.qty)} عدد از این گزینه باقی مانده`, cls: 'low' };
   return { text: '', cls: '' };
 }
+function priceForVariant(p, variant){
+  if(variant && variant.price !== null && variant.price !== undefined) return variant.price;
+  return p.effectivePrice;
+}
+function priceHtml(p, variant, cls, id){
+  const idAttr = id ? ` id="${id}"` : '';
+  if(variant && variant.price !== null && variant.price !== undefined){
+    return `<span class="${cls}"${idAttr}>${toFa(variant.price)} تومان</span>`;
+  }
+  const onSale = p.salePrice !== null && p.salePrice !== undefined;
+  return onSale
+    ? `<span class="${cls}"${idAttr}><span class="price-old">${toFa(p.price)} تومان</span><span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
+    : `<span class="${cls}"${idAttr}>${toFa(p.price)} تومان</span>`;
+}
 function productCardHtml(p){
   const soldOut = p.stock === 0;
   const lowStock = !soldOut && p.stock <= LOW_STOCK_THRESHOLD;
@@ -1008,12 +1027,11 @@ function productCardHtml(p){
   const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '')
     + `<div class="badge-col badge-right">${heartBtn}</div>`
     + (rightBadges ? `<div class="badge-col badge-right badge-bottom">${rightBadges}</div>` : '');
-  const priceHtml = onSale
-    ? `<span class="card-price"><span class="price-old">${toFa(p.price)} تومان</span><span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
-    : `<span class="card-price">${toFa(p.price)} تومان</span>`;
   const hasVariants = p.variants && p.variants.length > 0;
-  const firstAvailable = hasVariants && p.variants[0].available;
-  const firstStatus = hasVariants ? variantStatusHtml(p.variants[0]) : { text: '', cls: '' };
+  const firstVariant = hasVariants ? p.variants[0] : null;
+  const firstAvailable = hasVariants && firstVariant.available;
+  const firstStatus = hasVariants ? variantStatusHtml(firstVariant) : { text: '', cls: '' };
+  const priceHtmlStr = priceHtml(p, firstVariant, 'card-price', 'price-' + p.id);
   const variantSelect = hasVariants ? `
       <select class="variant-select" id="variant-${p.id}" ${soldOut?'disabled':''} onchange="onVariantChange(${p.id})">
         ${p.variants.map(v => `<option value="${v.name}">${variantOptionLabel(v)}</option>`).join('')}
@@ -1037,7 +1055,7 @@ function productCardHtml(p){
     <div class="card-body">
       <span class="card-cat">${p.catLabel}</span>
       <span class="card-name">${p.name}</span>
-      ${priceHtml}
+      ${priceHtmlStr}
       ${variantSelect}
       <button class="buy-btn" id="buy-btn-${p.id}" onclick="addToCart(${p.id})" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     </div>
@@ -1050,6 +1068,7 @@ function onVariantChange(productId){
   const sel = document.getElementById('variant-' + productId);
   const statusEl = document.getElementById('variant-status-' + productId);
   const btn = document.getElementById('buy-btn-' + productId);
+  const priceEl = document.getElementById('price-' + productId);
   const chosen = p.variants.find(v => v.name === sel.value);
   if(!chosen) return;
   const status = variantStatusHtml(chosen);
@@ -1058,6 +1077,7 @@ function onVariantChange(productId){
   statusEl.style.display = status.text ? 'block' : 'none';
   btn.disabled = !chosen.available;
   btn.textContent = chosen.available ? 'افزودن به سبد خرید' : 'ناموجود';
+  if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'card-price', 'price-' + productId);
 }
 
 let cardImageIndex = {};
@@ -1119,15 +1139,14 @@ function renderProductDetail(){
   const onSale = p.salePrice !== null && p.salePrice !== undefined;
   const discountPct = onSale ? Math.round((1 - p.salePrice / p.price) * 100) : 0;
   const badge = detailBadgeHtml(p, soldOut, lowStock, onSale, discountPct);
-  const priceHtml = onSale
-    ? `<span class="detail-price"><span class="price-old">${toFa(p.price)} تومان</span> <span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
-    : `<span class="detail-price">${toFa(p.price)} تومان</span>`;
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
   const hasMultiImages = images.length > 1;
   const hasVariants = p.variants && p.variants.length > 0;
-  const firstAvailable = hasVariants && p.variants[0].available;
-  const firstStatus = hasVariants ? variantStatusHtml(p.variants[0]) : { text: '', cls: '' };
+  const firstVariant = hasVariants ? p.variants[0] : null;
+  const firstAvailable = hasVariants && firstVariant.available;
+  const firstStatus = hasVariants ? variantStatusHtml(firstVariant) : { text: '', cls: '' };
+  const priceHtmlStr = priceHtml(p, firstVariant, 'detail-price', 'detail-price-el');
   const variantSelect = hasVariants ? `
       <select class="variant-select" id="detail-variant-select" ${soldOut?'disabled':''} onchange="onDetailVariantChange()">
         ${p.variants.map(v => `<option value="${v.name}">${variantOptionLabel(v)}</option>`).join('')}
@@ -1146,7 +1165,7 @@ function renderProductDetail(){
     </div>
     <span class="detail-cat">${p.catLabel}</span>
     <div class="detail-name">${p.name}</div>
-    ${priceHtml}
+    ${priceHtmlStr}
     ${variantSelect}
     <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${p.description}</div>` : ''}
@@ -1295,6 +1314,7 @@ function onDetailVariantChange(){
   const sel = document.getElementById('detail-variant-select');
   const statusEl = document.getElementById('detail-variant-status');
   const btn = document.getElementById('detail-buy-btn');
+  const priceEl = document.getElementById('detail-price-el');
   const chosen = p.variants.find(v => v.name === sel.value);
   if(!chosen) return;
   const status = variantStatusHtml(chosen);
@@ -1303,21 +1323,23 @@ function onDetailVariantChange(){
   statusEl.style.display = status.text ? 'block' : 'none';
   btn.disabled = !chosen.available;
   btn.textContent = chosen.available ? 'افزودن به سبد خرید' : 'ناموجود';
+  if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'detail-price', 'detail-price-el');
 }
 
 function addToCartDetail(){
   const p = currentDetailProduct;
   if(!p) return;
   let variant = null;
+  let chosen = null;
   if(p.variants && p.variants.length > 0){
     const sel = document.getElementById('detail-variant-select');
     variant = sel ? sel.value : p.variants[0].name;
-    const chosen = p.variants.find(v => v.name === variant);
+    chosen = p.variants.find(v => v.name === variant);
     if(chosen && !chosen.available) return;
   }
   const existing = cart.find(i=>i.id===p.id && i.variant===variant);
   if(existing){ existing.qty++; }
-  else { cart.push({...p, price: p.effectivePrice, qty:1, variant}); }
+  else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
   updateCart();
   closeProductDetail();
   openDrawer();
@@ -1492,15 +1514,16 @@ searchInput.addEventListener('input', () => {
 function addToCart(id){
   const p = products.find(p=>p.id===id);
   let variant = null;
+  let chosen = null;
   if(p && p.variants && p.variants.length > 0){
     const sel = document.getElementById('variant-' + id);
     variant = sel ? sel.value : p.variants[0].name;
-    const chosen = p.variants.find(v => v.name === variant);
+    chosen = p.variants.find(v => v.name === variant);
     if(chosen && !chosen.available) return; // احتیاطی: این گزینه ناموجوده
   }
   const existing = cart.find(i=>i.id===id && i.variant===variant);
   if(existing){ existing.qty++; }
-  else { cart.push({...p, price: p.effectivePrice, qty:1, variant}); }
+  else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
   updateCart();
   openDrawer();
 }
