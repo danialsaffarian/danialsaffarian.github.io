@@ -747,7 +747,6 @@
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewOrdersBtn">سفارش‌های من</button>
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewWishlistBtn">علاقه‌مندی‌های من</button>
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:#8B3A3A;border-color:#8B3A3A;" id="logoutBtn">خروج از حساب</button>
-    <div id="myOrdersList" style="margin-top:22px;"></div>
     <div id="myWishlistList" style="margin-top:22px;"></div>
   </div>
 </div>
@@ -877,6 +876,14 @@
     <h3 class="brand-font">جزئیات محصول</h3>
   </div>
   <div class="product-body" id="productBody"></div>
+</div>
+
+<div class="product-page" id="myOrdersPage">
+  <div class="product-head">
+    <button class="product-back" id="myOrdersBackBtn">→</button>
+    <h3 class="brand-font">سفارش‌های من</h3>
+  </div>
+  <div class="product-body" id="myOrdersPageBody"></div>
 </div>
 
 <div class="product-page" id="orderDetailPage">
@@ -1962,7 +1969,9 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 let myOrdersCache = [];
 
 document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
-  const listEl = document.getElementById('myOrdersList');
+  closeAccountPanel();
+  document.getElementById('myOrdersPage').classList.add('open');
+  const listEl = document.getElementById('myOrdersPageBody');
   listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
   const { data, error } = await db.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
   if(error || !data || data.length === 0){
@@ -1980,6 +1989,9 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
       <span class="oi-status">${o.status || 'جدید'}</span>
     </div>`;
   }).join('');
+});
+document.getElementById('myOrdersBackBtn').addEventListener('click', () => {
+  document.getElementById('myOrdersPage').classList.remove('open');
 });
 
 async function openOrderDetail(orderId){
