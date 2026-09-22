@@ -435,6 +435,48 @@
   .auth-tab{flex:1;padding:14px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;}
   .auth-tab.active{color:var(--coffee);border-color:var(--gold);}
   .auth-body{padding:22px 24px;}
+
+  /* ---------- مودال ورود/ثبت‌نام (بازطراحی‌شده) ---------- */
+  #authModal{border-radius:18px;overflow:hidden;}
+  #authModal .auth-head{
+    position:relative;flex-direction:column;align-items:flex-start;gap:8px;
+    padding:34px 26px 24px;border-bottom:none;
+    background:linear-gradient(135deg,var(--coffee) 0%,#7A5C47 100%);
+  }
+  #authModal .auth-head::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,var(--gold-soft),var(--gold),var(--gold-soft));
+  }
+  #authModal .auth-close-btn{
+    position:absolute;top:16px;left:18px;width:30px;height:30px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;font-size:15px;
+    color:var(--cream);background:rgba(255,255,255,.12);transition:background .2s;
+  }
+  #authModal .auth-close-btn:hover{background:rgba(255,255,255,.22);}
+  #authModal .auth-badge{
+    width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;
+    color:var(--gold-soft);
+  }
+  #authModal .auth-badge svg{width:22px;height:22px;}
+  #authModal .auth-head h3{color:var(--cream);font-size:23px;margin:0;}
+  #authModal .auth-tagline{color:rgba(255,255,255,.65);font-size:12px;margin:0;}
+  #authModal .auth-body{padding:26px 24px 22px;}
+  .input-icon-wrap{position:relative;}
+  .input-icon-wrap input, .input-icon-wrap textarea{padding-inline-start:38px;}
+  .input-icon-wrap .input-icon{position:absolute;top:21px;inset-inline-start:12px;width:16px;height:16px;color:var(--coffee-70);pointer-events:none;}
+  .input-icon-wrap.icon-top .input-icon{top:14px;}
+  .auth-submit-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+    background:var(--coffee);color:var(--cream);border:1px solid var(--coffee);
+    padding:15px 20px;font-size:14px;font-weight:600;letter-spacing:.3px;
+    border-radius:8px;margin-bottom:10px;transition:transform .15s,box-shadow .15s,background .15s;
+  }
+  .auth-submit-btn:hover{background:#7A5C47;box-shadow:0 10px 24px rgba(122,92,71,.35);transform:translateY(-1px);}
+  .auth-submit-btn:disabled{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none;}
+  .auth-submit-btn svg{width:15px;height:15px;flex-shrink:0;}
+  .auth-link{display:block;font-size:12.5px;color:var(--coffee-70);transition:color .15s;}
+  .auth-link:hover{color:var(--gold);}
   .account-user{display:flex;align-items:center;gap:12px;padding:8px 4px 20px;margin-bottom:6px;border-bottom:1px solid var(--line);}
   .account-user-avatar{width:40px;height:40px;border-radius:50%;background:var(--tan);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--coffee);}
   .account-user-avatar svg{width:20px;height:20px;}
@@ -755,66 +797,106 @@
 <div class="overlay" id="authOverlay"></div>
 <div class="auth-modal" id="authModal">
   <div class="auth-head">
+    <button class="auth-close-btn" id="authClose" aria-label="بستن">✕</button>
+    <div class="auth-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/><path d="M9 3l3 6 3-6"/><path d="M9 9l3 12 3-12"/></svg>
+    </div>
     <h3 class="brand-font" id="authTitle">ورود / ثبت‌نام</h3>
-    <button class="drawer-close" id="authClose">✕</button>
+    <p class="auth-tagline">به دنیای حنا گالری خوش اومدی</p>
   </div>
   <div class="auth-body">
     <div id="authStepPhonePass">
       <div class="form-field">
         <label for="authPhonePass">شماره موبایل</label>
-        <input type="tel" id="authPhonePass" placeholder="09xxxxxxxxx" inputmode="numeric">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <input type="tel" id="authPhonePass" placeholder="09xxxxxxxxx" inputmode="numeric">
+        </div>
       </div>
       <div class="form-field">
         <label for="authPasswordLogin">رمز عبور</label>
-        <input type="password" id="authPasswordLogin" placeholder="رمز عبورت">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="authPasswordLogin" placeholder="رمز عبورت">
+        </div>
       </div>
-      <a href="#" id="authForgotLink" style="display:block;font-size:12.5px;color:var(--coffee-70);margin:-8px 0 10px;">رمز عبور رو فراموش کردم؟</a>
+      <a href="#" id="authForgotLink" class="auth-link" style="margin:-8px 0 10px;">رمز عبور رو فراموش کردم؟</a>
       <p class="form-error" id="authPassError"></p>
-      <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:10px;" id="authLoginPassBtn">ورود</button>
-      <a href="#" id="authUseOtpLink" style="display:block;font-size:12.5px;color:var(--coffee-70);text-align:center;">ورود با کد پیامکی / ثبت‌نام</a>
+      <button class="auth-submit-btn" id="authLoginPassBtn">
+        <span class="btn-label">ورود</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <a href="#" id="authUseOtpLink" class="auth-link" style="text-align:center;">ورود با کد پیامکی / ثبت‌نام</a>
     </div>
 
     <div id="authStepPhone" style="display:none;">
       <div class="form-field">
         <label for="authPhone">شماره موبایل</label>
-        <input type="tel" id="authPhone" placeholder="09xxxxxxxxx" inputmode="numeric">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <input type="tel" id="authPhone" placeholder="09xxxxxxxxx" inputmode="numeric">
+        </div>
       </div>
       <p class="form-error" id="authError"></p>
-      <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:10px;" id="authSendCodeBtn">دریافت کد تایید</button>
-      <a href="#" id="authBackToPassLink" style="display:block;font-size:12.5px;color:var(--coffee-70);text-align:center;">بازگشت به ورود با رمز</a>
+      <button class="auth-submit-btn" id="authSendCodeBtn">
+        <span class="btn-label">دریافت کد تایید</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <a href="#" id="authBackToPassLink" class="auth-link" style="text-align:center;">بازگشت به ورود با رمز</a>
     </div>
 
     <div id="authStepOtp" style="display:none;">
       <p style="font-size:13px;color:var(--coffee-70);margin-bottom:16px;">کد ۶ رقمی که به شماره‌ی <span id="authPhoneDisplay" style="color:var(--coffee);font-weight:600;direction:ltr;display:inline-block;unicode-bidi:isolate;"></span> پیامک شد رو وارد کن.</p>
       <div class="form-field">
         <label for="authOtp">کد تایید</label>
-        <input type="tel" id="authOtp" placeholder="------" inputmode="numeric" maxlength="6">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><polyline points="9 12 11 14 15 10"/></svg>
+          <input type="tel" id="authOtp" placeholder="------" inputmode="numeric" maxlength="6">
+        </div>
       </div>
-      <a href="#" id="authChangePhoneLink" style="display:block;font-size:12.5px;color:var(--coffee-70);margin:-8px 0 16px;">تغییر شماره</a>
+      <a href="#" id="authChangePhoneLink" class="auth-link" style="margin:-8px 0 16px;">تغییر شماره</a>
       <p class="form-error" id="authOtpError"></p>
-      <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="authVerifyBtn">تایید</button>
+      <button class="auth-submit-btn" id="authVerifyBtn">
+        <span class="btn-label">تایید</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
     </div>
 
     <div id="authStepSetup" style="display:none;">
       <p id="authSetupIntro" style="font-size:13px;color:var(--coffee-70);margin-bottom:16px;"></p>
       <div class="form-field" id="authSetupNameField">
         <label for="authSetupName">نام و نام خانوادگی</label>
-        <input type="text" id="authSetupName" placeholder="مثلاً سارا محمدی">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="authSetupName" placeholder="مثلاً سارا محمدی">
+        </div>
       </div>
       <div class="form-field" id="authSetupAddressField">
         <label for="authSetupAddress">آدرس</label>
-        <textarea id="authSetupAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی"></textarea>
+        <div class="input-icon-wrap icon-top">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <textarea id="authSetupAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی"></textarea>
+        </div>
       </div>
       <div class="form-field">
         <label for="authSetupPassword">رمز عبور جدید</label>
-        <input type="password" id="authSetupPassword" placeholder="حداقل ۶ کاراکتر">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="authSetupPassword" placeholder="حداقل ۶ کاراکتر">
+        </div>
       </div>
       <div class="form-field">
         <label for="authSetupPassword2">تکرار رمز عبور</label>
-        <input type="password" id="authSetupPassword2" placeholder="حداقل ۶ کاراکتر">
+        <div class="input-icon-wrap">
+          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <input type="password" id="authSetupPassword2" placeholder="حداقل ۶ کاراکتر">
+        </div>
       </div>
       <p class="form-error" id="authSetupError"></p>
-      <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="authSetupSubmitBtn">ذخیره و ورود</button>
+      <button class="auth-submit-btn" id="authSetupSubmitBtn">
+        <span class="btn-label">ذخیره و ورود</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -2077,10 +2159,10 @@ document.getElementById('authLoginPassBtn').addEventListener('click', async () =
   }
   const btn = document.getElementById('authLoginPassBtn');
   btn.disabled = true;
-  btn.textContent = 'در حال ورود...';
+  btn.querySelector('.btn-label').textContent = 'در حال ورود...';
   const { error } = await db.auth.signInWithPassword({ phone: toE164(phoneRaw), password });
   btn.disabled = false;
-  btn.textContent = 'ورود';
+  btn.querySelector('.btn-label').textContent = 'ورود';
   if(error){
     errorEl.textContent = 'شماره یا رمز عبور اشتباهه.';
     errorEl.classList.add('show');
@@ -2122,10 +2204,10 @@ document.getElementById('authSendCodeBtn').addEventListener('click', async () =>
   authPhoneE164 = toE164(phoneRaw);
   const btn = document.getElementById('authSendCodeBtn');
   btn.disabled = true;
-  btn.textContent = 'در حال ارسال...';
+  btn.querySelector('.btn-label').textContent = 'در حال ارسال...';
   const { error } = await db.auth.signInWithOtp({ phone: authPhoneE164 });
   btn.disabled = false;
-  btn.textContent = 'دریافت کد تایید';
+  btn.querySelector('.btn-label').textContent = 'دریافت کد تایید';
   if(error){
     console.error('خطا در ارسال کد:', error);
     errorEl.textContent = 'مشکلی پیش اومد، دوباره امتحان کن.';
@@ -2153,10 +2235,10 @@ document.getElementById('authVerifyBtn').addEventListener('click', async () => {
   }
   const btn = document.getElementById('authVerifyBtn');
   btn.disabled = true;
-  btn.textContent = 'در حال بررسی...';
+  btn.querySelector('.btn-label').textContent = 'در حال بررسی...';
   const { error } = await db.auth.verifyOtp({ phone: authPhoneE164, token: code, type: 'sms' });
   btn.disabled = false;
-  btn.textContent = 'تایید';
+  btn.querySelector('.btn-label').textContent = 'تایید';
   if(error){
     errorEl.textContent = 'کد وارد شده اشتباهه یا منقضی شده.';
     errorEl.classList.add('show');
@@ -2214,7 +2296,7 @@ document.getElementById('authSetupSubmitBtn').addEventListener('click', async ()
 
   const btn = document.getElementById('authSetupSubmitBtn');
   btn.disabled = true;
-  btn.textContent = 'در حال ذخیره...';
+  btn.querySelector('.btn-label').textContent = 'در حال ذخیره...';
 
   const { error: passError } = await db.auth.updateUser({ password });
 
@@ -2231,7 +2313,7 @@ document.getElementById('authSetupSubmitBtn').addEventListener('click', async ()
   }
 
   btn.disabled = false;
-  btn.textContent = 'ذخیره و ورود';
+  btn.querySelector('.btn-label').textContent = 'ذخیره و ورود';
 
   if(passError){
     errorEl.textContent = 'مشکلی پیش اومد، دوباره امتحان کن.';
