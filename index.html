@@ -350,9 +350,10 @@
   .testimonial-card .t-author{font-size:12px;color:var(--gold);}
   .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   @media(max-width:860px){.testimonials-grid{grid-template-columns:1fr;}}
-  .admin-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px;}
-  .admin-tab{padding:12px 18px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;}
+  .admin-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px;flex-wrap:wrap;}
+  .admin-tab{padding:12px 18px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;position:relative;}
   .admin-tab.active{color:var(--coffee);border-color:var(--gold);}
+  .admin-tab-badge{display:inline-flex;align-items:center;justify-content:center;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#8B3A3A;color:#fff;font-size:10.5px;font-weight:700;margin-inline-start:5px;}
   .admin-status-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin-bottom:10px;}
   .admin-status-row b{font-size:14px;color:var(--coffee);display:block;margin-bottom:4px;}
   .admin-status-row span{font-size:12.5px;color:var(--coffee-70);}
@@ -386,6 +387,31 @@
   .stat-item{border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;}
   .stat-item b{display:block;font-size:24px;color:var(--coffee);margin-bottom:6px;}
   .stat-item span{font-size:12.5px;color:var(--coffee-70);}
+  .stat-subtitle{font-size:15px;font-weight:700;color:var(--coffee);margin:28px 0 12px;}
+  .low-stock-row{display:flex;justify-content:space-between;font-size:13px;color:var(--coffee-70);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:8px;}
+  .low-stock-row b{color:var(--coffee);}
+  .best-seller-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:8px;}
+  .best-seller-row b{color:var(--coffee);}
+  .sales-chart{display:flex;align-items:flex-end;gap:8px;height:140px;padding:10px 4px 0;}
+  .sales-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+  .sales-bar-val{font-size:10.5px;color:var(--coffee-70);margin-bottom:4px;white-space:nowrap;}
+  .sales-bar{width:100%;max-width:34px;background:var(--gold);border-radius:3px 3px 0 0;min-height:2px;}
+  .sales-bar-day{font-size:10.5px;color:var(--coffee-70);margin-top:6px;}
+  .coupon-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin-bottom:10px;flex-wrap:wrap;}
+  .coupon-row b{font-size:14px;color:var(--coffee);direction:ltr;unicode-bidi:isolate;display:inline-block;}
+  .coupon-row span{font-size:12.5px;color:var(--coffee-70);}
+  .coupon-badge{font-size:11px;padding:3px 9px;border-radius:3px;}
+  .coupon-badge.active{background:var(--tan);color:var(--coffee);}
+  .coupon-badge.inactive{background:#F3D9D9;color:#8B3A3A;}
+  .log-row{border-bottom:1px solid var(--line);padding:10px 0;font-size:12.5px;color:var(--coffee-70);}
+  .log-row b{color:var(--coffee);}
+  .log-row .log-time{font-size:11px;color:var(--coffee-70);margin-inline-start:8px;}
+  .coupon-apply-row{display:flex;gap:8px;margin-bottom:8px;}
+  .coupon-apply-row input{flex:1;}
+  .coupon-apply-row button{padding:0 18px;border:1px solid var(--coffee);color:var(--coffee);background:transparent;font-size:13px;white-space:nowrap;}
+  .coupon-msg{font-size:12px;margin:-2px 0 10px;}
+  .coupon-msg.ok{color:#3a8b4e;}
+  .coupon-msg.err{color:#8B3A3A;}
   .form-field{margin-bottom:12px;}
   .form-field label{display:block;font-size:12.5px;color:var(--coffee-70);margin-bottom:5px;}
   .form-field input, .form-field textarea{
@@ -789,6 +815,9 @@
       <button class="admin-tab" data-tab="products">محصولات</button>
       <button class="admin-tab" data-tab="stats">آمار</button>
       <button class="admin-tab" data-tab="reviews">نظرات</button>
+      <button class="admin-tab" data-tab="customers">مشتری‌ها</button>
+      <button class="admin-tab" data-tab="coupons">کدهای تخفیف</button>
+      <button class="admin-tab" data-tab="logs">لاگ فعالیت</button>
       <button class="admin-tab" data-tab="admins">مدیرها</button>
     </div>
 
@@ -835,10 +864,44 @@
 
     <div id="adminTabStats" class="admin-tab-panel" style="display:none;">
       <div id="adminStatsBox"></div>
+      <div class="stat-subtitle">فروش ۷ روز اخیر</div>
+      <div id="adminSalesChart"></div>
+      <div class="stat-subtitle">پرفروش‌ترین محصولات</div>
+      <div id="adminBestSellersBox"></div>
+      <div class="stat-subtitle">موجودی کم</div>
+      <div id="adminLowStockBox"></div>
     </div>
 
     <div id="adminTabReviews" class="admin-tab-panel" style="display:none;">
       <div id="adminReviewsList"></div>
+    </div>
+
+    <div id="adminTabCustomers" class="admin-tab-panel" style="display:none;">
+      <div id="adminCustomersList"></div>
+    </div>
+
+    <div id="adminTabCoupons" class="admin-tab-panel" style="display:none;">
+      <button class="hero-btn" style="display:inline-block;color:var(--coffee);border-color:var(--coffee);margin-bottom:18px;" id="adminAddCouponBtn">+ ساخت کد تخفیف جدید</button>
+      <div id="adminCouponForm" style="display:none;margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:6px;">
+        <div class="form-field"><label>کد تخفیف</label><input type="text" id="couponCode" placeholder="مثلاً HANA20" style="direction:ltr;text-align:left;"></div>
+        <div class="form-field"><label>نوع تخفیف</label>
+          <select id="couponType" style="width:100%;padding:11px 12px;border:1px solid var(--line);background:var(--cream-soft);font-family:inherit;font-size:14px;">
+            <option value="percent">درصدی (٪)</option>
+            <option value="fixed">مبلغ ثابت (تومان)</option>
+          </select>
+        </div>
+        <div class="form-field"><label>مقدار تخفیف</label><input type="number" id="couponValue"></div>
+        <div class="form-field"><label>حداکثر تعداد استفاده (اختیاری)</label><input type="number" id="couponMaxUses" placeholder="بدون محدودیت"></div>
+        <div class="form-field"><label>تاریخ انقضا (اختیاری)</label><input type="date" id="couponExpiry"></div>
+        <p class="form-error" id="couponError"></p>
+        <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="couponSaveBtn">ذخیره</button>
+        <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="couponCancelBtn">انصراف</button>
+      </div>
+      <div id="adminCouponsList"></div>
+    </div>
+
+    <div id="adminTabLogs" class="admin-tab-panel" style="display:none;">
+      <div id="adminLogsList"></div>
     </div>
 
     <div id="adminTabAdmins" class="admin-tab-panel" style="display:none;">
@@ -883,6 +946,14 @@
       <div class="form-field">
         <label for="custNote">یادداشت (اختیاری)</label>
         <textarea id="custNote" rows="2" placeholder="مثلاً درخواست طرح دلخواه"></textarea>
+      </div>
+      <div class="form-field">
+        <label for="couponInput">کد تخفیف (اختیاری)</label>
+        <div class="coupon-apply-row">
+          <input type="text" id="couponInput" placeholder="کد تخفیف رو وارد کن" style="direction:ltr;text-align:left;">
+          <button type="button" id="applyCouponBtn">اعمال کد</button>
+        </div>
+        <p class="coupon-msg" id="couponMsg"></p>
       </div>
       <p class="form-error" id="formError"></p>
 
@@ -1657,19 +1728,91 @@ overlay.addEventListener('click', closeDrawer);
 
 /* ================= صفحه‌ی تکمیل سفارش (جدا از سبد خرید) ================= */
 const checkoutPage = document.getElementById('checkoutPage');
+let appliedCoupon = null; // { code, discount_type, discount_value }
+function getCartSubtotal(){
+  return cart.reduce((s,i)=>s+i.price*i.qty,0);
+}
+function getDiscountAmount(){
+  if(!appliedCoupon) return 0;
+  const subtotal = getCartSubtotal();
+  const discount = appliedCoupon.discount_type === 'percent'
+    ? Math.round(subtotal * appliedCoupon.discount_value / 100)
+    : appliedCoupon.discount_value;
+  return Math.min(discount, subtotal);
+}
 function renderCheckoutSummary(){
   const summaryEl = document.getElementById('checkoutSummary');
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  summaryEl.innerHTML = cart.map(i => `
+  const subtotal = getCartSubtotal();
+  const discount = getDiscountAmount();
+  const total = subtotal - discount;
+  let html = cart.map(i => `
     <div class="checkout-summary-item">
       <span>${i.name}${i.variant ? ` <span style="color:var(--gold);">(${i.variant})</span>` : ''} × ${toFa(i.qty)}</span>
       <span>${toFa(i.price * i.qty)} تومان</span>
     </div>
-  `).join('') + `<div class="checkout-summary-total"><span>جمع کل</span><span>${toFa(total)} تومان</span></div>`;
+  `).join('');
+  if(discount > 0){
+    html += `<div class="checkout-summary-item"><span>تخفیف (${escapeHtml(appliedCoupon.code)})</span><span>- ${toFa(discount)} تومان</span></div>`;
+  }
+  html += `<div class="checkout-summary-total"><span>جمع کل</span><span>${toFa(total)} تومان</span></div>`;
+  summaryEl.innerHTML = html;
 }
+function resetCouponState(){
+  appliedCoupon = null;
+  document.getElementById('couponInput').value = '';
+  const msgEl = document.getElementById('couponMsg');
+  msgEl.textContent = '';
+  msgEl.className = 'coupon-msg';
+}
+document.getElementById('applyCouponBtn').addEventListener('click', async () => {
+  const msgEl = document.getElementById('couponMsg');
+  const codeRaw = document.getElementById('couponInput').value.trim();
+  if(!codeRaw){
+    msgEl.textContent = 'یه کد وارد کن.';
+    msgEl.className = 'coupon-msg err';
+    return;
+  }
+  const code = codeRaw.toUpperCase();
+  const { data } = await db.from('coupons').select('*').eq('code', code).eq('active', true).maybeSingle();
+  if(!data){
+    appliedCoupon = null;
+    msgEl.textContent = 'این کد تخفیف معتبر نیست.';
+    msgEl.className = 'coupon-msg err';
+    renderCheckoutSummary();
+    return;
+  }
+  if(data.expires_at && new Date(data.expires_at) < new Date()){
+    appliedCoupon = null;
+    msgEl.textContent = 'این کد تخفیف منقضی شده.';
+    msgEl.className = 'coupon-msg err';
+    renderCheckoutSummary();
+    return;
+  }
+  if(data.max_uses !== null && data.used_count >= data.max_uses){
+    appliedCoupon = null;
+    msgEl.textContent = 'ظرفیت استفاده از این کد تموم شده.';
+    msgEl.className = 'coupon-msg err';
+    renderCheckoutSummary();
+    return;
+  }
+  appliedCoupon = { code: data.code, discount_type: data.discount_type, discount_value: Number(data.discount_value) };
+  msgEl.textContent = 'کد تخفیف اعمال شد.';
+  msgEl.className = 'coupon-msg ok';
+  renderCheckoutSummary();
+});
+document.getElementById('couponInput').addEventListener('input', () => {
+  if(appliedCoupon){
+    appliedCoupon = null;
+    const msgEl = document.getElementById('couponMsg');
+    msgEl.textContent = '';
+    msgEl.className = 'coupon-msg';
+    renderCheckoutSummary();
+  }
+});
 function openCheckoutPage(){
   if(cart.length === 0) return;
   closeDrawer();
+  resetCouponState();
   document.getElementById('checkoutSummary').style.display = 'block';
   document.getElementById('checkoutForm').style.display = 'block';
   document.getElementById('orderSuccess').style.display = 'none';
@@ -1702,6 +1845,11 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.classList.add('show');
     return;
   }
+  if(currentUser && currentProfile && currentProfile.blocked){
+    errorEl.textContent = 'ثبت سفارش برای این حساب امکان‌پذیر نیست. لطفاً با فروشگاه تماس بگیر.';
+    errorEl.classList.add('show');
+    return;
+  }
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
@@ -1713,9 +1861,11 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     return;
   }
 
-  const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const discountAmount = getDiscountAmount();
+  const total = getCartSubtotal() - discountAmount;
   const items = cart.map(i => ({ id:i.id, name:i.name, qty:i.qty, price:i.price, variant:i.variant || null }));
   const trackingCode = generateTrackingCode();
+  const couponCode = appliedCoupon ? appliedCoupon.code : null;
 
   const btn = document.getElementById('submitOrderBtn');
   btn.disabled = true;
@@ -1729,6 +1879,8 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     customer_note: note || null,
     user_id: currentUser ? currentUser.id : null,
     tracking_code: trackingCode,
+    coupon_code: couponCode,
+    discount_amount: discountAmount,
   }]);
 
   if(!error && currentUser){
@@ -1739,7 +1891,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
       address: address,
       updated_at: new Date().toISOString(),
     });
-    currentProfile = { full_name: name, phone, address };
+    currentProfile = { ...currentProfile, full_name: name, phone, address };
   }
 
   btn.disabled = false;
@@ -1752,10 +1904,15 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     return;
   }
 
+  if(couponCode){
+    db.rpc('increment_coupon_usage', { p_code: couponCode }).catch(() => {});
+  }
+
   // اطلاع‌رسانی پیامکی به مالک فروشگاه و تاییدیه به مشتری (اگه به هر دلیلی پیامک نره، مشکلی برای ثبت سفارش مشتری پیش نمیاد)
   db.functions.invoke('notify-order', { body: { customerName: name, customerPhone: phone, total, trackingCode } }).catch(() => {});
 
   cart = [];
+  resetCouponState();
   updateCart();
   document.getElementById('checkoutForm').style.display = 'none';
   document.getElementById('checkoutSummary').style.display = 'none';
@@ -2135,10 +2292,10 @@ async function loadProfile(){
 
 let isAdmin = false;
 async function checkAdmin(){
-  if(!currentUser || !currentUser.phone){ isAdmin = false; stopHeartbeat(); return; }
+  if(!currentUser || !currentUser.phone){ isAdmin = false; stopHeartbeat(); stopOrdersRealtime(); return; }
   const { data } = await db.from('admins').select('phone').eq('phone', currentUser.phone).maybeSingle();
   isAdmin = !!data;
-  if(isAdmin) startHeartbeat(); else stopHeartbeat();
+  if(isAdmin){ startHeartbeat(); startOrdersRealtime(); } else { stopHeartbeat(); stopOrdersRealtime(); }
 }
 
 function refreshAuthUI(){
@@ -2246,11 +2403,17 @@ function switchAdminTab(tab){
   document.getElementById('adminTabProducts').style.display = tab === 'products' ? 'block' : 'none';
   document.getElementById('adminTabStats').style.display = tab === 'stats' ? 'block' : 'none';
   document.getElementById('adminTabReviews').style.display = tab === 'reviews' ? 'block' : 'none';
+  document.getElementById('adminTabCustomers').style.display = tab === 'customers' ? 'block' : 'none';
+  document.getElementById('adminTabCoupons').style.display = tab === 'coupons' ? 'block' : 'none';
+  document.getElementById('adminTabLogs').style.display = tab === 'logs' ? 'block' : 'none';
   document.getElementById('adminTabAdmins').style.display = tab === 'admins' ? 'block' : 'none';
-  if(tab === 'orders') loadAdminOrders();
+  if(tab === 'orders'){ loadAdminOrders(); clearNewOrderBadge(); }
   if(tab === 'products') loadAdminProducts();
   if(tab === 'stats') loadAdminStats();
   if(tab === 'reviews') loadAdminReviews();
+  if(tab === 'customers') loadAdminCustomers();
+  if(tab === 'coupons') loadAdminCoupons();
+  if(tab === 'logs') loadAdminLogs();
   if(tab === 'admins') loadAdminsStatus();
 }
 document.querySelectorAll('.admin-tab').forEach(btn => {
@@ -2297,6 +2460,7 @@ async function loadAdminOrders(){
 
 async function updateOrderStatus(orderId, status){
   await db.from('orders').update({ status }).eq('id', orderId);
+  logAdminAction('تغییر وضعیت سفارش', `سفارش #${orderId} به «${status}»`);
   showToast('وضعیت سفارش به‌روزرسانی شد');
 }
 
@@ -2489,6 +2653,7 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
     return;
   }
   document.getElementById('adminProductForm').style.display = 'none';
+  logAdminAction(id ? 'ویرایش محصول' : 'افزودن محصول', name);
   loadAdminProducts();
   fetchProducts();
   showToast(id ? 'محصول ویرایش شد' : 'محصول جدید اضافه شد');
@@ -2497,6 +2662,7 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
 async function deleteAdminProduct(id){
   if(!confirm('مطمئنی می‌خوای این محصول رو حذف کنی؟')) return;
   await db.from('products').delete().eq('id', id);
+  logAdminAction('حذف محصول', `شناسه #${id}`);
   loadAdminProducts();
   fetchProducts();
   showToast('محصول حذف شد');
@@ -2532,6 +2698,7 @@ async function loadAdminReviews(){
 
 async function approveAdminReview(id){
   await db.from('reviews').update({ approved: true }).eq('id', id);
+  logAdminAction('تایید نظر', `شناسه #${id}`);
   loadAdminReviews();
   loadTestimonials();
   showToast('نظر تایید شد');
@@ -2540,6 +2707,7 @@ async function approveAdminReview(id){
 async function deleteAdminReview(id){
   if(!confirm('مطمئنی می‌خوای این نظر رو حذف کنی؟')) return;
   await db.from('reviews').delete().eq('id', id);
+  logAdminAction('حذف نظر', `شناسه #${id}`);
   loadAdminReviews();
   loadTestimonials();
   showToast('نظر حذف شد');
@@ -2548,7 +2716,7 @@ async function deleteAdminReview(id){
 async function loadAdminStats(){
   const box = document.getElementById('adminStatsBox');
   box.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
-  const { data: orders } = await db.from('orders').select('total, created_at');
+  const { data: orders } = await db.from('orders').select('total, created_at, items');
   const { data: stats } = await db.from('site_stats').select('visits').eq('id', 1).maybeSingle();
 
   const totalRevenue = (orders || []).reduce((s, o) => s + (o.total || 0), 0);
@@ -2566,6 +2734,253 @@ async function loadAdminStats(){
       <div class="stat-item"><b>${toFa(visits)}</b><span>تعداد بازدید سایت</span></div>
     </div>
   `;
+
+  // نمودار فروش ۷ روز اخیر
+  const days = [];
+  for(let i = 6; i >= 0; i--){
+    const d = new Date(startOfToday);
+    d.setDate(d.getDate() - i);
+    days.push({ date: d, total: 0 });
+  }
+  (orders || []).forEach(o => {
+    const d = new Date(o.created_at);
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+    const match = days.find(x => x.date.getTime() === dayStart);
+    if(match) match.total += (o.total || 0);
+  });
+  const maxTotal = Math.max(1, ...days.map(x => x.total));
+  document.getElementById('adminSalesChart').innerHTML = `
+    <div class="sales-chart">
+      ${days.map(x => `
+        <div class="sales-bar-col">
+          <span class="sales-bar-val">${x.total > 0 ? toFa(x.total) : ''}</span>
+          <div class="sales-bar" style="height:${Math.max(2, Math.round(x.total / maxTotal * 100))}%;"></div>
+          <span class="sales-bar-day">${toFa(x.date.getDate())}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // پرفروش‌ترین محصولات
+  const soldQty = {};
+  (orders || []).forEach(o => {
+    (o.items || []).forEach(i => {
+      soldQty[i.name] = (soldQty[i.name] || 0) + (i.qty || 0);
+    });
+  });
+  const bestSellers = Object.entries(soldQty).sort((a,b) => b[1] - a[1]).slice(0, 5);
+  document.getElementById('adminBestSellersBox').innerHTML = bestSellers.length
+    ? bestSellers.map(([name, qty]) => `<div class="best-seller-row"><b>${escapeHtml(name)}</b><span>${toFa(qty)} عدد فروخته شده</span></div>`).join('')
+    : '<p style="font-size:13px;color:var(--coffee-70);">هنوز فروشی ثبت نشده.</p>';
+
+  // موجودی کم
+  const { data: lowStockProducts } = await db.from('products').select('name, stock').lte('stock', LOW_STOCK_THRESHOLD).order('stock', { ascending: true });
+  document.getElementById('adminLowStockBox').innerHTML = (lowStockProducts && lowStockProducts.length)
+    ? lowStockProducts.map(p => `<div class="low-stock-row"><b>${escapeHtml(p.name)}</b><span>${p.stock === 0 ? 'ناموجود' : `فقط ${toFa(p.stock)} عدد`}</span></div>`).join('')
+    : '<p style="font-size:13px;color:var(--coffee-70);">همه محصولات موجودی کافی دارن.</p>';
+}
+
+/* ================= مشتری‌ها ================= */
+async function loadAdminCustomers(){
+  const listEl = document.getElementById('adminCustomersList');
+  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  const { data: profilesData, error } = await db.from('profiles').select('id, full_name, phone, blocked').order('updated_at', { ascending: false });
+  if(error || !profilesData || profilesData.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز مشتری‌ای ثبت‌نام نکرده.</p>';
+    return;
+  }
+  const { data: ordersData } = await db.from('orders').select('user_id');
+  const orderCountByUser = {};
+  (ordersData || []).forEach(o => {
+    if(!o.user_id) return;
+    orderCountByUser[o.user_id] = (orderCountByUser[o.user_id] || 0) + 1;
+  });
+  listEl.innerHTML = profilesData.map(p => {
+    const count = orderCountByUser[p.id] || 0;
+    return `<div class="admin-status-row">
+      <div>
+        <b>${escapeHtml(p.full_name || p.phone || 'بدون‌نام')}${p.blocked ? ' <span style="color:#8B3A3A;font-size:11.5px;">(مسدود)</span>' : ''}</b>
+        <span>${escapeHtml(p.phone || '-')} · ${toFa(count)} سفارش</span>
+      </div>
+      <button class="admin-status-select" style="cursor:pointer;" onclick="toggleBlockCustomer('${p.id}', ${!p.blocked})">${p.blocked ? 'رفع مسدودی' : 'مسدود کردن'}</button>
+    </div>`;
+  }).join('');
+}
+async function toggleBlockCustomer(userId, blocked){
+  if(blocked && !confirm('مطمئنی می‌خوای این مشتری رو مسدود کنی؟ دیگه نمی‌تونه سفارش ثبت کنه.')) return;
+  await db.from('profiles').update({ blocked }).eq('id', userId);
+  logAdminAction(blocked ? 'مسدود کردن مشتری' : 'رفع مسدودی مشتری', `شناسه ${userId}`);
+  loadAdminCustomers();
+  showToast(blocked ? 'مشتری مسدود شد' : 'مسدودیت مشتری برداشته شد');
+}
+
+/* ================= کدهای تخفیف ================= */
+document.getElementById('adminAddCouponBtn').addEventListener('click', () => {
+  document.getElementById('couponCode').value = '';
+  document.getElementById('couponType').value = 'percent';
+  document.getElementById('couponValue').value = '';
+  document.getElementById('couponMaxUses').value = '';
+  document.getElementById('couponExpiry').value = '';
+  document.getElementById('couponError').classList.remove('show');
+  document.getElementById('adminCouponForm').style.display = 'block';
+});
+document.getElementById('couponCancelBtn').addEventListener('click', () => {
+  document.getElementById('adminCouponForm').style.display = 'none';
+});
+document.getElementById('couponSaveBtn').addEventListener('click', async () => {
+  const errorEl = document.getElementById('couponError');
+  errorEl.classList.remove('show');
+  const code = document.getElementById('couponCode').value.trim().toUpperCase();
+  const discount_type = document.getElementById('couponType').value;
+  const discount_value = Number(document.getElementById('couponValue').value);
+  const maxUsesRaw = document.getElementById('couponMaxUses').value;
+  const expiryRaw = document.getElementById('couponExpiry').value;
+
+  if(!code || !discount_value || discount_value <= 0){
+    errorEl.textContent = 'کد و مقدار تخفیف الزامیه.';
+    errorEl.classList.add('show');
+    return;
+  }
+  if(!/^[A-Z0-9_-]+$/.test(code)){
+    errorEl.textContent = 'کد تخفیف فقط می‌تونه شامل حروف انگلیسی، عدد، خط تیره و آندرلاین باشه.';
+    errorEl.classList.add('show');
+    return;
+  }
+  const payload = {
+    code,
+    discount_type,
+    discount_value,
+    max_uses: maxUsesRaw ? Number(maxUsesRaw) : null,
+    expires_at: expiryRaw ? new Date(expiryRaw).toISOString() : null,
+  };
+  const btn = document.getElementById('couponSaveBtn');
+  btn.disabled = true;
+  btn.textContent = 'در حال ذخیره...';
+  const { error } = await db.from('coupons').upsert(payload);
+  btn.disabled = false;
+  btn.textContent = 'ذخیره';
+  if(error){
+    console.error('خطا در ذخیره‌ی کد تخفیف:', error);
+    errorEl.textContent = 'مشکلی پیش اومد، دوباره امتحان کن (شاید این کد قبلاً ثبت شده).';
+    errorEl.classList.add('show');
+    return;
+  }
+  logAdminAction('ذخیره کد تخفیف', code);
+  document.getElementById('adminCouponForm').style.display = 'none';
+  loadAdminCoupons();
+  showToast('کد تخفیف ذخیره شد');
+});
+async function loadAdminCoupons(){
+  const listEl = document.getElementById('adminCouponsList');
+  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  const { data, error } = await db.from('coupons').select('*').order('created_at', { ascending: false });
+  if(error || !data || data.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز کد تخفیفی ساخته نشده.</p>';
+    return;
+  }
+  listEl.innerHTML = data.map(c => {
+    const valueText = c.discount_type === 'percent' ? `${toFa(c.discount_value)}٪` : `${toFa(c.discount_value)} تومان`;
+    const usesText = c.max_uses !== null ? `${toFa(c.used_count)} از ${toFa(c.max_uses)} استفاده` : `${toFa(c.used_count)} بار استفاده شده`;
+    const expiryText = c.expires_at ? new Date(c.expires_at).toLocaleDateString('fa-IR') : 'بدون انقضا';
+    return `<div class="coupon-row">
+      <div>
+        <b>${escapeHtml(c.code)}</b> <span class="coupon-badge ${c.active ? 'active' : 'inactive'}">${c.active ? 'فعال' : 'غیرفعال'}</span>
+        <div><span>${valueText} · ${usesText} · انقضا: ${expiryText}</span></div>
+      </div>
+      <div class="admin-prod-actions">
+        <button onclick="toggleCouponActive('${c.code}', ${!c.active})">${c.active ? 'غیرفعال کردن' : 'فعال کردن'}</button>
+        <button onclick="deleteCoupon('${c.code}')">حذف</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+async function toggleCouponActive(code, active){
+  await db.from('coupons').update({ active }).eq('code', code);
+  logAdminAction(active ? 'فعال کردن کد تخفیف' : 'غیرفعال کردن کد تخفیف', code);
+  loadAdminCoupons();
+  showToast(active ? 'کد تخفیف فعال شد' : 'کد تخفیف غیرفعال شد');
+}
+async function deleteCoupon(code){
+  if(!confirm('مطمئنی می‌خوای این کد تخفیف رو حذف کنی؟')) return;
+  await db.from('coupons').delete().eq('code', code);
+  logAdminAction('حذف کد تخفیف', code);
+  loadAdminCoupons();
+  showToast('کد تخفیف حذف شد');
+}
+
+/* ================= لاگ فعالیت مدیرها ================= */
+async function logAdminAction(action, details){
+  if(!currentUser || !currentUser.phone) return;
+  db.from('admin_logs').insert([{ admin_phone: currentUser.phone, action, details: details || null }]).then(() => {}).catch(() => {});
+}
+async function loadAdminLogs(){
+  const listEl = document.getElementById('adminLogsList');
+  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  const { data, error } = await db.from('admin_logs').select('*').order('created_at', { ascending: false }).limit(100);
+  if(error || !data || data.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز فعالیتی ثبت نشده.</p>';
+    return;
+  }
+  listEl.innerHTML = data.map(l => {
+    const time = new Date(l.created_at).toLocaleString('fa-IR');
+    return `<div class="log-row"><b>${escapeHtml(l.admin_phone)}</b> — ${escapeHtml(l.action)}${l.details ? ' · ' + escapeHtml(l.details) : ''}<span class="log-time">${time}</span></div>`;
+  }).join('');
+}
+
+/* ================= اعلان سفارش جدید ================= */
+let newOrderCount = 0;
+let ordersRealtimeChannel = null;
+function clearNewOrderBadge(){
+  newOrderCount = 0;
+  const badgeEl = document.getElementById('newOrderBadge');
+  if(badgeEl) badgeEl.remove();
+}
+function playNotifyBeep(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 880;
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.4);
+  } catch(e){}
+}
+function startOrdersRealtime(){
+  if(ordersRealtimeChannel) return;
+  ordersRealtimeChannel = db.channel('admin-orders-realtime')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
+      newOrderCount++;
+      const ordersTabBtn = document.querySelector('.admin-tab[data-tab="orders"]');
+      if(ordersTabBtn){
+        let badgeEl = document.getElementById('newOrderBadge');
+        if(!badgeEl){
+          badgeEl = document.createElement('span');
+          badgeEl.id = 'newOrderBadge';
+          badgeEl.className = 'admin-tab-badge';
+          ordersTabBtn.appendChild(badgeEl);
+        }
+        badgeEl.textContent = toFa(newOrderCount);
+      }
+      if(adminPage.classList.contains('open') && document.getElementById('adminTabOrders').style.display !== 'none'){
+        loadAdminOrders();
+        clearNewOrderBadge();
+      }
+      showToast('سفارش جدید ثبت شد');
+      playNotifyBeep();
+    })
+    .subscribe();
+}
+function stopOrdersRealtime(){
+  if(ordersRealtimeChannel){
+    db.removeChannel(ordersRealtimeChannel);
+    ordersRealtimeChannel = null;
+  }
+  clearNewOrderBadge();
 }
 </script>
 
