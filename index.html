@@ -1154,7 +1154,15 @@
 <script>
 const SUPABASE_URL = 'https://goykyskctygnciwttfqj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+    storageKey: 'hana-gallery-auth',
+  },
+});
 
 const LOW_STOCK_THRESHOLD = 2; // اگر موجودی مساوی یا کمتر از این عدد بود، هشدار «تعداد محدود» نشون داده می‌شه
 
