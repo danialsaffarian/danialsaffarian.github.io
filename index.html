@@ -15,6 +15,7 @@
 <meta name="twitter:title" content="حنا گالری | Hana Gallery">
 <meta name="twitter:description" content="فروشگاه آنلاین جواهرات و اکسسوری حنا گالری — گردنبند، دستبند، گوشواره، انگشتر و پابند با کیفیت بالا.">
 <meta name="twitter:image" content="https://goykyskctygnciwttfqj.supabase.co/storage/v1/object/public/image/hana-gallery-logo.png">
+<link rel="canonical" href="https://danialsaffarian.github.io/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Vazirmatn:wght@300;400;500;600;700;800&family=Lalezar&display=swap" rel="stylesheet">
 <style>
@@ -143,6 +144,8 @@
   .cfb-name{font-size:19px;font-weight:700;color:var(--coffee);}
   .cfb-back{background:none;border:1px solid var(--coffee);color:var(--coffee);padding:10px 20px;font-size:13px;font-weight:500;transition:.2s;}
   .cfb-back:hover{background:var(--coffee);color:var(--cream);}
+  .sort-select{padding:10px 12px;border:1px solid var(--line);background:var(--cream-soft);font-family:inherit;font-size:13px;color:var(--coffee);}
+  .sort-select:focus{outline:none;border-color:var(--gold);}
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
   /* ---------- Product grid ---------- */
@@ -587,6 +590,11 @@
           <div class="cfb-name" id="cfbName"></div>
         </div>
       </div>
+      <select class="sort-select" id="sortSelect">
+        <option value="newest">جدیدترین</option>
+        <option value="price_asc">ارزان‌ترین</option>
+        <option value="price_desc">گران‌ترین</option>
+      </select>
       <button class="cfb-back" id="cfbBackBtn">بازگشت به صفحه اصلی</button>
     </div>
 
@@ -1241,6 +1249,7 @@ const paginationEl = document.getElementById('pagination');
 const PAGE_SIZE = 8;
 let currentSearch = '';
 let currentPage = 1;
+let currentSort = 'newest';
 
 function variantOptionLabel(v){
   if(!v.available) return `${v.name} (ناموجود)`;
@@ -1628,9 +1637,16 @@ function renderSaleProducts(){
   saleGrid.innerHTML = onSaleProducts.map(productCardHtml).join('');
 }
 
+function sortProducts(list){
+  const sorted = [...list];
+  if(currentSort === 'price_asc') sorted.sort((a,b) => a.effectivePrice - b.effectivePrice);
+  else if(currentSort === 'price_desc') sorted.sort((a,b) => b.effectivePrice - a.effectivePrice);
+  else sorted.sort((a,b) => b.id - a.id); // جدیدترین
+  return sorted;
+}
 function renderProducts(cat){
   const normedCat = normCat(cat);
-  const filtered = products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || p.name.includes(currentSearch)));
+  const filtered = sortProducts(products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || p.name.includes(currentSearch))));
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   if(currentPage > totalPages) currentPage = totalPages;
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -1765,6 +1781,8 @@ function showHomeSections(){
 function exitCategoryFocus(){
   currentCat = null;
   currentSearch = '';
+  currentSort = 'newest';
+  document.getElementById('sortSelect').value = 'newest';
   searchInput.value = '';
   searchBar.classList.remove('open');
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
@@ -1772,6 +1790,11 @@ function exitCategoryFocus(){
   document.getElementById('shop').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 document.getElementById('cfbBackBtn').addEventListener('click', exitCategoryFocus);
+document.getElementById('sortSelect').addEventListener('change', () => {
+  currentSort = document.getElementById('sortSelect').value;
+  currentPage = 1;
+  if(currentCat) renderProducts(currentCat);
+});
 
 // منو (موبایل)
 const menuToggleBtn = document.getElementById('menuToggleBtn');
