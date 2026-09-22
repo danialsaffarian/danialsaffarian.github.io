@@ -975,6 +975,7 @@
     </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
+      <button class="hero-btn" style="display:inline-block;color:#8B3A3A;border-color:#8B3A3A;margin-bottom:18px;" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
       <div id="adminOrdersList"></div>
     </div>
 
@@ -2643,9 +2644,29 @@ async function loadAdminOrders(){
       <div class="admin-order-items">${itemsHtml}</div>
       ${o.coupon_code ? `<div class="admin-card-meta">کد تخفیف: ${escapeHtml(o.coupon_code)} (${toFa(o.discount_amount || 0)} تومان تخفیف)</div>` : ''}
       <div class="admin-card-meta"><b style="color:var(--coffee);">${toFa(o.total)} تومان</b> · ${date}</div>
+      <div class="admin-prod-actions" style="margin-top:8px;">
+        <button onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
+      </div>
     </div>`;
   }).join('');
 }
+
+async function deleteAdminOrder(id){
+  if(!confirm('مطمئنی می‌خوای این سفارش رو حذف کنی؟')) return;
+  await db.from('orders').delete().eq('id', id);
+  logAdminAction('حذف سفارش', `شناسه #${id}`);
+  loadAdminOrders();
+  showToast('سفارش حذف شد');
+}
+
+document.getElementById('deleteAllOrdersBtn').addEventListener('click', async () => {
+  if(!confirm('مطمئنی می‌خوای همه‌ی سفارش‌ها رو حذف کنی؟ این کار قابل بازگشت نیست.')) return;
+  if(!confirm('برای اطمینان دوباره تایید کن: همه‌ی سفارش‌ها برای همیشه پاک می‌شن.')) return;
+  await db.from('orders').delete().gte('id', 0);
+  logAdminAction('حذف همه‌ی سفارش‌ها', '');
+  loadAdminOrders();
+  showToast('همه‌ی سفارش‌ها حذف شدن');
+});
 
 async function updateOrderStatus(orderId, status){
   await db.from('orders').update({ status }).eq('id', orderId);
