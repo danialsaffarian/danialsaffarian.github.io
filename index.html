@@ -512,6 +512,54 @@
 
   ::selection{background:var(--blush);color:var(--coffee);}
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "حنا گالری",
+  "alternateName": "Hana Gallery",
+  "url": "https://hanagalleryy.ir/",
+  "logo": "https://goykyskctygnciwttfqj.supabase.co/storage/v1/object/public/image/hana-gallery-logo.png",
+  "sameAs": ["https://instagram.com/hana_gallery_____"],
+  "description": "فروشگاه آنلاین جواهرات و اکسسوری دست‌ساز حنا گالری — گردنبند، دستبند، گوشواره، انگشتر و پابند با کیفیت بالا."
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "حنا گالری",
+  "url": "https://hanagalleryy.ir/"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "آیا برای سفارش باید در سایت ثبت‌نام کنم؟",
+      "acceptedAnswer": { "@type": "Answer", "text": "نه. کافی‌ست محصول موردنظرتان را به سبد اضافه کنید، اطلاعات تماس‌تان را وارد کنید و سفارش را همان‌جا ثبت کنید." }
+    },
+    {
+      "@type": "Question",
+      "name": "هزینه‌ی سفارش را چطور پرداخت کنم؟",
+      "acceptedAnswer": { "@type": "Answer", "text": "در حال حاضر پرداخت به‌صورت کارت‌به‌کارت انجام می‌شود؛ بعد از ثبت سفارش، با شماره‌ای که وارد کرده‌اید برای هماهنگی پرداخت تماس می‌گیریم." }
+    },
+    {
+      "@type": "Question",
+      "name": "ارسال سفارش چقدر طول می‌کشد؟",
+      "acceptedAnswer": { "@type": "Answer", "text": "سفارش‌ها معمولاً طی چند روز کاری آماده و ارسال می‌شوند." }
+    },
+    {
+      "@type": "Question",
+      "name": "امکان سفارش طرح دلخواه هم هست؟",
+      "acceptedAnswer": { "@type": "Answer", "text": "بله، در قسمت یادداشت سفارش، توضیح بدهید تا هماهنگ کنیم." }
+    }
+  ]
+}
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 </head>
 <body>
@@ -673,8 +721,8 @@
     <div class="about-text reveal-on-scroll">
       <span class="kicker brand-font">Our Story</span>
       <p>حنا گالری از یک علاقه‌ی ساده شروع شد: ساختن چیزهایی کوچک که حس خوبی می‌دهند.</p>
-      <p>هر قطعه در این مجموعه با دست و با دقت زیاد ساخته می‌شود؛ از انتخاب متریال تا آخرین پرداخت. هدف ما این نیست که تعداد زیادی اکسسوری بسازیم، بلکه می‌خواهیم تعداد کمی را خیلی خوب بسازیم.</p>
-      <p>اگر دنبال چیزی ساده، اصیل و کمی متفاوت از چیزهای معمول بازار هستید، جای درستی آمده‌اید.</p>
+      <p>هر قطعه در این مجموعه — از گردنبند و دستبند گرفته تا گوشواره، انگشتر و پابند — با دست و با دقت زیاد ساخته می‌شود؛ از انتخاب متریال تا آخرین پرداخت. هدف ما این نیست که تعداد زیادی اکسسوری بسازیم، بلکه می‌خواهیم تعداد کمی را خیلی خوب بسازیم.</p>
+      <p>اگر دنبال جواهرات دست‌ساز، ساده، اصیل و کمی متفاوت از چیزهای معمول بازار هستید، جای درستی آمده‌اید.</p>
     </div>
   </div>
 </section>
@@ -1230,6 +1278,39 @@ async function fetchProducts(){
   });
   renderNewest();
   renderSaleProducts();
+  injectProductsJsonLd();
+}
+
+function injectProductsJsonLd(){
+  const existing = document.getElementById('productsJsonLd');
+  if(existing) existing.remove();
+  if(!products.length) return;
+  const itemListElement = products.map((p, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    item: {
+      '@type': 'Product',
+      name: p.name,
+      description: p.description || undefined,
+      image: p.imageUrl || undefined,
+      url: 'https://hanagalleryy.ir/#shop',
+      offers: {
+        '@type': 'Offer',
+        priceCurrency: 'IRR',
+        price: p.effectivePrice,
+        availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      },
+    },
+  }));
+  const script = document.createElement('script');
+  script.type = 'application/ld+json';
+  script.id = 'productsJsonLd';
+  script.textContent = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement,
+  });
+  document.head.appendChild(script);
 }
 
 const icons = {
