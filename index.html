@@ -3113,7 +3113,10 @@ async function loadAdminCustomers(){
         <b>${escapeHtml(p.full_name || p.phone || 'بدون‌نام')}${p.blocked ? ' <span style="color:#8B3A3A;font-size:11.5px;">(مسدود)</span>' : ''}</b>
         <span>${escapeHtml(p.phone || '-')} · ${toFa(count)} سفارش</span>
       </div>
-      <button class="admin-status-select" style="cursor:pointer;" onclick="toggleBlockCustomer('${p.id}', ${!p.blocked})">${p.blocked ? 'رفع مسدودی' : 'مسدود کردن'}</button>
+      <div style="display:flex;gap:8px;">
+        <button class="admin-status-select" style="cursor:pointer;" onclick="resetCustomerPassword('${p.id}')">ریست رمز</button>
+        <button class="admin-status-select" style="cursor:pointer;" onclick="toggleBlockCustomer('${p.id}', ${!p.blocked})">${p.blocked ? 'رفع مسدودی' : 'مسدود کردن'}</button>
+      </div>
     </div>`;
   }).join('');
 }
@@ -3123,6 +3126,17 @@ async function toggleBlockCustomer(userId, blocked){
   logAdminAction(blocked ? 'مسدود کردن مشتری' : 'رفع مسدودی مشتری', `شناسه ${userId}`);
   loadAdminCustomers();
   showToast(blocked ? 'مشتری مسدود شد' : 'مسدودیت مشتری برداشته شد');
+}
+async function resetCustomerPassword(userId){
+  if(!confirm('یه رمز جدید و تصادفی برای این مشتری ساخته می‌شه و رمز قبلیش دیگه کار نمی‌کنه. ادامه بدم؟')) return;
+  const { data, error } = await db.functions.invoke('admin-reset-customer-password', { body: { userId } });
+  if(error || !data || data.error || !data.newPassword){
+    showToast('مشکلی پیش اومد، دوباره امتحان کن.');
+    console.error('خطا در ریست رمز:', error || (data && data.error));
+    return;
+  }
+  logAdminAction('ریست رمز مشتری', `شناسه ${userId}`);
+  window.prompt('رمز جدید این مشتری (کپی کن و بهش اطلاع بده، این پیام دیگه تکرار نمی‌شه):', data.newPassword);
 }
 
 /* ================= کدهای تخفیف ================= */
