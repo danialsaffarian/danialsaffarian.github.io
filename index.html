@@ -81,7 +81,6 @@
   .search-bar input:focus{outline:none;}
   .mobile-nav{max-height:0;overflow:hidden;transition:max-height .25s ease;background:var(--cream-soft);}
   .mobile-nav.open{max-height:200px;border-top:1px solid var(--line);}
-  .mobile-nav a{display:block;padding:14px 32px;font-size:14px;color:var(--coffee-70);border-bottom:1px solid var(--line);}
   .mobile-nav a:last-child{border-bottom:none;}
 
   /* ---------- Hero ---------- */
@@ -436,6 +435,21 @@
   .auth-tab{flex:1;padding:14px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;}
   .auth-tab.active{color:var(--coffee);border-color:var(--gold);}
   .auth-body{padding:22px 24px;}
+  .account-user{display:flex;align-items:center;gap:12px;padding:8px 4px 20px;margin-bottom:6px;border-bottom:1px solid var(--line);}
+  .account-user-avatar{width:40px;height:40px;border-radius:50%;background:var(--tan);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--coffee);}
+  .account-user-avatar svg{width:20px;height:20px;}
+  .account-user-label{font-size:11px;color:var(--coffee-70);margin-bottom:2px;}
+  .account-user-phone{font-size:14.5px;color:var(--coffee);font-weight:600;direction:ltr;text-align:right;unicode-bidi:isolate;}
+  .menu-list{display:flex;flex-direction:column;}
+  .menu-item{display:flex;align-items:center;gap:14px;width:100%;padding:15px 6px;border:none;border-bottom:1px solid var(--line);background:none;color:var(--coffee);font-size:14.5px;font-weight:500;text-align:right;font-family:inherit;cursor:pointer;transition:background .15s,padding .15s;}
+  .menu-item:last-child{border-bottom:none;}
+  .menu-item:hover{background:var(--tan);padding-inline-start:12px;}
+  .menu-item .menu-icon{width:19px;height:19px;flex-shrink:0;color:var(--gold);}
+  .menu-item .menu-chevron{margin-inline-start:auto;width:15px;height:15px;color:var(--coffee-70);flex-shrink:0;}
+  .menu-item.danger{color:#8B3A3A;margin-top:6px;}
+  .menu-item.danger .menu-icon{color:#8B3A3A;}
+  .mobile-nav .menu-item{border-bottom:1px solid var(--line);padding:15px 32px;}
+  .mobile-nav .menu-item:hover{padding-inline-start:36px;}
   .order-item{border:1px solid var(--line);padding:14px;margin-bottom:10px;font-size:13px;}
   .order-item .oi-top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px;}
   .order-item .oi-items{color:var(--coffee-70);}
@@ -468,10 +482,26 @@
       <input type="text" id="searchInput" placeholder="جستجوی محصول...">
     </div>
     <nav class="mobile-nav" id="mobileNav">
-      <a href="#" id="menuAccountLink">حساب من</a>
-      <a href="#shop">فروشگاه</a>
-      <a href="#about">درباره ما</a>
-      <a href="#faq">سوالات متداول</a>
+      <a href="#" id="menuAccountLink" class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        حساب من
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#shop" class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        فروشگاه
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#about" class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        درباره ما
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#faq" class="menu-item">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        سوالات متداول
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
     </nav>
   </div>
 </header>
@@ -795,11 +825,36 @@
     <button class="drawer-close" id="accountClose">✕</button>
   </div>
   <div class="auth-body">
-    <p id="accountPhoneText" style="font-size:14px;color:var(--coffee-70);margin-bottom:20px;direction:ltr;text-align:right;unicode-bidi:isolate;"></p>
-    <button class="hero-btn" style="display:none;width:100%;text-align:center;color:var(--gold);border-color:var(--gold);margin-bottom:12px;" id="adminPanelBtn">پنل مدیریت</button>
-    <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewOrdersBtn">سفارش‌های من</button>
-    <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);margin-bottom:12px;" id="viewWishlistBtn">علاقه‌مندی‌های من</button>
-    <button class="hero-btn" style="display:block;width:100%;text-align:center;color:#8B3A3A;border-color:#8B3A3A;" id="logoutBtn">خروج از حساب</button>
+    <div class="account-user">
+      <div class="account-user-avatar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div>
+        <div class="account-user-label">شماره حساب</div>
+        <div class="account-user-phone" id="accountPhoneText"></div>
+      </div>
+    </div>
+    <div class="menu-list">
+      <button class="menu-item" style="display:none;" id="adminPanelBtn">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+        پنل مدیریت
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <button class="menu-item" id="viewOrdersBtn">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
+        سفارش‌های من
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <button class="menu-item" id="viewWishlistBtn">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg>
+        علاقه‌مندی‌های من
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </button>
+      <button class="menu-item danger" id="logoutBtn">
+        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        خروج از حساب
+      </button>
+    </div>
     <div id="myWishlistList" style="margin-top:22px;"></div>
   </div>
 </div>
@@ -2307,7 +2362,7 @@ function refreshAuthUI(){
   } else {
     loginLinkBtn.textContent = 'ورود و ثبت‌نام';
   }
-  document.getElementById('adminPanelBtn').style.display = isAdmin ? 'block' : 'none';
+  document.getElementById('adminPanelBtn').style.display = isAdmin ? 'flex' : 'none';
 }
 
 db.auth.getSession().then(({ data }) => {
