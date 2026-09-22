@@ -353,6 +353,12 @@
   .admin-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:22px;}
   .admin-tab{padding:12px 18px;font-size:14px;font-weight:600;color:var(--coffee-70);border-bottom:2px solid transparent;}
   .admin-tab.active{color:var(--coffee);border-color:var(--gold);}
+  .admin-status-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin-bottom:10px;}
+  .admin-status-row b{font-size:14px;color:var(--coffee);display:block;margin-bottom:4px;}
+  .admin-status-row span{font-size:12.5px;color:var(--coffee-70);}
+  .online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-start:6px;}
+  .online-dot.on{background:#3a8b4e;}
+  .online-dot.off{background:var(--coffee-70);}
   .admin-card{border:1px solid var(--line);border-radius:6px;padding:16px 18px;margin-bottom:14px;}
   .admin-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
   .admin-card-top b{font-size:14px;color:var(--coffee);}
@@ -783,6 +789,7 @@
       <button class="admin-tab" data-tab="products">محصولات</button>
       <button class="admin-tab" data-tab="stats">آمار</button>
       <button class="admin-tab" data-tab="reviews">نظرات</button>
+      <button class="admin-tab" data-tab="admins">مدیرها</button>
     </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
@@ -832,6 +839,10 @@
 
     <div id="adminTabReviews" class="admin-tab-panel" style="display:none;">
       <div id="adminReviewsList"></div>
+    </div>
+
+    <div id="adminTabAdmins" class="admin-tab-panel" style="display:none;">
+      <div id="adminsStatusList"></div>
     </div>
   </div>
 </div>
@@ -2124,9 +2135,10 @@ async function loadProfile(){
 
 let isAdmin = false;
 async function checkAdmin(){
-  if(!currentUser || !currentUser.phone){ isAdmin = false; return; }
+  if(!currentUser || !currentUser.phone){ isAdmin = false; stopHeartbeat(); return; }
   const { data } = await db.from('admins').select('phone').eq('phone', currentUser.phone).maybeSingle();
   isAdmin = !!data;
+  if(isAdmin) startHeartbeat(); else stopHeartbeat();
 }
 
 function refreshAuthUI(){
@@ -2166,6 +2178,62 @@ document.getElementById('adminPanelBtn').addEventListener('click', () => {
 });
 document.getElementById('adminBackBtn').addEventListener('click', () => { adminPage.classList.remove('open'); });
 
+const ONLINE_THRESHOLD_MS = 2 * 60 * 1000; // ۲ دقیقه
+
+function relativeTimeFa(dateStr){
+  if(!dateStr) return 'هیچ‌وقت وارد نشده';
+  const diffMs = Date.now() - new Date(dateStr).getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  if(diffMin < 1) return 'همین الان';
+  if(diffMin < 60) return `${diffMin} دقیقه پیش`;
+  const diffHr = Math.floor(diffMin / 60);
+  if(diffHr < 24) return `${diffHr} ساعت پیش`;
+  const diffDay = Math.floor(diffHr / 24);
+  return `${diffDay} روز پیش`;
+}
+
+async function loadAdminsStatus(){
+  const listEl = document.getElementById('adminsStatusList');
+  listEl.innerHTML = '<p>در حال بارگذاری...</p>';
+  const { data: adminRows, error } = await db.from('admins').select('phone');
+  if(error || !adminRows || adminRows.length === 0){
+    listEl.innerHTML = '<p>هیچ مدیری ثبت نشده.</p>';
+    return;
+  }
+  const phones = adminRows.map(a => a.phone);
+  const { data: profilesData } = await db.from('profiles').select('phone, full_name, last_seen').in('phone', phones);
+  const profileByPhone = {};
+  (profilesData || []).forEach(p => { profileByPhone[p.phone] = p; });
+
+  listEl.innerHTML = phones.map(phone => {
+    const p = profileByPhone[phone];
+    const name = (p && p.full_name) ? p.full_name : phone;
+    const lastSeen = p ? p.last_seen : null;
+    const isOnline = !!(lastSeen && (Date.now() - new Date(lastSeen).getTime()) < ONLINE_THRESHOLD_MS);
+    return `<div class="admin-status-row">
+      <div>
+        <b>${escapeHtml(name)}<span class="online-dot ${isOnline ? 'on' : 'off'}"></span></b>
+        <span>${escapeHtml(phone)}</span>
+      </div>
+      <span>${isOnline ? 'آنلاین الان' : relativeTimeFa(lastSeen)}</span>
+    </div>`;
+  }).join('');
+}
+
+let heartbeatInterval = null;
+async function sendHeartbeat(){
+  if(!currentUser) return;
+  await db.from('profiles').upsert({ id: currentUser.id, phone: currentUser.phone, last_seen: new Date().toISOString() });
+}
+function startHeartbeat(){
+  if(heartbeatInterval) return;
+  sendHeartbeat();
+  heartbeatInterval = setInterval(sendHeartbeat, 45000);
+}
+function stopHeartbeat(){
+  if(heartbeatInterval){ clearInterval(heartbeatInterval); heartbeatInterval = null; }
+}
+
 function openAdminPage(){
   adminPage.classList.add('open');
   adminPage.scrollTop = 0;
@@ -2178,10 +2246,12 @@ function switchAdminTab(tab){
   document.getElementById('adminTabProducts').style.display = tab === 'products' ? 'block' : 'none';
   document.getElementById('adminTabStats').style.display = tab === 'stats' ? 'block' : 'none';
   document.getElementById('adminTabReviews').style.display = tab === 'reviews' ? 'block' : 'none';
+  document.getElementById('adminTabAdmins').style.display = tab === 'admins' ? 'block' : 'none';
   if(tab === 'orders') loadAdminOrders();
   if(tab === 'products') loadAdminProducts();
   if(tab === 'stats') loadAdminStats();
   if(tab === 'reviews') loadAdminReviews();
+  if(tab === 'admins') loadAdminsStatus();
 }
 document.querySelectorAll('.admin-tab').forEach(btn => {
   btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab));
