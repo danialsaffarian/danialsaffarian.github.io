@@ -424,11 +424,13 @@
   .coupon-msg.err{color:#8B3A3A;}
   .form-field{margin-bottom:12px;}
   .form-field label{display:block;font-size:12.5px;color:var(--coffee-70);margin-bottom:5px;}
+  .form-field .required-mark{color:#8B3A3A;margin-inline-start:2px;}
   .form-field input, .form-field textarea{
     width:100%;padding:10px 12px;border:1px solid var(--line);background:var(--card);
     font-family:'Vazirmatn',sans-serif;font-size:13.5px;color:var(--coffee);resize:none;
   }
   .form-field input:focus, .form-field textarea:focus{outline:none;border-color:var(--gold);}
+  .form-field.invalid input, .form-field.invalid textarea{border-color:#8B3A3A;}
   .form-error{color:#8B3A3A;font-size:12.5px;margin-bottom:10px;display:none;}
   .form-error.show{display:block;}
 
@@ -1085,17 +1087,17 @@
     <div class="checkout-summary" id="checkoutSummary"></div>
 
     <div id="checkoutForm">
-      <div class="form-field">
-        <label for="custName">نام و نام خانوادگی</label>
-        <input type="text" id="custName" placeholder="مثلاً سارا محمدی">
+      <div class="form-field" id="custNameField">
+        <label for="custName">نام و نام خانوادگی<span class="required-mark">*</span></label>
+        <input type="text" id="custName" placeholder="مثلاً سارا محمدی" required>
       </div>
-      <div class="form-field">
-        <label for="custPhone">شماره تماس</label>
-        <input type="tel" id="custPhone" placeholder="09xxxxxxxxx">
+      <div class="form-field" id="custPhoneField">
+        <label for="custPhone">شماره تماس<span class="required-mark">*</span></label>
+        <input type="tel" id="custPhone" placeholder="09xxxxxxxxx" required>
       </div>
-      <div class="form-field">
-        <label for="custAddress">آدرس ارسال</label>
-        <textarea id="custAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی"></textarea>
+      <div class="form-field" id="custAddressField">
+        <label for="custAddress">آدرس ارسال<span class="required-mark">*</span></label>
+        <textarea id="custAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی" required></textarea>
       </div>
       <div class="form-field">
         <label for="custNote">یادداشت (اختیاری)</label>
@@ -2032,8 +2034,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   const address = document.getElementById('custAddress').value.trim();
   const note = document.getElementById('custNote').value.trim();
 
+  document.getElementById('custNameField').classList.toggle('invalid', !name);
+  document.getElementById('custPhoneField').classList.toggle('invalid', !phone);
+  document.getElementById('custAddressField').classList.toggle('invalid', !address);
+
   if(!name || !phone || !address){
-    errorEl.textContent = 'لطفاً نام، شماره تماس و آدرس رو وارد کن.';
+    errorEl.textContent = 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
     errorEl.classList.add('show');
     return;
   }
@@ -2099,6 +2105,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   document.getElementById('custPhone').value = '';
   document.getElementById('custAddress').value = '';
   document.getElementById('custNote').value = '';
+});
+
+['custName', 'custPhone', 'custAddress'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    document.getElementById(id + 'Field').classList.remove('invalid');
+  });
 });
 
 /* ================= حساب کاربری (ورود / ثبت‌نام) ================= */
