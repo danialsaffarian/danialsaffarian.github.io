@@ -359,6 +359,8 @@
   .admin-status-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin-bottom:10px;}
   .admin-status-row b{font-size:14px;color:var(--coffee);display:block;margin-bottom:4px;}
   .admin-status-row span{font-size:12.5px;color:var(--coffee-70);}
+  .admin-status-row .admin-location{font-size:12px;color:var(--gold);display:block;margin-top:2px;}
+  .admin-location-note{font-size:12.5px;color:var(--coffee-70);background:var(--cream-soft);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:14px;line-height:1.9;}
   .online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-start:6px;}
   .online-dot.on{background:#3a8b4e;}
   .online-dot.off{background:var(--coffee-70);}
@@ -1059,6 +1061,7 @@
     </div>
 
     <div id="adminTabAdmins" class="admin-tab-panel" style="display:none;">
+      <p class="admin-location-note">موقعیت (شهر/کشور) هر مدیر بر اساس آخرین ورودش به پنل مدیریت به‌صورت شفاف نمایش داده می‌شود و خود آن مدیر هم می‌تواند این اطلاعات را در همین‌جا ببیند.</p>
       <div id="adminsStatusList"></div>
     </div>
   </div>
@@ -2535,7 +2538,7 @@ async function loadAdminsStatus(){
     return;
   }
   const phones = adminRows.map(a => a.phone);
-  const { data: profilesData } = await db.from('profiles').select('phone, full_name, last_seen').in('phone', phones);
+  const { data: profilesData } = await db.from('profiles').select('phone, full_name, last_seen, last_city, last_country').in('phone', phones);
   const profileByPhone = {};
   (profilesData || []).forEach(p => { profileByPhone[p.phone] = p; });
 
@@ -2544,10 +2547,14 @@ async function loadAdminsStatus(){
     const name = (p && p.full_name) ? p.full_name : phone;
     const lastSeen = p ? p.last_seen : null;
     const isOnline = !!(lastSeen && (Date.now() - new Date(lastSeen).getTime()) < ONLINE_THRESHOLD_MS);
+    const city = p ? p.last_city : null;
+    const country = p ? p.last_country : null;
+    const locationText = (city || country) ? [city, country].filter(Boolean).join('، ') : 'نامشخص';
     return `<div class="admin-status-row">
       <div>
         <b>${escapeHtml(name)}<span class="online-dot ${isOnline ? 'on' : 'off'}"></span></b>
         <span>${escapeHtml(phone)}</span>
+        <span class="admin-location">📍 ${escapeHtml(locationText)}</span>
       </div>
       <span>${isOnline ? 'آنلاین الان' : relativeTimeFa(lastSeen)}</span>
     </div>`;
@@ -2559,9 +2566,25 @@ async function sendHeartbeat(){
   if(!currentUser) return;
   await db.from('profiles').upsert({ id: currentUser.id, phone: currentUser.phone, last_seen: new Date().toISOString() });
 }
+async function updateAdminLocationOnce(){
+  if(!currentUser) return;
+  try{
+    const res = await fetch('https://ipapi.co/json/');
+    if(!res.ok) return;
+    const geo = await res.json();
+    if(!geo || geo.error) return;
+    await db.from('profiles').upsert({
+      id: currentUser.id,
+      phone: currentUser.phone,
+      last_city: geo.city || null,
+      last_country: geo.country_name || null,
+    });
+  }catch(e){ /* geolocation lookup is best-effort, never block on failure */ }
+}
 function startHeartbeat(){
   if(heartbeatInterval) return;
   sendHeartbeat();
+  updateAdminLocationOnce();
   heartbeatInterval = setInterval(sendHeartbeat, 45000);
 }
 function stopHeartbeat(){
