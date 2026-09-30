@@ -2803,8 +2803,9 @@ async function loadAdminOrders(){
 }
 
 async function deleteAdminOrder(id){
-  if(!confirm('مطمئنی می‌خوای این سفارش رو حذف کنی؟')) return;
-  await db.from('orders').delete().eq('id', id);
+  if(!confirm('مطمئنی می‌خوای این سفارش رو حذف کنی؟ اگه سفارش هنوز ارسال نشده، موجودی‌اش به انبار برمی‌گرده.')) return;
+  const { error } = await db.from('orders').delete().eq('id', id);
+  if(error){ console.error(error); showToast('حذف سفارش ناموفق بود'); return; }
   logAdminAction('حذف سفارش', `شناسه #${id}`);
   loadAdminOrders();
   showToast('سفارش حذف شد');
@@ -2819,10 +2820,13 @@ document.getElementById('deleteAllOrdersBtn').addEventListener('click', async ()
   showToast('همه‌ی سفارش‌ها حذف شدن');
 });
 
+// stock is handled in the database: an order takes its items out of stock,
+// cancelling (or deleting it before shipping) puts them back
 async function updateOrderStatus(orderId, status){
-  await db.from('orders').update({ status }).eq('id', orderId);
+  const { error } = await db.from('orders').update({ status }).eq('id', orderId);
+  if(error){ console.error(error); showToast('تغییر وضعیت ناموفق بود'); loadAdminOrders(); return; }
   logAdminAction('تغییر وضعیت سفارش', `سفارش #${orderId} به «${status}»`);
-  showToast('وضعیت سفارش به‌روزرسانی شد');
+  showToast(status === 'لغو شده' ? 'سفارش لغو شد و موجودی‌اش به انبار برگشت' : 'وضعیت سفارش به‌روزرسانی شد');
 }
 
 async function loadAdminProducts(){
