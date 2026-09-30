@@ -150,6 +150,9 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 
   /* ---------- Product grid ---------- */
+  .wishlist-body{max-width:1100px;margin:0 auto;}
+  .wishlist-empty{grid-column:1/-1;text-align:center;padding:48px 16px;color:var(--coffee-70);font-size:14px;line-height:2;}
+  .wishlist-empty svg{width:40px;height:40px;stroke:var(--coffee-70);fill:none;stroke-width:1.4;margin-bottom:8px;}
   .product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;scroll-margin-top:100px;}
   @media(max-width:900px){.product-grid{grid-template-columns:repeat(2,1fr);}}
   @media(max-width:560px){.product-grid{grid-template-columns:repeat(2,1fr);gap:14px;}}
@@ -1018,7 +1021,6 @@
         خروج از حساب
       </button>
     </div>
-    <div id="myWishlistList" style="margin-top:22px;"></div>
   </div>
 </div>
 
@@ -1194,6 +1196,16 @@
       <p id="orderTrackingCodeText" style="font-size:14px;font-weight:700;color:var(--coffee);margin-top:12px;direction:ltr;unicode-bidi:isolate;"></p>
       <button class="hero-btn" style="display:inline-block;margin-top:18px;color:var(--coffee);border-color:var(--coffee);" id="backToShopBtn">بازگشت به فروشگاه</button>
     </div>
+  </div>
+</div>
+
+<div class="product-page" id="wishlistPage">
+  <div class="product-head">
+    <button class="product-back" id="wishlistBackBtn">→</button>
+    <h3 class="brand-font">علاقه‌مندی‌های من</h3>
+  </div>
+  <div class="product-body wishlist-body">
+    <div class="product-grid" id="wishlistGrid"></div>
   </div>
 </div>
 
@@ -1415,12 +1427,12 @@ function productCardHtml(p){
   const firstVariant = hasVariants ? p.variants[0] : null;
   const firstAvailable = hasVariants && firstVariant.available;
   const firstStatus = hasVariants ? variantStatusHtml(firstVariant) : { text: '', cls: '' };
-  const priceHtmlStr = priceHtml(p, firstVariant, 'card-price', 'price-' + p.id);
+  const priceHtmlStr = priceHtml(p, firstVariant, 'card-price');
   const variantSelect = hasVariants ? `
-      <select class="variant-select" id="variant-${p.id}" ${soldOut?'disabled':''} onchange="onVariantChange(${p.id})">
+      <select class="variant-select" ${soldOut?'disabled':''} onchange="onVariantChange(${p.id}, this)">
         ${p.variants.map(v => `<option value="${v.name}">${variantOptionLabel(v)}</option>`).join('')}
       </select>
-      <p class="variant-status ${firstStatus.cls}" id="variant-status-${p.id}" style="display:${firstStatus.text ? 'block' : 'none'};">${firstStatus.text}</p>` : '';
+      <p class="variant-status ${firstStatus.cls}" style="display:${firstStatus.text ? 'block' : 'none'};">${firstStatus.text}</p>` : '';
   const buyDisabled = soldOut || (hasVariants && !firstAvailable);
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
@@ -1442,18 +1454,19 @@ function productCardHtml(p){
       <span class="card-name">${p.name}</span>
       ${priceHtmlStr}
       ${variantSelect}
-      <button class="buy-btn" id="buy-btn-${p.id}" onclick="addToCart(${p.id})" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
+      <button class="buy-btn" onclick="addToCart(${p.id}, this)" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     </div>
   </div>`;
 }
 
-function onVariantChange(productId){
+function onVariantChange(productId, el){
   const p = products.find(p => p.id === productId);
-  if(!p || !p.variants) return;
-  const sel = document.getElementById('variant-' + productId);
-  const statusEl = document.getElementById('variant-status-' + productId);
-  const btn = document.getElementById('buy-btn-' + productId);
-  const priceEl = document.getElementById('price-' + productId);
+  const card = el && el.closest('.card');
+  if(!p || !p.variants || !card) return;
+  const sel = card.querySelector('.variant-select');
+  const statusEl = card.querySelector('.variant-status');
+  const btn = card.querySelector('.buy-btn');
+  const priceEl = card.querySelector('.card-price');
   const chosen = p.variants.find(v => v.name === sel.value);
   if(!chosen) return;
   const status = variantStatusHtml(chosen);
@@ -1462,7 +1475,7 @@ function onVariantChange(productId){
   statusEl.style.display = status.text ? 'block' : 'none';
   btn.disabled = !chosen.available;
   btn.textContent = chosen.available ? 'افزودن به سبد خرید' : 'ناموجود';
-  if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'card-price', 'price-' + productId);
+  if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'card-price');
 }
 
 let cardImageIndex = {};
@@ -2013,12 +2026,13 @@ function canAddOne(p, variant){
   return false;
 }
 
-function addToCart(id){
+function addToCart(id, el){
   const p = products.find(p=>p.id===id);
   let variant = null;
   let chosen = null;
   if(p && p.variants && p.variants.length > 0){
-    const sel = document.getElementById('variant-' + id);
+    const card = el && el.closest('.card');
+    const sel = card ? card.querySelector('.variant-select') : null;
     variant = sel ? sel.value : p.variants[0].name;
     chosen = p.variants.find(v => v.name === variant);
     if(chosen && !chosen.available) return; // احتیاطی: این گزینه ناموجوده
@@ -2338,6 +2352,7 @@ async function loadWishlist(){
   (data || []).forEach(r => wishlistIds.add(r.product_id));
 }
 function refreshAllProductGrids(){
+  if(typeof wishlistPage !== 'undefined' && wishlistPage.classList.contains('open')) renderWishlistPage();
   renderNewest();
   if(!isCategoryFocused()) renderSaleProducts();
   if(currentCat) renderProducts(currentCat);
@@ -2351,6 +2366,7 @@ async function toggleWishlist(id){
     await db.from('wishlists').delete().eq('user_id', currentUser.id).eq('product_id', id);
   } else {
     wishlistIds.add(id);
+    wishlistOrder = [id, ...wishlistOrder.filter(x => x !== id)];
     refreshAllProductGrids();
     const { error } = await db.from('wishlists').insert({ user_id: currentUser.id, product_id: id });
     if(error){ wishlistIds.delete(id); refreshAllProductGrids(); }
@@ -2669,22 +2685,35 @@ async function openOrderDetail(orderId){
 function closeOrderDetail(){ document.getElementById('orderDetailPage').classList.remove('open'); }
 document.getElementById('orderDetailBackBtn').addEventListener('click', closeOrderDetail);
 
-document.getElementById('viewWishlistBtn').addEventListener('click', async () => {
-  const listEl = document.getElementById('myWishlistList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
-  const { data, error } = await db.from('wishlists').select('product_id, products(id, name, price, sale_price)').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if(error || !data || data.length === 0){
-    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز محصولی به علاقه‌مندی‌ها اضافه نکردی.</p>';
+/* ================= صفحه‌ی جداگانه‌ی علاقه‌مندی‌ها ================= */
+const wishlistPage = document.getElementById('wishlistPage');
+let wishlistOrder = []; // product ids, newest favourite first
+function renderWishlistPage(){
+  const gridEl = document.getElementById('wishlistGrid');
+  const items = wishlistOrder.filter(id => wishlistIds.has(id)).map(id => products.find(p => p.id === id)).filter(Boolean);
+  if(items.length === 0){
+    gridEl.innerHTML = `<div class="wishlist-empty"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg><br>هنوز محصولی به علاقه‌مندی‌ها اضافه نکردی.<br>روی قلبِ هر محصول بزن تا این‌جا ذخیره بشه.</div>`;
     return;
   }
-  listEl.innerHTML = data.filter(r => r.products).map(r => {
-    const pr = r.products;
-    const price = (pr.sale_price && pr.sale_price > 0 && pr.sale_price < pr.price) ? pr.sale_price : pr.price;
-    return `<div class="order-item" style="cursor:pointer;" onclick="closeAccountPanel(); openProductDetail(${pr.id});">
-      <div class="oi-top"><span>${escapeHtml(pr.name)}</span><span>${toFa(price)} تومان</span></div>
-    </div>`;
-  }).join('');
-});
+  gridEl.innerHTML = items.map(productCardHtml).join('');
+  observeCardPreloads();
+}
+async function openWishlistPage(){
+  if(!currentUser){ openAuthModal(); return; }
+  closeAccountPanel();
+  wishlistPage.classList.add('open');
+  wishlistPage.scrollTop = 0;
+  document.getElementById('wishlistGrid').innerHTML = Array(2).fill(skeletonCardHtml()).join('');
+  const { data } = await db.from('wishlists').select('product_id').eq('user_id', currentUser.id).order('created_at', { ascending: false });
+  if(data){
+    wishlistOrder = data.map(r => r.product_id);
+    wishlistIds = new Set(wishlistOrder);
+  }
+  renderWishlistPage();
+}
+function closeWishlistPage(){ wishlistPage.classList.remove('open'); }
+document.getElementById('viewWishlistBtn').addEventListener('click', openWishlistPage);
+document.getElementById('wishlistBackBtn').addEventListener('click', closeWishlistPage);
 
 async function loadProfile(){
   if(!currentUser) { currentProfile = null; return; }
