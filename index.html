@@ -408,6 +408,7 @@
   @keyframes adminSpin{to{transform:rotate(360deg);}}
   .qty-ctrl button.at-limit{opacity:.35;}
   .stock-limit-note{font-size:11.5px;color:#8B3A3A;margin-top:4px;}
+  .auth-checkout-note{font-size:13px;line-height:1.9;color:var(--coffee);background:var(--tan);padding:10px 14px;margin:0 0 16px;}
   .toast{position:fixed;bottom:24px;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.7;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
@@ -889,6 +890,7 @@
     <p class="auth-tagline">به دنیای حنا گالری خوش اومدی</p>
   </div>
   <div class="auth-body">
+    <p class="auth-checkout-note" id="authCheckoutNote" style="display:none;">برای ثبت سفارش اول وارد حسابت شو؛ اگه حساب نداری با «ورود با کد پیامکی» در چند ثانیه ساخته می‌شه. سبد خریدت سر جاش می‌مونه.</p>
     <div id="authStepPhonePass">
       <div class="form-field">
         <label for="authPhonePass">شماره موبایل</label>
@@ -1375,6 +1377,8 @@ function showToast(msg){
   toastTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 let cart = [];
+let currentUser = null;     // signed-in Supabase user (declared early: the cart reads it)
+let currentProfile = null;
 
 const grid = document.getElementById('productGrid');
 const paginationEl = document.getElementById('pagination');
@@ -2087,7 +2091,9 @@ function updateCart(){
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('drawerTotal').textContent = toFa(total) + ' تومان';
-  document.getElementById('proceedCheckoutBtn').disabled = cart.length === 0;
+  const proceedBtn = document.getElementById('proceedCheckoutBtn');
+  proceedBtn.disabled = cart.length === 0;
+  proceedBtn.textContent = currentUser ? 'تکمیل خرید' : 'ورود و تکمیل خرید';
 }
 updateCart();
 
@@ -2172,8 +2178,28 @@ document.getElementById('couponInput').addEventListener('input', () => {
     renderCheckoutSummary();
   }
 });
+// ordering needs a signed-in customer: ask for login first, then continue to checkout with the same cart
+let pendingCheckout = false;
+function requireLoginForCheckout(){
+  pendingCheckout = true;
+  closeDrawer();
+  closeCheckoutPage();
+  openAuthModal();
+  document.getElementById('authCheckoutNote').style.display = 'block';
+}
+async function resumeCheckoutIfPending(){
+  if(!pendingCheckout) return;
+  pendingCheckout = false;
+  document.getElementById('authCheckoutNote').style.display = 'none';
+  const { data } = await db.auth.getSession();
+  if(!data || !data.session || cart.length === 0) return;
+  currentUser = data.session.user;
+  if(!currentProfile) await loadProfile();
+  openCheckoutPage();
+}
 function openCheckoutPage(){
   if(cart.length === 0) return;
+  if(!currentUser){ requireLoginForCheckout(); return; }
   closeDrawer();
   resetCouponState();
   document.getElementById('checkoutSummary').style.display = 'block';
@@ -2182,9 +2208,10 @@ function openCheckoutPage(){
   renderCheckoutSummary();
   if(currentProfile){
     document.getElementById('custName').value = currentProfile.full_name || '';
-    document.getElementById('custPhone').value = currentProfile.phone || '';
     document.getElementById('custAddress').value = currentProfile.address || '';
   }
+  document.getElementById('custPhone').value = (currentProfile && currentProfile.phone && normalizeIranMobile(currentProfile.phone))
+    || normalizeIranMobile(currentUser.phone) || '';
   checkoutPage.classList.add('open');
   checkoutPage.scrollTop = 0;
 }
@@ -2209,6 +2236,7 @@ function orderErrorMessage(error){
   if(/HG_BAD_PHONE/.test(m)) return 'شماره موبایل رو درست وارد کن (مثل ۰۹۱۲۳۴۵۶۷۸۹).';
   if(/HG_BLOCKED/.test(m)) return 'ثبت سفارش برای این حساب امکان‌پذیر نیست. لطفاً با فروشگاه تماس بگیر.';
   if(/HG_TOO_MANY/.test(m)) return 'از این شماره چند سفارش پشت سر هم ثبت شده. چند دقیقه دیگه دوباره امتحان کن.';
+  if(/HG_LOGIN/.test(m)) return 'برای ثبت سفارش اول وارد حسابت شو.';
   if(/HG_REQUIRED/.test(m)) return 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
   return 'مشکلی پیش اومد، لطفاً دوباره امتحان کن.';
 }
@@ -2222,7 +2250,8 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.classList.add('show');
     return;
   }
-  if(currentUser && currentProfile && currentProfile.blocked){
+  if(!currentUser){ requireLoginForCheckout(); return; }
+  if(currentProfile && currentProfile.blocked){
     errorEl.textContent = 'ثبت سفارش برای این حساب امکان‌پذیر نیست. لطفاً با فروشگاه تماس بگیر.';
     errorEl.classList.add('show');
     return;
@@ -2311,6 +2340,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   btn.disabled = false;
   btn.textContent = 'ثبت سفارش';
 
+  if(error && /HG_LOGIN|permission denied/.test(error.message || '')){ requireLoginForCheckout(); return; }
   if(error || !placed){
     console.error('خطا در ثبت سفارش:', error);
     errorEl.textContent = orderErrorMessage(error);
@@ -2345,8 +2375,6 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 });
 
 /* ================= حساب کاربری (ورود / ثبت‌نام) ================= */
-let currentUser = null;
-let currentProfile = null;
 
 let wishlistIds = new Set();
 async function loadWishlist(){
@@ -2410,7 +2438,7 @@ function openAuthModal(){
   document.getElementById('authOtpError').classList.remove('show');
   document.getElementById('authSetupError').classList.remove('show');
 }
-function closeAuthModal(){ authModal.classList.remove('open'); authOverlay.classList.remove('open'); }
+function closeAuthModal(){ authModal.classList.remove('open'); authOverlay.classList.remove('open'); resumeCheckoutIfPending(); }
 function openAccountPanel(){ accountPanel.classList.add('open'); authOverlay.classList.add('open'); }
 function closeAccountPanel(){ accountPanel.classList.remove('open'); authOverlay.classList.remove('open'); }
 
@@ -2734,6 +2762,7 @@ async function checkAdmin(){
 }
 
 function refreshAuthUI(){
+  updateCart();
   if(currentUser){
     const phone = currentUser.phone || '';
     const displayName = (currentProfile && currentProfile.full_name) ? currentProfile.full_name : phone;
