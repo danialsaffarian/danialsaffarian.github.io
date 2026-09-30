@@ -403,7 +403,9 @@
   .admin-img-thumb-pending{display:flex;align-items:center;justify-content:center;background:var(--tan);}
   .admin-img-spinner{width:20px;height:20px;border-radius:50%;border:2.5px solid rgba(142,110,88,.25);border-top-color:var(--coffee);animation:adminSpin .8s linear infinite;}
   @keyframes adminSpin{to{transform:rotate(360deg);}}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
+  .qty-ctrl button.at-limit{opacity:.35;}
+  .stock-limit-note{font-size:11.5px;color:#8B3A3A;margin-top:4px;}
+  .toast{position:fixed;bottom:24px;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.7;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
   .stat-item{border:1px solid var(--line);border-radius:6px;padding:20px;text-align:center;}
@@ -1748,6 +1750,7 @@ function addToCartDetail(){
     chosen = p.variants.find(v => v.name === variant);
     if(chosen && !chosen.available) return;
   }
+  if(!canAddOne(p, variant)) return;
   const existing = cart.find(i=>i.id===p.id && i.variant===variant);
   if(existing){ existing.qty++; }
   else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
@@ -1975,6 +1978,41 @@ searchInput.addEventListener('input', () => {
   }
 });
 
+// ---- cart vs. stock: the cart may never hold more than is in stock ----
+// product stock is shared by all its variants; a variant with its own count is capped by that too
+function variantQtyFromText(text, name){
+  if(!text || !name) return null;
+  for(const entry of text.split(/[,،]/)){
+    const parts = entry.trim().split(':');
+    if(parts.length < 2 || parts[0].trim() !== name) continue;
+    const rest = parts[1].trim();
+    if(rest === 'ناموجود') return 0;
+    const n = parseInt(rest, 10);
+    return isNaN(n) ? null : n;
+  }
+  return null;
+}
+function lineLimit(p, variant){
+  const stock = Math.max(0, Number(p.stock) || 0);
+  const otherLines = cart.filter(i => i.id === p.id && i.variant !== variant).reduce((s, i) => s + i.qty, 0);
+  let limit = Math.max(0, stock - otherLines);
+  const v = variant ? (p.variants || []).find(v => v.name === variant) : null;
+  if(v && v.qty !== null) limit = Math.min(limit, Math.max(0, v.qty));
+  return limit;
+}
+function stockWarning(p, variant, limit){
+  const label = `«${p.name}${variant ? ' - ' + variant : ''}»`;
+  return limit > 0 ? `از ${label} فقط ${toFa(limit)} عدد موجوده.` : `${label} دیگه موجودی نداره.`;
+}
+// returns true if one more fits; otherwise warns and returns false
+function canAddOne(p, variant){
+  const line = cart.find(i => i.id === p.id && i.variant === variant);
+  const limit = lineLimit(p, variant);
+  if((line ? line.qty : 0) + 1 <= limit) return true;
+  showToast(stockWarning(p, variant, limit));
+  return false;
+}
+
 function addToCart(id){
   const p = products.find(p=>p.id===id);
   let variant = null;
@@ -1985,6 +2023,7 @@ function addToCart(id){
     chosen = p.variants.find(v => v.name === variant);
     if(chosen && !chosen.available) return; // احتیاطی: این گزینه ناموجوده
   }
+  if(!p || !canAddOne(p, variant)){ if(p) openDrawer(); return; }
   const existing = cart.find(i=>i.id===id && i.variant===variant);
   if(existing){ existing.qty++; }
   else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
@@ -1994,6 +2033,10 @@ function addToCart(id){
 function changeQty(id, delta, variant){
   const item = cart.find(i=>i.id===id && i.variant===(variant || null));
   if(!item) return;
+  if(delta > 0){
+    const p = products.find(p => p.id === id) || item;
+    if(!canAddOne(p, item.variant)) return;
+  }
   item.qty += delta;
   if(item.qty<=0) cart = cart.filter(i=>i !== item);
   updateCart();
@@ -2005,7 +2048,9 @@ function updateCart(){
   if(cart.length===0){
     itemsEl.innerHTML = '<p class="drawer-empty">سبد خریدت هنوز خالیه</p>';
   } else {
-    itemsEl.innerHTML = cart.map(i=>`
+    itemsEl.innerHTML = cart.map(i=>{
+      const atLimit = i.qty >= lineLimit(products.find(p => p.id === i.id) || i, i.variant);
+      return `
       <div class="drawer-item">
         <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${i.imageUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;">` : icons[i.icon]}</div>
         <div class="drawer-item-info">
@@ -2014,11 +2059,12 @@ function updateCart(){
           <div class="qty-ctrl">
             <button onclick="changeQty(${i.id},-1,${i.variant ? `'${i.variant.replace(/'/g, "\\'")}'` : 'null'})">−</button>
             <span>${toFa(i.qty)}</span>
-            <button onclick="changeQty(${i.id},1,${i.variant ? `'${i.variant.replace(/'/g, "\\'")}'` : 'null'})">+</button>
+            <button onclick="changeQty(${i.id},1,${i.variant ? `'${i.variant.replace(/'/g, "\\'")}'` : 'null'})"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''}>+</button>
           </div>
+          ${atLimit ? '<div class="stock-limit-note">حداکثر موجودی</div>' : ''}
         </div>
       </div>
-    `).join('');
+    `;}).join('');
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('drawerTotal').textContent = toFa(total) + ' تومان';
@@ -2173,6 +2219,42 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.textContent = 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
     errorEl.classList.add('show');
     return;
+  }
+
+  // stock may have changed since the page loaded: check the live numbers and trim the cart
+  const btnCheck = document.getElementById('submitOrderBtn');
+  btnCheck.disabled = true;
+  const { data: fresh, error: freshErr } = await db.from('products').select('id, stock, variants').in('id', [...new Set(cart.map(i => i.id))]);
+  btnCheck.disabled = false;
+  if(!freshErr && fresh){
+    const byId = {};
+    fresh.forEach(f => { byId[f.id] = f; });
+    const notes = [];
+    const usedStock = {};
+    cart.forEach(item => {
+      const f = byId[item.id];
+      const local = products.find(p => p.id === item.id);
+      if(local && f){
+        local.stock = f.stock;
+        if(local.variants) local.variants.forEach(v => { const q = variantQtyFromText(f.variants, v.name); if(q !== null){ v.qty = q; v.available = q > 0; } });
+      }
+      let limit = f ? Math.max(0, (Number(f.stock) || 0) - (usedStock[item.id] || 0)) : 0;
+      const vq = f && item.variant ? variantQtyFromText(f.variants, item.variant) : null;
+      if(vq !== null) limit = Math.min(limit, Math.max(0, vq));
+      if(item.qty > limit){
+        notes.push(limit > 0 ? `«${item.name}${item.variant ? ' - ' + item.variant : ''}»: فقط ${toFa(limit)} عدد موجوده` : `«${item.name}${item.variant ? ' - ' + item.variant : ''}»: تموم شده`);
+        item.qty = limit;
+      }
+      usedStock[item.id] = (usedStock[item.id] || 0) + item.qty;
+    });
+    if(notes.length){
+      cart = cart.filter(i => i.qty > 0);
+      updateCart();
+      renderCheckoutSummary();
+      errorEl.textContent = 'موجودی بعضی محصولات تغییر کرده و سبدت اصلاح شد: ' + notes.join('، ') + '. اگه موافقی دوباره «ثبت سفارش» رو بزن.';
+      errorEl.classList.add('show');
+      return;
+    }
   }
 
   const discountAmount = getDiscountAmount();
