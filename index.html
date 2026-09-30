@@ -1121,6 +1121,10 @@
         <div class="form-field"><label>مقدار تخفیف</label><input type="number" id="couponValue"></div>
         <div class="form-field"><label>حداکثر تعداد استفاده (اختیاری)</label><input type="number" id="couponMaxUses" placeholder="بدون محدودیت"></div>
         <div class="form-field"><label>تاریخ انقضا (اختیاری)</label><input type="date" id="couponExpiry"></div>
+        <div class="form-field">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="couponOncePerCustomer" style="width:auto;"> هر مشتری فقط یک بار بتونه استفاده کنه</label>
+          <p style="font-size:12px;color:var(--coffee-70);margin:6px 0 0;line-height:1.9;">هر حساب و هر شماره موبایل فقط در یک سفارش می‌تونه از این کد استفاده کنه. همراه با «حداکثر تعداد استفاده» مثلاً ۲۰، یعنی فقط ۲۰ نفرِ اول و هر کدوم یک بار. اگه سفارشی لغو بشه، جای اون نفر آزاد می‌شه.</p>
+        </div>
         <p class="form-error" id="couponError"></p>
         <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="couponSaveBtn">ذخیره</button>
         <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="couponCancelBtn">انصراف</button>
@@ -2158,7 +2162,7 @@ document.getElementById('applyCouponBtn').addEventListener('click', async () => 
   const data = rows && rows[0];
   if(couponErr || !data || data.status !== 'ok'){
     appliedCoupon = null;
-    const why = { expired: 'این کد تخفیف منقضی شده.', used_up: 'ظرفیت استفاده از این کد تموم شده.' };
+    const why = { expired: 'این کد تخفیف منقضی شده.', used_up: 'ظرفیت استفاده از این کد تموم شده.', already_used: 'شما قبلاً از این کد تخفیف استفاده کردی؛ هر نفر فقط یک بار می‌تونه ازش استفاده کنه.' };
     msgEl.textContent = couponErr ? 'بررسی کد ممکن نشد، دوباره امتحان کن.' : (why[data && data.status] || 'این کد تخفیف معتبر نیست.');
     msgEl.className = 'coupon-msg err';
     renderCheckoutSummary();
@@ -2232,6 +2236,7 @@ function orderErrorMessage(error){
   const m = (error && error.message) || '';
   if(/HG_STOCK:/.test(m)) return `موجودی «${m.split('HG_STOCK:')[1].trim()}» کافی نیست. سبدت رو اصلاح کن و دوباره امتحان کن.`;
   if(/HG_GONE/.test(m)) return 'یکی از محصولات سبدت دیگه موجود نیست. سبد رو اصلاح کن.';
+  if(/HG_COUPON_USED/.test(m)) return 'شما قبلاً از این کد تخفیف استفاده کردی؛ هر نفر فقط یک بار می‌تونه ازش استفاده کنه. کد حذف شد.';
   if(/HG_COUPON/.test(m)) return 'کد تخفیف دیگه معتبر نیست؛ حذف شد. دوباره «ثبت سفارش» رو بزن.';
   if(/HG_BAD_PHONE/.test(m)) return 'شماره موبایل رو درست وارد کن (مثل ۰۹۱۲۳۴۵۶۷۸۹).';
   if(/HG_BLOCKED/.test(m)) return 'ثبت سفارش برای این حساب امکان‌پذیر نیست. لطفاً با فروشگاه تماس بگیر.';
@@ -3438,6 +3443,7 @@ document.getElementById('adminAddCouponBtn').addEventListener('click', () => {
   document.getElementById('couponValue').value = '';
   document.getElementById('couponMaxUses').value = '';
   document.getElementById('couponExpiry').value = '';
+  document.getElementById('couponOncePerCustomer').checked = false;
   document.getElementById('couponError').classList.remove('show');
   document.getElementById('adminCouponForm').style.display = 'block';
 });
@@ -3458,6 +3464,11 @@ document.getElementById('couponSaveBtn').addEventListener('click', async () => {
     errorEl.classList.add('show');
     return;
   }
+  if(maxUsesRaw && (!Number.isInteger(Number(maxUsesRaw)) || Number(maxUsesRaw) < 1)){
+    errorEl.textContent = 'حداکثر تعداد استفاده باید یک عدد صحیح بزرگ‌تر از صفر باشه.';
+    errorEl.classList.add('show');
+    return;
+  }
   if(discount_type === 'percent' && discount_value > 100){
     errorEl.textContent = 'تخفیف درصدی نمی‌تونه بیشتر از ۱۰۰ باشه.';
     errorEl.classList.add('show');
@@ -3474,6 +3485,7 @@ document.getElementById('couponSaveBtn').addEventListener('click', async () => {
     discount_value,
     max_uses: maxUsesRaw ? Number(maxUsesRaw) : null,
     expires_at: expiryRaw ? new Date(expiryRaw).toISOString() : null,
+    one_per_customer: document.getElementById('couponOncePerCustomer').checked,
   };
   const btn = document.getElementById('couponSaveBtn');
   btn.disabled = true;
@@ -3506,11 +3518,12 @@ async function loadAdminCoupons(){
     const expiryText = c.expires_at ? new Date(c.expires_at).toLocaleDateString('fa-IR') : 'بدون انقضا';
     return `<div class="coupon-row">
       <div>
-        <b>${escapeHtml(c.code)}</b> <span class="coupon-badge ${c.active ? 'active' : 'inactive'}">${c.active ? 'فعال' : 'غیرفعال'}</span>
+        <b>${escapeHtml(c.code)}</b> <span class="coupon-badge ${c.active ? 'active' : 'inactive'}">${c.active ? 'فعال' : 'غیرفعال'}</span>${c.one_per_customer ? ' <span class="coupon-badge active">هر مشتری یک بار</span>' : ''}
         <div><span>${valueText} · ${usesText} · انقضا: ${expiryText}</span></div>
       </div>
       <div class="admin-prod-actions">
         <button onclick="toggleCouponActive('${c.code}', ${!c.active})">${c.active ? 'غیرفعال کردن' : 'فعال کردن'}</button>
+        <button onclick="toggleCouponOnce('${c.code}', ${!c.one_per_customer})">${c.one_per_customer ? 'استفاده‌ی نامحدود برای هر مشتری' : 'فقط یک بار برای هر مشتری'}</button>
         <button onclick="deleteCoupon('${c.code}')">حذف</button>
       </div>
     </div>`;
@@ -3522,6 +3535,13 @@ async function toggleCouponActive(code, active){
   logAdminAction(active ? 'فعال کردن کد تخفیف' : 'غیرفعال کردن کد تخفیف', code);
   loadAdminCoupons();
   showToast(active ? 'کد تخفیف فعال شد' : 'کد تخفیف غیرفعال شد');
+}
+async function toggleCouponOnce(code, once){
+  const { error } = await db.from('coupons').update({ one_per_customer: once }).eq('code', code);
+  if(error){ console.error(error); showToast('انجام نشد، دوباره امتحان کن'); return; }
+  logAdminAction(once ? 'کد تخفیف: هر مشتری یک بار' : 'کد تخفیف: بدون محدودیت برای هر مشتری', code);
+  loadAdminCoupons();
+  showToast(once ? 'از این به بعد هر مشتری فقط یک بار می‌تونه از این کد استفاده کنه' : 'محدودیت یک بار برای هر مشتری برداشته شد');
 }
 async function deleteCoupon(code){
   if(!confirm('مطمئنی می‌خوای این کد تخفیف رو حذف کنی؟')) return;
