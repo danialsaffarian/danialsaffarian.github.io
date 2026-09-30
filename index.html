@@ -333,6 +333,9 @@
   .detail-visual svg{width:32%;}
   .detail-photo{width:100%;height:100%;object-fit:cover;display:block;min-height:0;min-width:0;}
   .detail-visual .img-nav{width:40px;height:40px;}
+  .card-photo,.detail-photo{transition:opacity .2s;}
+  .img-loading .card-photo,.img-loading .detail-photo{opacity:.55;}
+  .img-loading::after{content:"";position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;border:2.5px solid rgba(142,110,88,.25);border-top-color:var(--coffee);animation:adminSpin .8s linear infinite;z-index:3;pointer-events:none;}
   .detail-visual .img-nav svg{width:20px;height:20px;}
   .detail-cat{font-size:12.5px;color:var(--gold);font-weight:600;letter-spacing:0.5px;}
   .detail-name{font-size:24px;font-weight:700;color:var(--coffee);margin:6px 0 10px;}
@@ -1073,6 +1076,11 @@
         <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="adminProdSaveBtn">ذخیره</button>
         <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="adminProdCancelBtn">انصراف</button>
       </div>
+      <div class="admin-optimize" style="margin:0 0 18px;padding:14px;border:1px dashed var(--line);border-radius:6px;font-size:13px;color:var(--coffee-70);">
+        <p style="margin:0 0 10px;">عکس‌هایی که قبلاً آپلود شده‌اند خیلی حجیم‌اند و دیر باز می‌شوند. این دکمه یک بار همه را کوچک می‌کند (کیفیت روی صفحه تغییری نمی‌کند). تا تمام نشده این صفحه را نبندید.</p>
+        <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);margin:0;" id="adminOptimizeImagesBtn">کوچک کردن عکس‌های قبلی</button>
+        <p id="adminOptimizeStatus" style="margin:10px 0 0;"></p>
+      </div>
       <div id="adminProductsList"></div>
     </div>
 
@@ -1464,12 +1472,39 @@ function preloadProductImages(productId){
   if(p) preloadImages(p.images);
 }
 function swapImageSrc(img, url){
-  if(img.src === url) return;
+  if(img.getAttribute('src') === url) return;
+  img.dataset.want = url;
+  const box = img.parentElement;
   const loader = new Image();
-  loader.onload = () => { img.src = url; };
-  loader.onerror = () => { img.src = url; };
+  const done = () => {
+    if(img.dataset.want !== url) return; // a newer click already asked for another photo
+    img.src = url;
+    if(box) box.classList.remove('img-loading');
+  };
+  loader.onload = done;
+  loader.onerror = done;
   loader.src = url;
-  if(loader.complete) img.src = url;
+  if(loader.complete){ done(); return; }
+  if(box) box.classList.add('img-loading');
+}
+function preloadNextImage(images, idx){
+  if(images && images.length > 1) preloadImages([images[(idx + 1) % images.length]]);
+}
+// cards with several photos fetch their second photo as soon as they scroll into view
+const cardPreloadObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(!e.isIntersecting) return;
+    cardPreloadObserver.unobserve(e.target);
+    const p = products.find(p => p.id === Number(e.target.dataset.id));
+    if(p) preloadNextImage(p.images, 0);
+  });
+}, { rootMargin: '200px' }) : null;
+function observeCardPreloads(){
+  if(!cardPreloadObserver) return;
+  grid.querySelectorAll('.card-visual[id^="visual-"]').forEach(v => {
+    const card = v.closest('.card');
+    if(card) cardPreloadObserver.observe(card);
+  });
 }
 function setCardImage(productId, idx){
   const p = products.find(p => p.id === productId);
@@ -1477,6 +1512,7 @@ function setCardImage(productId, idx){
   cardImageIndex[productId] = idx;
   const img = document.getElementById('card-img-' + productId);
   if(img) swapImageSrc(img, p.images[idx]);
+  preloadNextImage(p.images, idx);
   const visual = document.getElementById('visual-' + productId);
   if(visual){
     visual.querySelectorAll('.img-dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
@@ -1672,6 +1708,7 @@ function setDetailImage(idx){
   detailImageIndex = idx;
   const img = document.getElementById('detailImg');
   if(img) swapImageSrc(img, currentDetailProduct.images[idx]);
+  preloadNextImage(currentDetailProduct.images, idx);
   const visual = document.getElementById('detailVisual');
   if(visual) visual.querySelectorAll('.img-dot').forEach((dot,i) => dot.classList.toggle('active', i===idx));
 }
@@ -1763,6 +1800,7 @@ function renderProducts(cat){
   const pageItems = filtered.slice(start, start + PAGE_SIZE);
 
   grid.innerHTML = pageItems.map(productCardHtml).join('');
+  observeCardPreloads();
   renderPagination(totalPages);
 }
 
@@ -2851,6 +2889,36 @@ function removeAdminProdImage(i){
 }
 document.getElementById('adminProdImage').addEventListener('input', renderAdminProdImagePreview);
 
+// phone photos are 3-7 MB; shrink to max 1600px JPEG (~200-400 KB) before they reach the site
+async function compressImageFile(file, maxSide = 1600, quality = 0.82){
+  try{
+    let src;
+    if(window.createImageBitmap){
+      src = await createImageBitmap(file);
+    } else {
+      src = await new Promise((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = URL.createObjectURL(file);
+      });
+    }
+    const scale = Math.min(1, maxSide / Math.max(src.width, src.height));
+    const w = Math.round(src.width * scale), h = Math.round(src.height * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(src, 0, 0, w, h);
+    if(src.close) src.close();
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', quality));
+    return blob && blob.size < file.size ? blob : null;
+  }catch(e){
+    return null; // e.g. a format the browser cannot decode: upload the original
+  }
+}
+
 async function handleAdminImageFiles(files){
   if(!files.length) return;
   const statusEl = document.getElementById('adminProdImageUploadStatus');
@@ -2858,9 +2926,13 @@ async function handleAdminImageFiles(files){
     const pendingId = Math.random().toString(36).slice(2);
     adminPendingUploads.push(pendingId);
     renderAdminProdImagePreview();
-    const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    statusEl.textContent = `در حال آماده‌سازی ${file.name}...`;
+    const small = await compressImageFile(file);
+    const ext = small ? 'jpg' : (file.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const { error } = await db.storage.from('image').upload(path, file, { cacheControl: '3600', upsert: false });
+    const { error } = await db.storage.from('image').upload(path, small || file, {
+      cacheControl: '31536000', upsert: false, contentType: small ? 'image/jpeg' : (file.type || undefined)
+    });
     adminPendingUploads = adminPendingUploads.filter(id => id !== pendingId);
     if(error){
       console.error('خطا در آپلود عکس:', error);
@@ -2896,6 +2968,61 @@ adminImgDropZone.addEventListener('drop', e => {
   const files = Array.from(e.dataTransfer.files || []).filter(f => f.type.startsWith('image/'));
   handleAdminImageFiles(files);
 });
+
+async function optimizeExistingProductImages(){
+  const btn = document.getElementById('adminOptimizeImagesBtn');
+  const statusEl = document.getElementById('adminOptimizeStatus');
+  btn.disabled = true;
+  statusEl.textContent = 'در حال خواندن محصولات...';
+  const { data, error } = await db.from('products').select('id, image_url');
+  if(error || !data){
+    statusEl.textContent = 'خواندن محصولات ناموفق بود.';
+    btn.disabled = false;
+    return;
+  }
+  const split = v => (v || '').split(/[,،]/).map(s => s.trim()).filter(Boolean);
+  const total = data.reduce((n, p) => n + split(p.image_url).length, 0);
+  let done = 0, shrunk = 0, failed = 0, savedBytes = 0;
+  for(const p of data){
+    const urls = split(p.image_url);
+    const out = [];
+    let changed = false;
+    for(const url of urls){
+      done++;
+      statusEl.textContent = `در حال کوچک کردن عکس ${toFa(done)} از ${toFa(total)}...`;
+      if(!url.includes('/storage/v1/object/public/image/')){ out.push(url); continue; }
+      try{
+        const res = await fetch(url, { cache: 'no-store' });
+        if(!res.ok) throw new Error('download ' + res.status);
+        const blob = await res.blob();
+        const small = blob.size > 600 * 1024 ? await compressImageFile(blob) : null;
+        if(!small){ out.push(url); continue; }
+        const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
+        const up = await db.storage.from('image').upload(path, small, { cacheControl: '31536000', upsert: false, contentType: 'image/jpeg' });
+        if(up.error) throw up.error;
+        out.push(db.storage.from('image').getPublicUrl(path).data.publicUrl);
+        savedBytes += blob.size - small.size;
+        shrunk++;
+        changed = true;
+      }catch(e){
+        console.error('بهینه‌سازی عکس ناموفق:', url, e);
+        failed++;
+        out.push(url);
+      }
+    }
+    if(changed){
+      const { error: upErr } = await db.from('products').update({ image_url: out.join(',') }).eq('id', p.id);
+      if(upErr){ console.error(upErr); failed++; }
+    }
+  }
+  const mb = (savedBytes / 1048576).toFixed(1);
+  statusEl.textContent = `تمام شد: ${toFa(shrunk)} عکس کوچک شد (${toFaDigits(mb)} مگابایت کمتر)` + (failed ? `، ${toFa(failed)} مورد ناموفق بود؛ دوباره بزنید.` : '.');
+  logAdminAction('کوچک کردن عکس‌ها', `${shrunk} عکس، ${mb} MB`);
+  btn.disabled = false;
+  loadAdminProducts();
+  fetchProducts();
+}
+document.getElementById('adminOptimizeImagesBtn').addEventListener('click', optimizeExistingProductImages);
 
 document.getElementById('adminAddProductBtn').addEventListener('click', () => {
   resetAdminProductForm();
