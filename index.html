@@ -1423,15 +1423,16 @@ function productCardHtml(p){
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
   const hasMultiImages = images.length > 1;
+  const shownIdx = hasMultiImages ? (cardImageIndex[p.id] || 0) % images.length : 0;
   return `
   <div class="card${soldOut?' soldout':''}" data-id="${p.id}">
-    <div class="card-visual" ${hasMultiImages ? `id="visual-${p.id}" onpointerenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
+    <div class="card-visual" ${hasMultiImages ? `data-visual="${p.id}" onpointerenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
       <div class="card-shine"></div>
       ${badge}
-      ${hasImages ? `<img src="${images[0]}" alt="${p.name}" class="card-photo" id="card-img-${p.id}">` : icons[p.icon]}
+      ${hasImages ? `<img src="${images[shownIdx]}" alt="${p.name}" class="card-photo" data-pid="${p.id}">` : icons[p.icon]}
       ${hasMultiImages ? `
         <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
-        <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===0?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
+        <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===shownIdx?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
       ` : ''}
     </div>
     <div class="card-body">
@@ -1501,7 +1502,7 @@ const cardPreloadObserver = 'IntersectionObserver' in window ? new IntersectionO
 }, { rootMargin: '200px' }) : null;
 function observeCardPreloads(){
   if(!cardPreloadObserver) return;
-  grid.querySelectorAll('.card-visual[id^="visual-"]').forEach(v => {
+  document.querySelectorAll('.card-visual[data-visual]').forEach(v => {
     const card = v.closest('.card');
     if(card) cardPreloadObserver.observe(card);
   });
@@ -1510,13 +1511,12 @@ function setCardImage(productId, idx){
   const p = products.find(p => p.id === productId);
   if(!p || !p.images || !p.images.length) return;
   cardImageIndex[productId] = idx;
-  const img = document.getElementById('card-img-' + productId);
-  if(img) swapImageSrc(img, p.images[idx]);
+  // the same product can be on the page several times (newest, on sale, all products): update every copy
+  document.querySelectorAll(`.card-photo[data-pid="${productId}"]`).forEach(img => swapImageSrc(img, p.images[idx]));
   preloadNextImage(p.images, idx);
-  const visual = document.getElementById('visual-' + productId);
-  if(visual){
+  document.querySelectorAll(`.card-visual[data-visual="${productId}"]`).forEach(visual => {
     visual.querySelectorAll('.img-dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
-  }
+  });
 }
 function changeCardImage(productId, dir){
   const p = products.find(p => p.id === productId);
@@ -1770,6 +1770,7 @@ const newestGrid = document.getElementById('newestGrid');
 function renderNewest(){
   const newest = [...products].sort((a,b) => b.id - a.id).slice(0, 4);
   newestGrid.innerHTML = newest.map(productCardHtml).join('');
+  observeCardPreloads();
 }
 
 const saleGrid = document.getElementById('saleGrid');
@@ -1782,6 +1783,7 @@ function renderSaleProducts(){
   }
   saleSection.style.display = 'block';
   saleGrid.innerHTML = onSaleProducts.map(productCardHtml).join('');
+  observeCardPreloads();
 }
 
 function sortProducts(list){
