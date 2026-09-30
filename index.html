@@ -1159,19 +1159,19 @@
     <div id="checkoutForm">
       <div class="form-field" id="custNameField">
         <label for="custName">نام و نام خانوادگی<span class="required-mark">*</span></label>
-        <input type="text" id="custName" placeholder="مثلاً سارا محمدی" required>
+        <input type="text" id="custName" placeholder="مثلاً سارا محمدی" maxlength="100" autocomplete="name" required>
       </div>
       <div class="form-field" id="custPhoneField">
         <label for="custPhone">شماره تماس<span class="required-mark">*</span></label>
-        <input type="tel" id="custPhone" placeholder="09xxxxxxxxx" required>
+        <input type="tel" id="custPhone" placeholder="09xxxxxxxxx" maxlength="15" inputmode="tel" autocomplete="tel" required>
       </div>
       <div class="form-field" id="custAddressField">
         <label for="custAddress">آدرس ارسال<span class="required-mark">*</span></label>
-        <textarea id="custAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی" required></textarea>
+        <textarea id="custAddress" rows="2" placeholder="شهر، آدرس کامل، کد پستی" maxlength="600" required></textarea>
       </div>
       <div class="form-field">
         <label for="custNote">یادداشت (اختیاری)</label>
-        <textarea id="custNote" rows="2" placeholder="مثلاً درخواست طرح دلخواه"></textarea>
+        <textarea id="custNote" rows="2" placeholder="مثلاً درخواست طرح دلخواه" maxlength="600"></textarea>
       </div>
       <div class="form-field">
         <label for="couponInput">کد تخفیف (اختیاری)</label>
@@ -1265,7 +1265,7 @@ async function fetchProducts(){
   if(error){
     console.error('خطا در خواندن محصولات از Supabase:', error);
     const detail = (error.message || '') + (error.details ? ' — ' + error.details : '') + (error.hint ? ' — ' + error.hint : '');
-    grid.innerHTML = `<p style="text-align:center;color:var(--coffee-70);grid-column:1/-1;">مشکلی در بارگذاری محصولات پیش آمد.<br><span style="font-size:12px;direction:ltr;display:inline-block;margin-top:8px;">${detail || JSON.stringify(error)}</span></p>`;
+    grid.innerHTML = `<p style="text-align:center;color:var(--coffee-70);grid-column:1/-1;">مشکلی در بارگذاری محصولات پیش آمد.<br><span style="font-size:12px;direction:ltr;display:inline-block;margin-top:8px;">${escapeHtml(detail || JSON.stringify(error))}</span></p>`;
     return;
   }
   products = data.map((p, i) => {
@@ -1358,7 +1358,7 @@ const icons = {
   anklet2:`<svg viewBox="0 0 100 100" fill="none" style="stroke:var(--coffee)" stroke-width="1.8"><path d="M15 40 Q50 72 85 40"/><circle cx="25" cy="49" r="4"/><circle cx="38" cy="60" r="4"/><circle cx="50" cy="64" r="4"/><circle cx="62" cy="60" r="4"/><circle cx="75" cy="49" r="4"/></svg>`,
 };
 
-const toFa = n => n.toLocaleString('fa-IR');
+const toFa = n => (Number(n) || 0).toLocaleString('fa-IR'); // an empty field must not break the page
 
 let toastTimer = null;
 function showToast(msg){
@@ -1380,6 +1380,7 @@ const grid = document.getElementById('productGrid');
 const paginationEl = document.getElementById('pagination');
 const PAGE_SIZE = 8;
 let currentSearch = '';
+const normFa = str => String(str || '').replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/\u200c/g, ' ').toLowerCase();
 let currentPage = 1;
 let currentSort = 'newest';
 
@@ -1430,7 +1431,7 @@ function productCardHtml(p){
   const priceHtmlStr = priceHtml(p, firstVariant, 'card-price');
   const variantSelect = hasVariants ? `
       <select class="variant-select" ${soldOut?'disabled':''} onchange="onVariantChange(${p.id}, this)">
-        ${p.variants.map(v => `<option value="${v.name}">${variantOptionLabel(v)}</option>`).join('')}
+        ${p.variants.map(v => `<option value="${escapeHtml(v.name)}">${escapeHtml(variantOptionLabel(v))}</option>`).join('')}
       </select>
       <p class="variant-status ${firstStatus.cls}" style="display:${firstStatus.text ? 'block' : 'none'};">${firstStatus.text}</p>` : '';
   const buyDisabled = soldOut || (hasVariants && !firstAvailable);
@@ -1443,15 +1444,15 @@ function productCardHtml(p){
     <div class="card-visual" ${hasMultiImages ? `data-visual="${p.id}" onpointerenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
       <div class="card-shine"></div>
       ${badge}
-      ${hasImages ? `<img src="${images[shownIdx]}" alt="${p.name}" class="card-photo" data-pid="${p.id}">` : icons[p.icon]}
+      ${hasImages ? `<img src="${escapeHtml(images[shownIdx])}" alt="${escapeHtml(p.name)}" class="card-photo" data-pid="${p.id}">` : icons[p.icon]}
       ${hasMultiImages ? `
         <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===shownIdx?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
       ` : ''}
     </div>
     <div class="card-body">
-      <span class="card-cat">${p.catLabel}</span>
-      <span class="card-name">${p.name}</span>
+      <span class="card-cat">${escapeHtml(p.catLabel)}</span>
+      <span class="card-name">${escapeHtml(p.name)}</span>
       ${priceHtmlStr}
       ${variantSelect}
       <button class="buy-btn" onclick="addToCart(${p.id}, this)" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
@@ -1574,7 +1575,7 @@ function renderProductDetail(){
   const priceHtmlStr = priceHtml(p, firstVariant, 'detail-price', 'detail-price-el');
   const variantSelect = hasVariants ? `
       <select class="variant-select" id="detail-variant-select" ${soldOut?'disabled':''} onchange="onDetailVariantChange()">
-        ${p.variants.map(v => `<option value="${v.name}">${variantOptionLabel(v)}</option>`).join('')}
+        ${p.variants.map(v => `<option value="${escapeHtml(v.name)}">${escapeHtml(variantOptionLabel(v))}</option>`).join('')}
       </select>
       <p class="variant-status ${firstStatus.cls}" id="detail-variant-status" style="display:${firstStatus.text ? 'block' : 'none'};">${firstStatus.text}</p>` : '';
   const buyDisabled = soldOut || (hasVariants && !firstAvailable);
@@ -1582,18 +1583,18 @@ function renderProductDetail(){
   document.getElementById('productBody').innerHTML = `
     <div class="detail-visual" id="detailVisual">
       ${badge}
-      ${hasImages ? `<img src="${images[detailImageIndex]}" alt="${p.name}" class="detail-photo" id="detailImg">` : icons[p.icon]}
+      ${hasImages ? `<img src="${escapeHtml(images[detailImageIndex])}" alt="${escapeHtml(p.name)}" class="detail-photo" id="detailImg">` : icons[p.icon]}
       ${hasMultiImages ? `
         <button class="img-nav right" onclick="changeDetailImage(1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===detailImageIndex?' active':''}" onclick="setDetailImage(${i})"></span>`).join('')}</div>
       ` : ''}
     </div>
-    <span class="detail-cat">${p.catLabel}</span>
-    <div class="detail-name">${p.name}</div>
+    <span class="detail-cat">${escapeHtml(p.catLabel)}</span>
+    <div class="detail-name">${escapeHtml(p.name)}</div>
     ${priceHtmlStr}
     ${variantSelect}
     <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
-    ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${p.description}</div>` : ''}
+    ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${escapeHtml(p.description)}</div>` : ''}
     <div class="reviews-section">
       <div class="detail-desc-title">نظر خریداران</div>
       <div id="reviewsSummary" class="reviews-summary"></div>
@@ -1670,7 +1671,7 @@ async function loadProductReviews(productId){
   formWrapEl.innerHTML = `
     <div class="review-form">
       <div class="review-star-picker" id="reviewStarPicker"></div>
-      <textarea id="reviewCommentInput" rows="3" placeholder="نظرت رو درباره‌ی این محصول بنویس..."></textarea>
+      <textarea id="reviewCommentInput" rows="3" maxlength="1000" placeholder="نظرت رو درباره‌ی این محصول بنویس..."></textarea>
       <p class="form-error" id="reviewFormError"></p>
       <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" onclick="submitReview(${productId})">ثبت نظر</button>
     </div>
@@ -1811,7 +1812,7 @@ function sortProducts(list){
 }
 function renderProducts(cat){
   const normedCat = normCat(cat);
-  const filtered = sortProducts(products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || p.name.includes(currentSearch))));
+  const filtered = sortProducts(products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || normFa(p.name).includes(normFa(currentSearch)))));
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   if(currentPage > totalPages) currentPage = totalPages;
   const start = (currentPage - 1) * PAGE_SIZE;
@@ -1920,7 +1921,7 @@ function isCategoryFocused(){
 }
 function updateCategoryBanner(cat){
   const normedCat = normCat(cat);
-  const count = products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || p.name.includes(currentSearch))).length;
+  const count = products.filter(p => (normedCat==='all' || p.cat===normedCat) && (!currentSearch || normFa(p.name).includes(normFa(currentSearch)))).length;
   const btn = document.querySelector(`.filter-btn[data-cat="${cat}"]`);
   document.getElementById('cfbCount').textContent = toFa(count);
   document.getElementById('cfbName').textContent = btn ? btn.textContent : '';
@@ -2055,6 +2056,10 @@ function changeQty(id, delta, variant){
   if(item.qty<=0) cart = cart.filter(i=>i !== item);
   updateCart();
 }
+function changeQtyAt(idx, delta){
+  const item = cart[idx];
+  if(item) changeQty(item.id, delta, item.variant);
+}
 function updateCart(){
   const count = cart.reduce((s,i)=>s+i.qty,0);
   document.getElementById('cartCount').textContent = toFa(count);
@@ -2062,18 +2067,18 @@ function updateCart(){
   if(cart.length===0){
     itemsEl.innerHTML = '<p class="drawer-empty">سبد خریدت هنوز خالیه</p>';
   } else {
-    itemsEl.innerHTML = cart.map(i=>{
+    itemsEl.innerHTML = cart.map((i, idx)=>{
       const atLimit = i.qty >= lineLimit(products.find(p => p.id === i.id) || i, i.variant);
       return `
       <div class="drawer-item">
-        <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${i.imageUrl}" alt="${i.name}" style="width:100%;height:100%;object-fit:cover;">` : icons[i.icon]}</div>
+        <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${escapeHtml(i.imageUrl)}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;">` : icons[i.icon]}</div>
         <div class="drawer-item-info">
-          <div class="name">${i.name}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${i.variant})</span>` : ''}</div>
+          <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
           <div class="price">${toFa(i.price)} تومان</div>
           <div class="qty-ctrl">
-            <button onclick="changeQty(${i.id},-1,${i.variant ? `'${i.variant.replace(/'/g, "\\'")}'` : 'null'})">−</button>
+            <button onclick="changeQtyAt(${idx},-1)">−</button>
             <span>${toFa(i.qty)}</span>
-            <button onclick="changeQty(${i.id},1,${i.variant ? `'${i.variant.replace(/'/g, "\\'")}'` : 'null'})"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''}>+</button>
+            <button onclick="changeQtyAt(${idx},1)"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''}>+</button>
           </div>
           ${atLimit ? '<div class="stock-limit-note">حداکثر موجودی</div>' : ''}
         </div>
@@ -2117,7 +2122,7 @@ function renderCheckoutSummary(){
   const total = subtotal - discount;
   let html = cart.map(i => `
     <div class="checkout-summary-item">
-      <span>${i.name}${i.variant ? ` <span style="color:var(--gold);">(${i.variant})</span>` : ''} × ${toFa(i.qty)}</span>
+      <span>${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);">(${escapeHtml(i.variant)})</span>` : ''} × ${toFa(i.qty)}</span>
       <span>${toFa(i.price * i.qty)} تومان</span>
     </div>
   `).join('');
@@ -2143,24 +2148,12 @@ document.getElementById('applyCouponBtn').addEventListener('click', async () => 
     return;
   }
   const code = codeRaw.toUpperCase();
-  const { data } = await db.from('coupons').select('*').eq('code', code).eq('active', true).maybeSingle();
-  if(!data){
+  const { data: rows, error: couponErr } = await db.rpc('check_coupon', { p_code: code });
+  const data = rows && rows[0];
+  if(couponErr || !data || data.status !== 'ok'){
     appliedCoupon = null;
-    msgEl.textContent = 'این کد تخفیف معتبر نیست.';
-    msgEl.className = 'coupon-msg err';
-    renderCheckoutSummary();
-    return;
-  }
-  if(data.expires_at && new Date(data.expires_at) < new Date()){
-    appliedCoupon = null;
-    msgEl.textContent = 'این کد تخفیف منقضی شده.';
-    msgEl.className = 'coupon-msg err';
-    renderCheckoutSummary();
-    return;
-  }
-  if(data.max_uses !== null && data.used_count >= data.max_uses){
-    appliedCoupon = null;
-    msgEl.textContent = 'ظرفیت استفاده از این کد تموم شده.';
+    const why = { expired: 'این کد تخفیف منقضی شده.', used_up: 'ظرفیت استفاده از این کد تموم شده.' };
+    msgEl.textContent = couponErr ? 'بررسی کد ممکن نشد، دوباره امتحان کن.' : (why[data && data.status] || 'این کد تخفیف معتبر نیست.');
     msgEl.className = 'coupon-msg err';
     renderCheckoutSummary();
     return;
@@ -2201,9 +2194,23 @@ document.getElementById('checkoutBackBtn').addEventListener('click', () => { clo
 document.getElementById('backToShopBtn').addEventListener('click', closeCheckoutPage);
 
 // ثبت سفارش مستقیم داخل سایت (بدون نیاز به اینستاگرام)
-function generateTrackingCode(){
-  // فقط عدد، چون پترن پیامک فراز فقط مقدار عددی برای کد پیگیری قبول می‌کنه
-  return String(Math.floor(100000 + Math.random() * 900000));
+function normalizeIranMobile(v){
+  let d = String(v || '').replace(/[۰-۹]/g, c => '۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g, c => '٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/\D/g, '');
+  if(/^00989\d{9}$/.test(d)) d = '0' + d.slice(4);
+  else if(/^989\d{9}$/.test(d)) d = '0' + d.slice(2);
+  else if(/^9\d{9}$/.test(d)) d = '0' + d;
+  return /^09\d{9}$/.test(d) ? d : null;
+}
+function orderErrorMessage(error){
+  const m = (error && error.message) || '';
+  if(/HG_STOCK:/.test(m)) return `موجودی «${m.split('HG_STOCK:')[1].trim()}» کافی نیست. سبدت رو اصلاح کن و دوباره امتحان کن.`;
+  if(/HG_GONE/.test(m)) return 'یکی از محصولات سبدت دیگه موجود نیست. سبد رو اصلاح کن.';
+  if(/HG_COUPON/.test(m)) return 'کد تخفیف دیگه معتبر نیست؛ حذف شد. دوباره «ثبت سفارش» رو بزن.';
+  if(/HG_BAD_PHONE/.test(m)) return 'شماره موبایل رو درست وارد کن (مثل ۰۹۱۲۳۴۵۶۷۸۹).';
+  if(/HG_BLOCKED/.test(m)) return 'ثبت سفارش برای این حساب امکان‌پذیر نیست. لطفاً با فروشگاه تماس بگیر.';
+  if(/HG_TOO_MANY/.test(m)) return 'از این شماره چند سفارش پشت سر هم ثبت شده. چند دقیقه دیگه دوباره امتحان کن.';
+  if(/HG_REQUIRED/.test(m)) return 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
+  return 'مشکلی پیش اومد، لطفاً دوباره امتحان کن.';
 }
 
 document.getElementById('submitOrderBtn').addEventListener('click', async () => {
@@ -2231,6 +2238,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 
   if(!name || !phone || !address){
     errorEl.textContent = 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
+    errorEl.classList.add('show');
+    return;
+  }
+  if(!normalizeIranMobile(phone)){
+    document.getElementById('custPhoneField').classList.add('invalid');
+    errorEl.textContent = 'شماره موبایل رو درست وارد کن (مثل ۰۹۱۲۳۴۵۶۷۸۹).';
     errorEl.classList.add('show');
     return;
   }
@@ -2271,27 +2284,18 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     }
   }
 
-  const discountAmount = getDiscountAmount();
-  const total = getCartSubtotal() - discountAmount;
-  const items = cart.map(i => ({ id:i.id, name:i.name, qty:i.qty, price:i.price, variant:i.variant || null }));
-  const trackingCode = generateTrackingCode();
+  // prices, discount and total are decided by the server (place_order); the browser only sends what was picked
+  const shownTotal = getCartSubtotal() - getDiscountAmount();
+  const items = cart.map(i => ({ id:i.id, qty:i.qty, variant:i.variant || null }));
   const couponCode = appliedCoupon ? appliedCoupon.code : null;
 
   const btn = document.getElementById('submitOrderBtn');
   btn.disabled = true;
   btn.textContent = 'در حال ثبت...';
 
-  const { error } = await db.from('orders').insert([{
-    items, total,
-    customer_name: name,
-    customer_phone: phone,
-    customer_address: address,
-    customer_note: note || null,
-    user_id: currentUser ? currentUser.id : null,
-    tracking_code: trackingCode,
-    coupon_code: couponCode,
-    discount_amount: discountAmount,
-  }]);
+  const { data: placed, error } = await db.rpc('place_order', {
+    p_items: items, p_name: name, p_phone: phone, p_address: address, p_note: note || null, p_coupon: couponCode,
+  });
 
   if(!error && currentUser){
     await db.from('profiles').upsert({
@@ -2307,19 +2311,17 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   btn.disabled = false;
   btn.textContent = 'ثبت سفارش';
 
-  if(error){
+  if(error || !placed){
     console.error('خطا در ثبت سفارش:', error);
-    errorEl.textContent = 'مشکلی پیش اومد، لطفاً دوباره امتحان کن.';
+    errorEl.textContent = orderErrorMessage(error);
     errorEl.classList.add('show');
+    if(error && /HG_COUPON/.test(error.message || '')){ resetCouponState(); renderCheckoutSummary(); }
     return;
   }
+  const trackingCode = placed.tracking_code;
 
-  if(couponCode){
-    db.rpc('increment_coupon_usage', { p_code: couponCode }).catch(() => {});
-  }
-
-  // اطلاع‌رسانی پیامکی به مالک فروشگاه و تاییدیه به مشتری (اگه به هر دلیلی پیامک نره، مشکلی برای ثبت سفارش مشتری پیش نمیاد)
-  db.functions.invoke('notify-order', { body: { customerName: name, customerPhone: phone, total, trackingCode } }).catch(() => {});
+  // اطلاع‌رسانی پیامکی به مالک فروشگاه و تاییدیه به مشتری؛ سرور اطلاعات رو خودش از روی کد پیگیری می‌خونه
+  db.functions.invoke('notify-order', { body: { trackingCode } }).catch(() => {});
 
   cart = [];
   resetCouponState();
@@ -2327,7 +2329,9 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   document.getElementById('checkoutForm').style.display = 'none';
   document.getElementById('checkoutSummary').style.display = 'none';
   document.getElementById('orderSuccess').style.display = 'block';
-  document.getElementById('orderTrackingCodeText').textContent = 'کد پیگیری سفارش شما: ' + trackingCode;
+  document.getElementById('orderTrackingCodeText').textContent = 'کد پیگیری سفارش شما: ' + trackingCode
+    + (Number(placed.total) !== shownTotal ? ` · مبلغ نهایی: ${toFa(Number(placed.total))} تومان` : '');
+  fetchProducts(); // stock changed
   document.getElementById('custName').value = '';
   document.getElementById('custPhone').value = '';
   document.getElementById('custAddress').value = '';
@@ -2623,13 +2627,13 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
   }
   myOrdersCache = data;
   listEl.innerHTML = data.map(o => {
-    const itemsText = (o.items || []).map(i => `${i.name}${i.variant ? ` (${i.variant})` : ''} × ${i.qty}`).join('، ');
+    const itemsText = (o.items || []).map(i => `${escapeHtml(i.name)}${i.variant ? ` (${escapeHtml(i.variant)})` : ''} × ${toFa(Number(i.qty) || 0)}`).join('، ');
     const date = new Date(o.created_at).toLocaleDateString('fa-IR');
     return `<div class="order-item" onclick="openOrderDetail(${o.id})" style="cursor:pointer;">
       <div class="oi-top"><span>${toFa(o.total)} تومان</span><span>${date}</span></div>
       <div class="oi-items">${itemsText}</div>
       ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
-      <span class="oi-status">${o.status || 'جدید'}</span>
+      <span class="oi-status">${escapeHtml(o.status || 'جدید')}</span>
     </div>`;
   }).join('');
 });
@@ -2951,7 +2955,7 @@ async function loadAdminProducts(){
   listEl.innerHTML = data.map(p => `
     <div class="admin-prod-row">
       <div>
-        <b>${p.name}</b> — <span>${p.category_label || p.category} · ${toFa(p.price)} تومان · موجودی: ${toFa(p.stock)}</span>
+        <b>${escapeHtml(p.name)}</b> — <span>${escapeHtml(p.category_label || p.category)} · ${toFa(p.price)} تومان · موجودی: ${toFa(p.stock)}</span>
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
@@ -2990,7 +2994,7 @@ function renderAdminProdImagePreview(){
   const imgs = getAdminProdImages();
   const doneHtml = imgs.map((url, i) => `
     <div class="admin-img-thumb">
-      <img src="${url}" loading="lazy">
+      <img src="${escapeHtml(url)}" loading="lazy">
       <button type="button" onclick="removeAdminProdImage(${i})">×</button>
     </div>
   `).join('');
@@ -3226,7 +3230,8 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
 
 async function deleteAdminProduct(id){
   if(!confirm('مطمئنی می‌خوای این محصول رو حذف کنی؟')) return;
-  await db.from('products').delete().eq('id', id);
+  const { error } = await db.from('products').delete().eq('id', id);
+  if(error){ console.error(error); showToast('حذف محصول ناموفق بود'); return; }
   logAdminAction('حذف محصول', `شناسه #${id}`);
   loadAdminProducts();
   fetchProducts();
@@ -3262,7 +3267,8 @@ async function loadAdminReviews(){
 }
 
 async function approveAdminReview(id){
-  await db.from('reviews').update({ approved: true }).eq('id', id);
+  const { error } = await db.from('reviews').update({ approved: true }).eq('id', id);
+  if(error){ console.error(error); showToast('تایید نظر ناموفق بود'); return; }
   logAdminAction('تایید نظر', `شناسه #${id}`);
   loadAdminReviews();
   loadTestimonials();
@@ -3271,7 +3277,8 @@ async function approveAdminReview(id){
 
 async function deleteAdminReview(id){
   if(!confirm('مطمئنی می‌خوای این نظر رو حذف کنی؟')) return;
-  await db.from('reviews').delete().eq('id', id);
+  const { error } = await db.from('reviews').delete().eq('id', id);
+  if(error){ console.error(error); showToast('حذف نظر ناموفق بود'); return; }
   logAdminAction('حذف نظر', `شناسه #${id}`);
   loadAdminReviews();
   loadTestimonials();
@@ -3281,7 +3288,8 @@ async function deleteAdminReview(id){
 async function loadAdminStats(){
   const box = document.getElementById('adminStatsBox');
   box.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
-  const { data: orders } = await db.from('orders').select('total, created_at, items');
+  const { data: allOrders } = await db.from('orders').select('total, created_at, items, status');
+  const orders = (allOrders || []).filter(o => o.status !== 'لغو شده'); // cancelled orders are not sales
   const { data: stats } = await db.from('site_stats').select('visits').eq('id', 1).maybeSingle();
 
   const totalRevenue = (orders || []).reduce((s, o) => s + (o.total || 0), 0);
@@ -3376,7 +3384,8 @@ async function loadAdminCustomers(){
 }
 async function toggleBlockCustomer(userId, blocked){
   if(blocked && !confirm('مطمئنی می‌خوای این مشتری رو مسدود کنی؟ دیگه نمی‌تونه سفارش ثبت کنه.')) return;
-  await db.from('profiles').update({ blocked }).eq('id', userId);
+  const { error } = await db.from('profiles').update({ blocked }).eq('id', userId);
+  if(error){ console.error(error); showToast('انجام نشد، دوباره امتحان کن'); return; }
   logAdminAction(blocked ? 'مسدود کردن مشتری' : 'رفع مسدودی مشتری', `شناسه ${userId}`);
   loadAdminCustomers();
   showToast(blocked ? 'مشتری مسدود شد' : 'مسدودیت مشتری برداشته شد');
@@ -3417,6 +3426,11 @@ document.getElementById('couponSaveBtn').addEventListener('click', async () => {
 
   if(!code || !discount_value || discount_value <= 0){
     errorEl.textContent = 'کد و مقدار تخفیف الزامیه.';
+    errorEl.classList.add('show');
+    return;
+  }
+  if(discount_type === 'percent' && discount_value > 100){
+    errorEl.textContent = 'تخفیف درصدی نمی‌تونه بیشتر از ۱۰۰ باشه.';
     errorEl.classList.add('show');
     return;
   }
@@ -3474,14 +3488,16 @@ async function loadAdminCoupons(){
   }).join('');
 }
 async function toggleCouponActive(code, active){
-  await db.from('coupons').update({ active }).eq('code', code);
+  const { error } = await db.from('coupons').update({ active }).eq('code', code);
+  if(error){ console.error(error); showToast('انجام نشد، دوباره امتحان کن'); return; }
   logAdminAction(active ? 'فعال کردن کد تخفیف' : 'غیرفعال کردن کد تخفیف', code);
   loadAdminCoupons();
   showToast(active ? 'کد تخفیف فعال شد' : 'کد تخفیف غیرفعال شد');
 }
 async function deleteCoupon(code){
   if(!confirm('مطمئنی می‌خوای این کد تخفیف رو حذف کنی؟')) return;
-  await db.from('coupons').delete().eq('code', code);
+  const { error } = await db.from('coupons').delete().eq('code', code);
+  if(error){ console.error(error); showToast('حذف کد تخفیف ناموفق بود'); return; }
   logAdminAction('حذف کد تخفیف', code);
   loadAdminCoupons();
   showToast('کد تخفیف حذف شد');
