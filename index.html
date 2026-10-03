@@ -444,13 +444,6 @@
   .toast{position:fixed;bottom:24px;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.7;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
-  .ad-box{border:1px solid var(--line);padding:16px;margin-top:22px;font-size:13px;color:var(--coffee);}
-  .ad-box p{color:var(--coffee-70);line-height:1.9;margin:6px 0 12px;font-size:12.5px;}
-  .ad-row{display:flex;gap:10px;flex-wrap:wrap;}
-  .ad-row input,.ad-row select{flex:1 1 160px;min-width:0;font:inherit;font-size:13px;padding:9px 10px;border:1px solid var(--line);background:#fff;color:var(--coffee);}
-  .ad-out{display:flex;gap:10px;align-items:center;margin-top:10px;}
-  .ad-out code{flex:1;min-width:0;word-break:break-all;line-height:1.6;font-size:12.5px;padding:9px 10px;background:var(--tan);color:var(--coffee);}
-  .ad-out button{flex:none;font:inherit;font-size:12.5px;padding:9px 14px;border:1px solid var(--coffee);background:var(--coffee);color:#fff;cursor:pointer;}
   .ana-head{display:flex;justify-content:space-between;align-items:center;gap:10px;}
   .ana-head select{font:inherit;font-size:12.5px;padding:5px 8px;border:1px solid var(--line);background:#fff;color:var(--coffee);}
   .ana-totals{font-size:12.5px;color:var(--coffee-70);line-height:2;margin-bottom:10px;}
@@ -1191,21 +1184,10 @@
 
     <div id="adminTabStats" class="admin-tab-panel" style="display:none;">
       <div id="adminStatsBox"></div>
-      <div class="ad-box">
-        <b>ساخت لینک تبلیغ</b>
-        <p>برای هر تبلیغ یه اسم کوتاه انگلیسی بذار (مثلاً <span dir="ltr">story1</span> یا <span dir="ltr">page-fashion</span>) و لینکش رو تو همون تبلیغ بذار. بازدید و فروشِ هر لینک جدا شمرده می‌شه.</p>
-        <div class="ad-row">
-          <input id="adLinkName" maxlength="40" placeholder="اسم تبلیغ، مثلاً story1" dir="ltr">
-          <select id="adLinkProduct"><option value="">صفحه‌ی اصلی سایت</option></select>
-        </div>
-        <div class="ad-out"><code id="adLinkOut" dir="ltr">—</code><button type="button" id="adLinkCopy">کپی لینک</button></div>
-      </div>
-      <div class="stat-subtitle ana-head">بازدید و فروش هر تبلیغ
+      <div class="stat-subtitle ana-head">بازدید و فروش هر محصول
         <select id="anaDays"><option value="7">۷ روز اخیر</option><option value="30" selected>۳۰ روز اخیر</option><option value="0">از اول</option></select>
       </div>
       <div id="adminAnaTotals" class="ana-totals"></div>
-      <div id="adminSourcesBox"></div>
-      <div class="stat-subtitle">بازدید و فروش هر محصول</div>
       <div id="adminProductStatsBox"></div>
       <div class="stat-subtitle">فروش ۷ روز اخیر</div>
       <div id="adminSalesChart"></div>
@@ -1377,9 +1359,9 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
   },
 });
 
-/* ================= آمار و ردیابی تبلیغ‌ها =================
-   لینک تبلیغ: hanagalleryy.ir/?src=story1  (یا با utm_source)؛ منبع ۳۰ روز روی همین مرورگر می‌مونه
-   و سفارشی که بعداً ثبت بشه به همون تبلیغ نسبت داده می‌شه. هیچ اطلاعات شخصی‌ای ذخیره نمی‌شه. */
+/* ================= آمار بازدید محصولات =================
+   بازدید سایت، دیدن هر محصول و افزودن به سبد، یک بار در روز برای هر مرورگر شمرده می‌شه.
+   فقط یه شناسه‌ی تصادفی ذخیره می‌شه، هیچ اطلاعات شخصی‌ای نه. */
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function lsSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){} }
 const hgSession = (() => {
@@ -1390,31 +1372,12 @@ const hgSession = (() => {
   }
   return sid;
 })();
-(function captureAdSource(){
-  const q = new URLSearchParams(location.search);
-  let src = q.get('src') || q.get('utm_source');
-  if(q.get('utm_campaign') && q.get('utm_source')) src += '/' + q.get('utm_campaign');
-  if(src){
-    src = src.trim().replace(/[\u0000-\u001f<>"']/g, '').slice(0, 40);
-    if(src) lsSet('hg-src', JSON.stringify({ s: src, t: Date.now() }));
-    ['src', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].forEach(k => q.delete(k));
-    const rest = q.toString();
-    history.replaceState(null, '', location.pathname + (rest ? '?' + rest : '') + location.hash);
-  }
-})();
-function currentAdSource(){
-  try{
-    const v = JSON.parse(lsGet('hg-src') || 'null');
-    if(v && v.s && Date.now() - v.t < 30 * 864e5) return v.s;
-  }catch(e){}
-  return null;
-}
 const trackedOnce = new Set();
 function trackEvent(kind, productId){
   const key = kind + ':' + (productId || '');
   if(trackedOnce.has(key)) return;
   trackedOnce.add(key);
-  db.rpc('track_event', { p_kind: kind, p_product: productId || null, p_source: currentAdSource(), p_session: hgSession }).then(() => {}, () => {});
+  db.rpc('track_event', { p_kind: kind, p_product: productId || null, p_source: null, p_session: hgSession }).then(() => {}, () => {});
 }
 trackEvent('visit');
 
@@ -2691,8 +2654,6 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     return;
   }
   const trackingCode = placed.tracking_code;
-  const adSource = currentAdSource();
-  if(adSource) await db.rpc('set_order_source', { p_tracking: trackingCode, p_source: adSource }).then(() => {}, () => {});
   const totalNote = Number(placed.total) !== shownTotal ? ` مبلغ نهایی: ${toFa(Number(placed.total))} تومان.` : '';
   ['custName', 'custPhone', 'custAddress', 'custNote'].forEach(id => { document.getElementById(id).value = ''; });
 
@@ -3823,46 +3784,18 @@ async function deleteAdminReview(id){
   showToast('نظر حذف شد');
 }
 
-// ad links: hanagalleryy.ir/?src=<name>[#p<id>]
-function updateAdLink(){
-  const name = document.getElementById('adLinkName').value.trim().replace(/\s+/g, '-').replace(/[^\w\-\u0600-\u06FF]/g, '').slice(0, 40);
-  const pid = document.getElementById('adLinkProduct').value;
-  const out = document.getElementById('adLinkOut');
-  out.textContent = name ? `${location.origin}/?src=${encodeURIComponent(name)}${pid ? '#p' + pid : ''}` : '—';
-}
-function fillAdLinkProducts(){
-  const sel = document.getElementById('adLinkProduct');
-  const keep = sel.value;
-  sel.innerHTML = '<option value="">صفحه‌ی اصلی سایت</option>' + products.slice().sort((a, b) => b.id - a.id)
-    .map(p => `<option value="${p.id}">${escapeHtml(p.name)}</option>`).join('');
-  sel.value = keep;
-}
-document.getElementById('adLinkName').addEventListener('input', updateAdLink);
-document.getElementById('adLinkProduct').addEventListener('change', updateAdLink);
-document.getElementById('adLinkCopy').addEventListener('click', async () => {
-  const link = document.getElementById('adLinkOut').textContent;
-  if(link === '—'){ showToast('اول یه اسم برای تبلیغ بنویس'); return; }
-  try{ await navigator.clipboard.writeText(link); showToast('لینک کپی شد'); }catch(e){ showToast(link); }
-});
 document.getElementById('anaDays').addEventListener('change', loadAdminAnalytics);
 
 const pct = (a, b) => b > 0 ? toFaDigits((100 * a / b).toFixed(a / b < 0.1 ? 1 : 0)) + '٪' : '—';
 async function loadAdminAnalytics(){
-  fillAdLinkProducts();
   const days = Number(document.getElementById('anaDays').value);
   const totalsEl = document.getElementById('adminAnaTotals');
-  const srcEl = document.getElementById('adminSourcesBox');
   const prodEl = document.getElementById('adminProductStatsBox');
-  srcEl.innerHTML = prodEl.innerHTML = '<p class="ana-empty">در حال بارگذاری...</p>';
+  prodEl.innerHTML = '<p class="ana-empty">در حال بارگذاری...</p>';
   const { data, error } = await db.rpc('admin_analytics', { p_days: days });
-  if(error || !data){ srcEl.innerHTML = '<p class="ana-empty">آمار خوانده نشد.</p>'; prodEl.innerHTML = ''; return; }
+  if(error || !data){ prodEl.innerHTML = '<p class="ana-empty">آمار خوانده نشد.</p>'; return; }
   const t = data.totals || {};
   totalsEl.innerHTML = `<b>${toFa(t.visits)}</b> بازدیدکننده · <b>${toFa(t.viewers)}</b> نفر محصول دیدن · <b>${toFa(t.carts)}</b> نفر به سبد اضافه کردن · <b>${toFa(t.orders)}</b> سفارش · <b>${toFa(t.revenue)}</b> تومان فروش · نرخ خرید ${pct(t.orders, t.visits)}`;
-  const sources = data.sources || [];
-  srcEl.innerHTML = sources.length ? `<div class="ana-wrap"><table class="ana-table">
-    <tr><th>تبلیغ</th><th>بازدید</th><th>سفارش</th><th>فروش (تومان)</th><th>نرخ خرید</th></tr>
-    ${sources.map(r => `<tr><td>${r.source ? `<span dir="ltr">${escapeHtml(r.source)}</span>` : 'بدون لینک تبلیغ'}</td><td>${toFa(r.visits)}</td><td>${toFa(r.orders)}</td><td>${toFa(r.revenue)}</td><td>${pct(r.orders, r.visits)}</td></tr>`).join('')}
-  </table></div>` : '<p class="ana-empty">هنوز بازدیدی ثبت نشده. لینک تبلیغ بساز و تو تبلیغ‌هات بذار.</p>';
   const prods = data.products || [];
   prodEl.innerHTML = prods.length ? `<div class="ana-wrap"><table class="ana-table">
     <tr><th>محصول</th><th>دیده شده</th><th>افزودن به سبد</th><th>فروخته شده</th><th>نرخ خرید</th></tr>
