@@ -790,6 +790,53 @@
     .cfb-sort span{display:none;}
     .cfb-sort button{font-size:12px;padding:5px 6px;}
   }
+
+  /* cart drawer */
+  .drawer{box-shadow:0 0 40px rgba(46,32,22,.18);}
+  .drawer-head{padding:20px 22px;}
+  .drawer-head h3{font-family:'Vazirmatn',sans-serif;font-style:normal;direction:rtl;font-size:18px;font-weight:800;color:var(--coffee);display:flex;align-items:baseline;gap:8px;}
+  .drawer-count{font-size:12px;font-weight:600;color:var(--coffee-70);}
+  .drawer-close{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s;}
+  .drawer-close:hover{background:var(--tan);border-color:var(--tan);}
+  .drawer-close svg{width:16px;height:16px;fill:none;stroke:var(--coffee);stroke-width:1.8;stroke-linecap:round;}
+  .drawer-items{padding:6px 22px;gap:0;}
+  .drawer-item{align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);animation:fadeUp .3s ease;}
+  .drawer-item:last-child{border-bottom:0;}
+  .drawer-item .mini-visual{width:76px;height:92px;border-radius:4px;}
+  .drawer-item-info{min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .di-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .drawer-item-info .name{font-size:14px;font-weight:700;color:var(--coffee);line-height:1.6;}
+  .di-remove{flex:none;width:28px;height:28px;margin:-3px -4px 0 0;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--coffee-70);transition:background .2s,color .2s;}
+  .di-remove:hover{background:#F6E3E1;color:#8B3A3A;}
+  .di-remove svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .di-variant{align-self:flex-start;font-size:11.5px;font-weight:600;color:var(--gold);background:#F5ECDD;padding:2px 9px;border-radius:99px;}
+  .di-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:2px;}
+  .drawer-item-info .price{font-size:14px;font-weight:700;color:var(--coffee);font-variant-numeric:tabular-nums;}
+  .drawer-item-info .price small{font-size:11px;font-weight:500;color:var(--coffee-70);}
+  .drawer .qty-ctrl{margin:0;gap:0;border:1px solid var(--line);border-radius:99px;height:32px;padding:0 3px;}
+  .drawer .qty-ctrl button{width:26px;height:26px;border:0;border-radius:50%;font-size:15px;color:var(--coffee);display:flex;align-items:center;justify-content:center;transition:background .2s;}
+  .drawer .qty-ctrl button:hover{background:var(--tan);}
+  .drawer .qty-ctrl span{min-width:22px;text-align:center;font-size:13px;font-weight:700;}
+  .drawer-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;margin:0;padding:40px 10px;}
+  .drawer-empty svg{width:76px;height:76px;margin-bottom:6px;animation:emptyFloat 3.2s ease-in-out infinite;}
+  .drawer-empty .l{fill:none;stroke:var(--coffee);stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;}
+  .drawer-empty .g{fill:#C9A46A;}
+  .drawer-empty b{font-size:15.5px;color:var(--coffee);}
+  .drawer-empty span{font-size:13px;color:var(--coffee-70);line-height:1.9;max-width:240px;}
+  .drawer-empty button{margin-top:10px;font:inherit;font-size:13.5px;font-weight:700;padding:11px 26px;border:1px solid var(--coffee);color:var(--coffee);transition:background .2s,color .2s;}
+  .drawer-empty button:hover{background:var(--coffee);color:var(--cream);}
+  @keyframes emptyFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  .drawer-foot{padding:18px 22px calc(18px + env(safe-area-inset-bottom,0px));background:var(--cream);}
+  .drawer-total{align-items:baseline;font-size:14px;margin-bottom:12px;}
+  .drawer-total #drawerTotal{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;}
+  .drawer-foot .ship-fee-note{margin:0 0 14px;background:transparent;border:1px dashed var(--line);font-size:12px;color:var(--coffee-70);}
+  .drawer-cta{display:block;width:100%;padding:15px;background:var(--coffee);color:var(--cream);font:inherit;font-size:15px;font-weight:700;letter-spacing:.2px;transition:background .2s,transform .1s;}
+  .drawer-cta:hover{background:#7A5C47;}
+  .drawer-cta:active{transform:scale(.99);}
+  .drawer-cta:disabled{opacity:.45;cursor:not-allowed;}
+  .drawer-secure{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 0;font-size:11.5px;color:var(--coffee-70);}
+  .drawer-secure svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;}
+  @media(prefers-reduced-motion:reduce){.drawer-empty svg{animation:none;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1473,14 +1520,15 @@
 <div class="overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
-    <h3 class="brand-font">Cart</h3>
-    <button class="drawer-close" id="drawerClose">✕</button>
+    <h3>سبد خرید <span class="drawer-count" id="drawerCount"></span></h3>
+    <button class="drawer-close" id="drawerClose" aria-label="بستن سبد خرید"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <div class="drawer-items" id="drawerItems"></div>
   <div class="drawer-foot" id="drawerFoot">
     <div class="drawer-total"><span>جمع کل</span><span id="drawerTotal">۰ تومان</span></div>
-    <p class="ship-fee-note" style="margin:-8px 0 16px;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>
-    <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="proceedCheckoutBtn">تکمیل خرید</button>
+    <p class="ship-fee-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>
+    <button class="drawer-cta" id="proceedCheckoutBtn">تکمیل خرید</button>
+    <p class="drawer-secure"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>پرداخت امن از طریق درگاه زیبال</p>
   </div>
 </div>
 
@@ -2487,7 +2535,12 @@ function updateCart(){
   document.getElementById('cartCount').textContent = toFa(count);
   const itemsEl = document.getElementById('drawerItems');
   if(cart.length===0){
-    itemsEl.innerHTML = '<p class="drawer-empty">سبد خریدت هنوز خالیه</p>';
+    itemsEl.innerHTML = `<div class="drawer-empty">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path class="l" d="M14 22h36l-3 32H17z"/><path class="l" d="M24 22v-4a8 8 0 0 1 16 0v4"/><path class="g" d="M32 33c2.6 3.4 4.3 5.7 4.3 7.8 0 2.4-1.9 4.2-4.3 4.2s-4.3-1.8-4.3-4.2c0-2.1 1.7-4.4 4.3-7.8z"/></svg>
+      <b>سبد خریدت هنوز خالیه</b>
+      <span>یه سر به جدیدترین کارهای دست‌ساز حنا گالری بزن.</span>
+      <button type="button" onclick="closeDrawer(); document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });">مشاهده‌ی محصولات</button>
+    </div>`;
   } else {
     itemsEl.innerHTML = cart.map((i, idx)=>{
       const atLimit = i.qty >= lineLimit(products.find(p => p.id === i.id) || i, i.variant);
@@ -2495,12 +2548,18 @@ function updateCart(){
       <div class="drawer-item">
         <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${escapeHtml(thumbUrl(i.imageUrl))}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="thumbFallback(this)">` : icons[i.icon]}</div>
         <div class="drawer-item-info">
-          <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
-          <div class="price">${toFa(i.price)} تومان</div>
-          <div class="qty-ctrl">
-            <button onclick="changeQtyAt(${idx},-1)">−</button>
-            <span>${toFa(i.qty)}</span>
-            <button onclick="changeQtyAt(${idx},1)"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''}>+</button>
+          <div class="di-top">
+            <div class="name">${escapeHtml(i.name)}</div>
+            <button class="di-remove" onclick="changeQtyAt(${idx},-${i.qty})" aria-label="حذف ${escapeHtml(i.name)} از سبد"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button>
+          </div>
+          ${i.variant ? `<span class="di-variant">${escapeHtml(i.variant)}</span>` : ''}
+          <div class="di-bottom">
+            <div class="qty-ctrl">
+              <button onclick="changeQtyAt(${idx},-1)" aria-label="کم کردن">−</button>
+              <span>${toFa(i.qty)}</span>
+              <button onclick="changeQtyAt(${idx},1)"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''} aria-label="اضافه کردن">+</button>
+            </div>
+            <div class="price">${toFa(i.price * i.qty)} <small>تومان</small></div>
           </div>
           ${atLimit ? '<div class="stock-limit-note">حداکثر موجودی</div>' : ''}
         </div>
@@ -2509,6 +2568,8 @@ function updateCart(){
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
   document.getElementById('drawerTotal').textContent = toFa(total) + ' تومان';
+  document.getElementById('drawerCount').textContent = count ? toFa(count) + ' محصول' : '';
+  document.getElementById('drawerFoot').hidden = cart.length === 0;
   const proceedBtn = document.getElementById('proceedCheckoutBtn');
   proceedBtn.disabled = cart.length === 0;
   proceedBtn.textContent = currentUser ? 'تکمیل خرید' : 'ورود و تکمیل خرید';
