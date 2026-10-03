@@ -909,6 +909,65 @@
     .hero-mark *,.header-top .bl-word,.header-top .bl-div i,.header-top .bl-div svg,.header-top .bl-tag,.filter-row.pop-row .filter-btn,.filter-btn:hover .cat-art,.wish-btn.burst svg,.wish-btn.burst::after{animation:none!important;opacity:1;transform:none;}
     .hero-mark .hm-chain{stroke-dashoffset:0;}
   }
+
+  /* ---------- product page ---------- */
+  .pdp .product-head{padding:12px 16px;gap:10px;background:rgba(251,248,243,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .pdp .product-back,.pd-icon{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--cream-soft);display:flex;align-items:center;justify-content:center;padding:0;color:var(--coffee);cursor:pointer;transition:background .2s,border-color .2s,transform .1s;}
+  .pdp .product-back:hover,.pd-icon:hover{background:var(--tan);border-color:var(--tan);}
+  .pdp .product-back:active,.pd-icon:active{transform:scale(.94);}
+  .pdp .product-back svg,.pd-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .pdp .product-head h3.pd-head-title{flex:1;min-width:0;font-family:'Vazirmatn',sans-serif;font-style:normal;font-size:14.5px;font-weight:700;color:var(--coffee);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .pd-head-actions{display:flex;gap:8px;}
+  .pd-heart.active svg{fill:#8B3A3A;stroke:#8B3A3A;}
+  .pd-heart{position:relative;}
+  .pd-heart.burst svg{animation:heartPop .55s cubic-bezier(.3,1.6,.5,1);}
+  .pd-heart.burst::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid #C9A46A;animation:heartRing .6s ease-out forwards;pointer-events:none;}
+  .pdp .product-body{max-width:560px;padding:16px 16px 40px;}
+  .pd-gallery{margin-bottom:22px;}
+  .pdp .detail-visual{aspect-ratio:4/5;margin:0;border-radius:2px;touch-action:pan-y;}
+  .pdp .detail-cat:empty{display:none;}
+  .pd-counter{direction:ltr;unicode-bidi:isolate;position:absolute;left:12px;bottom:12px;z-index:2;font-size:11.5px;font-weight:700;color:var(--coffee);background:rgba(251,248,243,.92);padding:3px 10px;border-radius:99px;font-variant-numeric:tabular-nums;}
+  .pd-thumbs{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none;}
+  .pd-thumbs::-webkit-scrollbar{display:none;}
+  .pd-thumb{flex:none;width:62px;height:62px;padding:0;border:1.5px solid transparent;opacity:.6;transition:opacity .2s,border-color .2s;background:var(--tan);overflow:hidden;cursor:pointer;}
+  .pd-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .pd-thumb.on{border-color:var(--coffee);opacity:1;}
+  .pdp .detail-cat{display:inline-block;font-size:11.5px;font-weight:700;color:var(--gold);background:#F5ECDD;padding:3px 11px;border-radius:99px;letter-spacing:0;}
+  .pdp .detail-name{font-size:23px;font-weight:800;line-height:1.5;margin:10px 0 8px;}
+  .pd-price-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;margin-bottom:6px;}
+  .pdp .detail-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin:0;font-size:21px;font-weight:800;color:var(--coffee);font-variant-numeric:tabular-nums;}
+  .pdp .detail-price .price-sale{order:-1;font-size:21px;}
+  .pdp .detail-price .price-old{margin:0;font-size:14px;font-weight:400;}
+  .pd-off{font-size:11.5px;font-weight:700;color:#fff;background:#8B3A3A;padding:3px 9px;}
+  .pd-stock{font-size:12.5px;color:#8B3A3A;margin:4px 0 0;}
+  .pd-variants{margin:18px 0 4px;}
+  .pd-label{font-size:12.5px;font-weight:700;color:var(--coffee);margin-bottom:8px;}
+  .pd-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .pd-chip{font:inherit;font-size:13px;font-weight:600;padding:8px 16px;border:1px solid var(--line);background:#fff;color:var(--coffee);cursor:pointer;transition:border-color .2s,background .2s,color .2s;}
+  .pd-chip:hover{border-color:var(--gold);}
+  .pd-chip.on{border-color:var(--coffee);background:var(--coffee);color:var(--cream);}
+  .pd-chip.off{color:var(--coffee-70);text-decoration:line-through;opacity:.6;}
+  .pd-hidden-select .variant-select{display:none;}
+  .pd-hidden-select .variant-status{margin:8px 0 0;}
+  .pd-buybar{margin-top:18px;}
+  .pdp .pd-buy{display:block;width:100%;padding:16px;background:var(--coffee);color:var(--cream);border-color:var(--coffee);font-size:15px;font-weight:700;position:relative;overflow:hidden;}
+  .pdp .pd-buy:not(:disabled):hover{background:#7A5C47;color:var(--cream);}
+  .pdp .pd-buy:not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,240,214,.28),transparent);transform:skewX(-18deg);animation:ctaGloss 4.5s ease-in-out 1.2s infinite;}
+  @media(max-width:899px){.pd-buybar{position:sticky;bottom:0;z-index:3;margin:18px -16px 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:linear-gradient(to top,var(--cream-soft) 75%,rgba(251,248,243,0));}}
+  .pd-trust{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 0;padding:14px 0;border-block:1px solid var(--line);}
+  .pd-trust li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;font-size:12px;font-weight:700;color:var(--coffee);line-height:1.5;}
+  .pd-trust svg{width:22px;height:22px;fill:none;stroke:var(--gold);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .pd-trust small{display:block;font-size:10.5px;font-weight:500;color:var(--coffee-70);}
+  .pdp .detail-desc{margin:20px 0 0;font-size:14px;}
+  .pdp .reviews-section{max-width:560px;}
+  .pdp .review-item{background:#fff;border-color:var(--line);}
+  @media(min-width:900px){
+    .pdp .product-body{max-width:1080px;padding:32px 32px 60px;}
+    .pd{display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:start;}
+    .pd-gallery{position:sticky;top:90px;margin:0;}
+    .pdp .detail-name{font-size:30px;}
+    .pdp .reviews-section{max-width:none;margin-top:48px;}
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -1675,10 +1734,11 @@
   </div>
 </div>
 
-<div class="product-page" id="productPage">
+<div class="product-page pdp" id="productPage">
   <div class="product-head">
-    <button class="product-back" id="productBackBtn">→</button>
-    <h3 class="brand-font">جزئیات محصول</h3>
+    <button class="product-back" id="productBackBtn" aria-label="بازگشت"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <h3 class="pd-head-title" id="pdHeadTitle"></h3>
+    <div class="pd-head-actions" id="pdHeadActions"></div>
   </div>
   <div class="product-body" id="productBody"></div>
 </div>
@@ -2075,7 +2135,8 @@ function renderProductDetail(){
   const lowStock = !soldOut && p.stock <= LOW_STOCK_THRESHOLD;
   const onSale = p.salePrice !== null && p.salePrice !== undefined;
   const discountPct = onSale ? Math.round((1 - p.salePrice / p.price) * 100) : 0;
-  const badge = detailBadgeHtml(p, soldOut, lowStock, onSale, discountPct);
+  // sale and low-stock live next to the price on this page, so the photo only carries «تازه» / «ناموجود»
+  const badge = detailBadgeHtml(p, soldOut, false, false, discountPct);
   const images = p.images && p.images.length > 0 ? p.images : [];
   const hasImages = images.length > 0;
   const hasMultiImages = images.length > 1;
@@ -2091,23 +2152,48 @@ function renderProductDetail(){
       <p class="variant-status ${firstStatus.cls}" id="detail-variant-status" style="display:${firstStatus.text ? 'block' : 'none'};">${firstStatus.text}</p>` : '';
   const buyDisabled = soldOut || (hasVariants && !firstAvailable);
 
+  const variantChips = hasVariants ? `<div class="pd-variants" role="radiogroup" aria-label="انتخاب مدل">
+      <div class="pd-label">انتخاب رنگ / مدل</div>
+      <div class="pd-chips">${p.variants.map((v, i) => `<button type="button" class="pd-chip${i === 0 ? ' on' : ''}${v.available ? '' : ' off'}" data-v="${escapeHtml(v.name)}" onclick="pickDetailVariant(this)">${escapeHtml(v.name)}</button>`).join('')}</div>
+    </div>` : '';
+  const wishActive = wishlistIds.has(p.id);
+  document.getElementById('pdHeadTitle').textContent = p.name;
+  document.getElementById('pdHeadActions').innerHTML = `
+    <button type="button" class="pd-icon" onclick="shareProduct(${p.id}, this)" aria-label="اشتراک‌گذاری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button>
+    <button type="button" class="pd-icon pd-heart${wishActive ? ' active' : ''}" id="pdHeart" onclick="pdToggleWish(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
+
   document.getElementById('productBody').innerHTML = `
-    <div class="detail-visual" id="detailVisual">
-      ${badge}
-      ${hasImages ? `<img src="${escapeHtml(images[detailImageIndex])}" alt="${escapeHtml(p.name)}" class="detail-photo" id="detailImg">` : icons[p.icon]}
-      ${hasMultiImages ? `
-        <button class="img-nav right" onclick="changeDetailImage(1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
-        <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===detailImageIndex?' active':''}" onclick="setDetailImage(${i})"></span>`).join('')}</div>
-      ` : ''}
+    <div class="pd">
+      <div class="pd-gallery">
+        <div class="detail-visual" id="detailVisual">
+          ${badge}
+          ${hasImages ? `<img src="${escapeHtml(images[detailImageIndex])}" alt="${escapeHtml(p.name)}" class="detail-photo" id="detailImg">` : icons[p.icon]}
+          ${hasMultiImages ? `
+            <button class="img-nav right" onclick="changeDetailImage(1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
+            <span class="pd-counter" id="pdCounter">${toFa(detailImageIndex + 1)} / ${toFa(images.length)}</span>
+          ` : ''}
+        </div>
+        ${hasMultiImages ? `<div class="pd-thumbs">${images.map((src, i) => `<button type="button" class="pd-thumb${i === detailImageIndex ? ' on' : ''}" onclick="setDetailImage(${i})" aria-label="عکس ${toFa(i + 1)}"><img src="${escapeHtml(thumbUrl(src))}" alt="" loading="lazy" onerror="thumbFallback(this)"></button>`).join('')}</div>` : ''}
+      </div>
+      <div class="pd-info">
+        <span class="detail-cat">${escapeHtml(p.catLabel)}</span>
+        <h1 class="detail-name">${escapeHtml(p.name)}</h1>
+        <div class="pd-price-row">${priceHtmlStr}${onSale && !soldOut ? `<span class="pd-off">${toFa(discountPct)}٪ تخفیف</span>` : ''}</div>
+        ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
+        ${lowStock ? `<p class="pd-stock">فقط ${toFa(p.stock)} عدد باقی مونده</p>` : ''}
+        ${variantChips}
+        <div class="pd-hidden-select">${variantSelect}</div>
+        <div class="pd-buybar">
+          <button class="buy-btn pd-buy" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
+        </div>
+        <ul class="pd-trust">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg><span>ساخت دست<small>تولید محدود</small></span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>ارسال به سراسر کشور<small>پس‌کرایه، درب منزل</small></span></li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><span>پرداخت امن<small>درگاه زیبال</small></span></li>
+        </ul>
+        ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${escapeHtml(p.description)}</div>` : ''}
+      </div>
     </div>
-    <span class="detail-cat">${escapeHtml(p.catLabel)}</span>
-    <div class="detail-name-row"><div class="detail-name">${escapeHtml(p.name)}</div><button type="button" class="share-btn" onclick="shareProduct(${p.id}, this)" aria-label="اشتراک‌گذاری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.3M8.3 13.2l7.4 4.3"/></svg>اشتراک‌گذاری</button></div>
-    ${priceHtmlStr}
-    ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
-    ${variantSelect}
-    <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
-    <p class="ship-fee-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>
-    ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${escapeHtml(p.description)}</div>` : ''}
     <div class="reviews-section">
       <div class="detail-desc-title">نظر خریداران</div>
       <div id="reviewsSummary" class="reviews-summary"></div>
@@ -2115,6 +2201,33 @@ function renderProductDetail(){
       <div id="reviewFormWrap" style="margin-top:16px;"></div>
     </div>
   `;
+  const vis = document.getElementById('detailVisual');
+  if(hasMultiImages && vis){
+    let x0 = null, y0 = null;
+    vis.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+    vis.addEventListener('touchend', e => {
+      if(x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) changeDetailImage(dx < 0 ? 1 : -1);
+      x0 = null;
+    });
+  }
+}
+function pickDetailVariant(btn){
+  const sel = document.getElementById('detail-variant-select');
+  if(!sel) return;
+  sel.value = btn.dataset.v;
+  document.querySelectorAll('.pd-chip').forEach(c => c.classList.toggle('on', c === btn));
+  onDetailVariantChange();
+}
+function pdToggleWish(id){
+  toggleWishlist(id);
+  const h = document.getElementById('pdHeart');
+  if(!h || !currentUser) return;
+  const on = wishlistIds.has(id);
+  h.classList.toggle('active', on);
+  h.classList.remove('burst');
+  if(on){ void h.offsetWidth; h.classList.add('burst'); }
 }
 
 function starsHtml(rating){
@@ -2265,6 +2378,9 @@ function setDetailImage(idx){
   preloadNextImage(currentDetailProduct.images, idx);
   const visual = document.getElementById('detailVisual');
   if(visual) visual.querySelectorAll('.img-dot').forEach((dot,i) => dot.classList.toggle('active', i===idx));
+  document.querySelectorAll('.pd-thumb').forEach((t, i) => t.classList.toggle('on', i === idx));
+  const counter = document.getElementById('pdCounter');
+  if(counter) counter.textContent = toFa(idx + 1) + ' / ' + toFa(currentDetailProduct.images.length);
 }
 function changeDetailImage(dir){
   if(!currentDetailProduct || !currentDetailProduct.images || currentDetailProduct.images.length < 2) return;
