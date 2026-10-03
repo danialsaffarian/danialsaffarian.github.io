@@ -1192,6 +1192,8 @@
         <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);margin:0;" id="adminOptimizeImagesBtn">کوچک کردن عکس‌های قبلی</button>
         <p id="adminOptimizeStatus" style="margin:10px 0 0;"></p>
       </div>
+      <input type="search" id="adminProductSearch" class="admin-order-search" placeholder="جستجوی محصول: اسم، رنگ یا مدل" autocomplete="off">
+      <div id="adminProductChips" class="admin-order-chips"></div>
       <div id="adminProductsList"></div>
     </div>
 
@@ -3467,12 +3469,39 @@ async function updateOrderStatus(orderId, status){
   showToast(status === 'لغو شده' ? 'سفارش لغو شد و موجودی‌اش به انبار برگشت' : 'وضعیت سفارش به‌روزرسانی شد');
 }
 
+let adminProductsCache = [];
+let adminProductCat = 'all';
 async function loadAdminProducts(){
   const listEl = document.getElementById('adminProductsList');
   listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
   const { data, error } = await db.from('products').select('*').order('id', { ascending: false });
   if(error || !data){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">مشکلی تو بارگذاری محصولات پیش اومد.</p>';
+    return;
+  }
+  adminProductsCache = data;
+  renderAdminProducts();
+}
+function setAdminProductCat(cat){ adminProductCat = cat; renderAdminProducts(); }
+// category chips (with counts) + search by name, colour or model
+function renderAdminProducts(){
+  const listEl = document.getElementById('adminProductsList');
+  const all = adminProductsCache;
+  const counts = {};
+  all.forEach(p => { counts[p.category] = (counts[p.category] || 0) + 1; });
+  const lowStock = all.filter(p => (Number(p.stock) || 0) <= 1).length;
+  const chips = [['all', 'همه', all.length], ...Object.keys(CAT_LABELS).filter(c => counts[c]).map(c => [c, CAT_LABELS[c], counts[c]]),
+    ...Object.keys(counts).filter(c => !CAT_LABELS[c]).map(c => [c, (all.find(p => p.category === c) || {}).category_label || c, counts[c]]),
+    ...(lowStock ? [['low', 'موجودی کم', lowStock]] : [])];
+  if(!chips.some(c => c[0] === adminProductCat)) adminProductCat = 'all';
+  document.getElementById('adminProductChips').innerHTML = chips.map(([key, label, n]) =>
+    `<button type="button" class="${key === adminProductCat ? 'on' : ''}" onclick="setAdminProductCat(${escapeHtml(JSON.stringify(key))})">${escapeHtml(label)} (${toFa(n)})</button>`).join('');
+  const q = normFa(latinDigits(document.getElementById('adminProductSearch').value.trim()));
+  const data = all.filter(p =>
+    (adminProductCat === 'all' || (adminProductCat === 'low' ? (Number(p.stock) || 0) <= 1 : p.category === adminProductCat))
+    && (!q || normFa(latinDigits([p.name, p.variants, p.description, p.category_label, String(p.price)].join(' '))).includes(q)));
+  if(data.length === 0){
+    listEl.innerHTML = `<p style="font-size:13px;color:var(--coffee-70);">${all.length ? 'محصولی با این مشخصات پیدا نشد.' : 'هنوز محصولی اضافه نشده.'}</p>`;
     return;
   }
   listEl.innerHTML = data.map(p => `
@@ -3487,6 +3516,7 @@ async function loadAdminProducts(){
     </div>
   `).join('');
 }
+document.getElementById('adminProductSearch').addEventListener('input', renderAdminProducts);
 
 function resetAdminProductForm(){
   document.getElementById('adminProdId').value = '';
