@@ -3008,8 +3008,8 @@ async function loadAdminOrders(){
       ${o.status === 'لغو شده' ? '' : `<div class="ship-box">
         <select id="shipCarrier-${o.id}">${SHIP_CARRIERS.map(c => `<option${(o.post_carrier || 'پست') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
         <input id="shipCode-${o.id}" maxlength="60" placeholder="کد رهگیری مرسوله" value="${escapeHtml(o.post_tracking || '')}">
-        <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره و ارسال دوباره‌ی پیامک' : 'ثبت ارسال و پیامک به مشتری'}</button>
-        ${o.shipped_sms_at ? `<span class="ship-note">پیامک کد رهگیری ${new Date(o.shipped_sms_at).toLocaleString('fa-IR')} برای مشتری رفت.</span>` : ''}
+        <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره‌ی تغییر' : 'ثبت ارسال'}</button>
+        <span class="ship-note">مشتری کد رو در «سفارش‌های من» می‌بینه.</span>
       </div>`}
       <div class="admin-prod-actions" style="margin-top:8px;">
         <button onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
@@ -3019,7 +3019,7 @@ async function loadAdminOrders(){
 }
 
 const SHIP_CARRIERS = ['پست', 'تیپاکس', 'چاپار', 'پیک', 'سایر'];
-// save carrier + tracking code, mark the order shipped and text the customer
+// save carrier + tracking code and mark the order shipped; the customer sees it under My orders
 async function saveShipping(orderId){
   const code = document.getElementById('shipCode-' + orderId).value.trim();
   const carrier = document.getElementById('shipCarrier-' + orderId).value;
@@ -3027,10 +3027,7 @@ async function saveShipping(orderId){
   const { error } = await db.from('orders').update({ post_tracking: code, post_carrier: carrier, status: 'ارسال شده' }).eq('id', orderId);
   if(error){ console.error(error); showToast('ذخیره نشد، دوباره امتحان کن'); return; }
   logAdminAction('ثبت کد رهگیری', `سفارش #${orderId}: ${carrier} ${code}`);
-  const { data, error: smsErr } = await db.functions.invoke('notify-shipped', { body: { orderId } });
-  if(!smsErr && data && data.sent) showToast('ثبت شد و پیامک کد رهگیری برای مشتری رفت');
-  else if(!smsErr && data && data.skipped) showToast('ثبت شد؛ پیامک ارسال هنوز تنظیم نشده');
-  else { console.error(smsErr || data); showToast('ثبت شد، ولی پیامک نرفت'); }
+  showToast('ثبت شد؛ مشتری کد رهگیری رو در سفارش‌هاش می‌بینه');
   loadAdminOrders();
 }
 
