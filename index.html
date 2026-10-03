@@ -409,6 +409,19 @@
   .qty-ctrl button.at-limit{opacity:.35;}
   .stock-limit-note{font-size:11.5px;color:#8B3A3A;margin-top:4px;}
   .auth-checkout-note{font-size:13px;line-height:1.9;color:var(--coffee);background:var(--tan);padding:10px 14px;margin:0 0 16px;}
+  .announce-bar{position:relative;background:var(--coffee);color:var(--cream);font-size:13.5px;line-height:1.8;text-align:center;padding:9px 44px;}
+  .announce-bar a{color:var(--cream);font-weight:700;margin-inline-start:8px;text-decoration:underline;text-underline-offset:3px;}
+  .announce-close{position:absolute;top:50%;left:10px;transform:translateY(-50%);width:30px;height:30px;border:0;background:transparent;color:var(--cream);font-size:18px;cursor:pointer;opacity:.8;}
+  .sale-ends{display:block;font-size:11.5px;color:#8B3A3A;margin-top:4px;}
+  .ship-box{margin-top:10px;padding:10px;border:1px dashed var(--line);display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+  .ship-box select,.ship-box input{padding:8px 10px;border:1px solid var(--line);background:var(--cream-soft);font-family:inherit;font-size:13px;}
+  .ship-box input{flex:1;min-width:150px;direction:ltr;text-align:left;}
+  .ship-box button{padding:8px 12px;border:1px solid var(--coffee);background:var(--coffee);color:var(--cream);font-family:inherit;font-size:12.5px;cursor:pointer;}
+  .ship-box .ship-note{flex-basis:100%;font-size:12px;color:var(--coffee-70);}
+  .ship-track{border:1px solid var(--line);padding:14px;margin-bottom:22px;font-size:13px;color:var(--coffee-70);line-height:2;}
+  .ship-track b{color:var(--coffee);font-size:18px;direction:ltr;unicode-bidi:isolate;letter-spacing:.5px;}
+  .ship-track button{margin-inline-start:8px;padding:3px 10px;border:1px solid var(--line);background:transparent;font-family:inherit;font-size:12px;cursor:pointer;color:var(--coffee);}
+  .announce-preview{margin:10px 0 0;}
   .toast{position:fixed;bottom:24px;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;line-height:1.7;transform:translateX(-50%) translateY(16px);background:var(--coffee);color:var(--cream);padding:14px 22px;font-size:13.5px;font-weight:600;z-index:999;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .stat-box{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px;}
@@ -582,6 +595,10 @@
 </head>
 <body>
 
+<div class="announce-bar" id="announceBar" hidden>
+  <span id="announceText"></span><a id="announceLink" href="#" target="_blank" rel="noopener" hidden>مشاهده</a>
+  <button class="announce-close" id="announceClose" aria-label="بستن اطلاعیه">×</button>
+</div>
 <header>
   <div class="header-bar">
     <div class="wrap header-bar-inner">
@@ -1041,6 +1058,7 @@
       <button class="admin-tab" data-tab="coupons">کدهای تخفیف</button>
       <button class="admin-tab" data-tab="logs">لاگ فعالیت</button>
       <button class="admin-tab" data-tab="admins">مدیرها</button>
+      <button class="admin-tab" data-tab="announce">اطلاعیه سایت</button>
     </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
@@ -1064,6 +1082,14 @@
         </div>
         <div class="form-field"><label>قیمت (تومان)</label><input type="number" id="adminProdPrice"></div>
         <div class="form-field"><label>قیمت تخفیف‌خورده (اختیاری)</label><input type="number" id="adminProdSalePrice"></div>
+        <div class="form-field">
+          <label>زمان‌بندی حراج (اختیاری)</label>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <label style="flex:1;min-width:160px;font-size:12px;color:var(--coffee-70);">شروع<input type="datetime-local" id="adminProdSaleStart"></label>
+            <label style="flex:1;min-width:160px;font-size:12px;color:var(--coffee-70);">پایان<input type="datetime-local" id="adminProdSaleEnd"></label>
+          </div>
+          <p style="font-size:12px;color:var(--coffee-70);margin:6px 0 0;line-height:1.9;">قیمت تخفیف‌خورده فقط بین این دو زمان اعمال می‌شه و بعدش خودکار به قیمت اصلی برمی‌گرده. خالی بذاری یعنی محدودیتی نداره.</p>
+        </div>
         <div class="form-field"><label>موجودی</label><input type="number" id="adminProdStock"></div>
         <div class="form-field">
           <label>عکس‌های محصول</label>
@@ -1130,6 +1156,16 @@
         <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="couponCancelBtn">انصراف</button>
       </div>
       <div id="adminCouponsList"></div>
+    </div>
+
+    <div id="adminTabAnnounce" class="admin-tab-panel" style="display:none;">
+      <p style="font-size:13px;color:var(--coffee-70);line-height:2;margin-bottom:14px;">یه نوار کوچیک بالای همه‌ی صفحه‌های سایت؛ مثلاً «تا جمعه ارسال رایگان» یا «کد INSTA20 برای ۲۰ نفر اول». هر وقت خاموشش کنی از سایت برداشته می‌شه.</p>
+      <div class="form-field"><label>متن اطلاعیه</label><textarea id="announceTextInput" rows="2" maxlength="160" placeholder="مثلاً: تا پایان هفته ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان"></textarea></div>
+      <div class="form-field"><label>لینک (اختیاری)</label><input type="text" id="announceLinkInput" maxlength="300" placeholder="https://instagram.com/... یا #shop" style="direction:ltr;text-align:left;"></div>
+      <div class="form-field"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="announceActiveInput" style="width:auto;"> نمایش روی سایت</label></div>
+      <div class="form-field"><label>پیش‌نمایش</label><div class="announce-bar announce-preview" id="announcePreview"></div></div>
+      <p class="form-error" id="announceError"></p>
+      <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="announceSaveBtn">ذخیره</button>
     </div>
 
     <div id="adminTabLogs" class="admin-tab-panel" style="display:none;">
@@ -1276,7 +1312,9 @@ async function fetchProducts(){
   }
   products = data.map((p, i) => {
     const rawSale = p.sale_price;
-    const salePrice = (rawSale !== null && rawSale !== undefined && rawSale !== '' && !isNaN(rawSale) && Number(rawSale) > 0 && Number(rawSale) < Number(p.price)) ? Number(rawSale) : null;
+    const nowMs = Date.now();
+    const saleOpen = (!p.sale_starts_at || new Date(p.sale_starts_at).getTime() <= nowMs) && (!p.sale_ends_at || new Date(p.sale_ends_at).getTime() > nowMs);
+    const salePrice = (saleOpen && rawSale !== null && rawSale !== undefined && rawSale !== '' && !isNaN(rawSale) && Number(rawSale) > 0 && Number(rawSale) < Number(p.price)) ? Number(rawSale) : null;
     return {
     id: p.id,
     name: p.name,
@@ -1284,6 +1322,7 @@ async function fetchProducts(){
     catLabel: p.category_label,
     price: p.price,
     salePrice,
+    saleEndsAt: salePrice !== null && p.sale_ends_at ? p.sale_ends_at : null,
     effectivePrice: salePrice !== null ? salePrice : p.price,
     description: p.description || '',
     stock: p.stock,
@@ -1416,6 +1455,14 @@ function priceHtml(p, variant, cls, id){
     ? `<span class="${cls}"${idAttr}><span class="price-old">${toFa(p.price)} تومان</span><span class="price-sale">${toFa(p.salePrice)} تومان</span></span>`
     : `<span class="${cls}"${idAttr}>${toFa(p.price)} تومان</span>`;
 }
+// '۲ روز دیگه' style countdown for a timed sale
+function saleEndsText(iso){
+  const ms = new Date(iso).getTime() - Date.now();
+  if(!(ms > 0)) return '';
+  const h = Math.floor(ms / 3600000), d = Math.floor(h / 24);
+  const left = d >= 1 ? `${toFa(d)} روز` : h >= 1 ? `${toFa(h)} ساعت` : `${toFa(Math.max(1, Math.floor(ms / 60000)))} دقیقه`;
+  return `<span class="sale-ends">حراج تا ${left} دیگه</span>`;
+}
 function productCardHtml(p){
   const soldOut = p.stock === 0;
   const lowStock = !soldOut && p.stock <= LOW_STOCK_THRESHOLD;
@@ -1462,6 +1509,7 @@ function productCardHtml(p){
       <span class="card-cat">${escapeHtml(p.catLabel)}</span>
       <span class="card-name">${escapeHtml(p.name)}</span>
       ${priceHtmlStr}
+      ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
       ${variantSelect}
       <button class="buy-btn" onclick="addToCart(${p.id}, this)" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     </div>
@@ -1600,6 +1648,7 @@ function renderProductDetail(){
     <span class="detail-cat">${escapeHtml(p.catLabel)}</span>
     <div class="detail-name">${escapeHtml(p.name)}</div>
     ${priceHtmlStr}
+    ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
     ${variantSelect}
     <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
     ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${escapeHtml(p.description)}</div>` : ''}
@@ -2666,6 +2715,7 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
       <div class="oi-top"><span>${toFa(o.total)} تومان</span><span>${date}</span></div>
       <div class="oi-items">${itemsText}</div>
       ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
+      ${o.post_tracking ? `<div style="font-size:11.5px;color:var(--coffee);margin-top:4px;">ارسال شد با ${escapeHtml(o.post_carrier || 'پست')} · کد رهگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.post_tracking)}</span></div>` : ''}
       <span class="oi-status">${escapeHtml(o.status || 'جدید')}</span>
     </div>`;
   }).join('');
@@ -2708,6 +2758,11 @@ async function openOrderDetail(orderId){
       <div style="font-size:12px;color:var(--coffee-70);margin-bottom:6px;">کد پیگیری سفارش</div>
       <div style="font-size:24px;font-weight:800;color:var(--coffee);direction:ltr;unicode-bidi:isolate;">${order.tracking_code ? escapeHtml(order.tracking_code) : '—'}</div>
     </div>
+    ${order.post_tracking ? `<div class="ship-track">
+      سفارشت با <b style="font-size:14px;">${escapeHtml(order.post_carrier || 'پست')}</b> ارسال شد. کد رهگیری مرسوله:<br>
+      <b>${escapeHtml(order.post_tracking)}</b><button type="button" onclick="copyText(${escapeHtml(JSON.stringify(String(order.post_tracking)))}, this)">کپی</button>
+      ${(order.post_carrier || 'پست') === 'پست' ? `<br><a href="https://tracking.post.ir/" target="_blank" rel="noopener" style="color:var(--coffee);">پیگیری در سایت پست (tracking.post.ir)</a>` : ''}
+    </div>` : ''}
     <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);margin-bottom:8px;">
       <span>${date}</span>
       <span class="oi-status">${escapeHtml(order.status || 'جدید')}</span>
@@ -2718,6 +2773,10 @@ async function openOrderDetail(orderId){
     </div>
     ${order.customer_address ? `<div style="margin-top:22px;font-size:13px;color:var(--coffee-70);"><b style="color:var(--coffee);">آدرس تحویل:</b> ${escapeHtml(order.customer_address)}</div>` : ''}
   `;
+}
+async function copyText(text, btn){
+  try{ await navigator.clipboard.writeText(text); if(btn) btn.textContent = 'کپی شد'; }
+  catch(e){ showToast('کد: ' + text); }
 }
 function closeOrderDetail(){ document.getElementById('orderDetailPage').classList.remove('open'); }
 document.getElementById('orderDetailBackBtn').addEventListener('click', closeOrderDetail);
@@ -2876,6 +2935,8 @@ function switchAdminTab(tab){
   document.getElementById('adminTabCoupons').style.display = tab === 'coupons' ? 'block' : 'none';
   document.getElementById('adminTabLogs').style.display = tab === 'logs' ? 'block' : 'none';
   document.getElementById('adminTabAdmins').style.display = tab === 'admins' ? 'block' : 'none';
+  document.getElementById('adminTabAnnounce').style.display = tab === 'announce' ? 'block' : 'none';
+  if(tab === 'announce') loadAdminAnnouncement();
   if(tab === 'orders'){ loadAdminOrders(); clearNewOrderBadge(); }
   if(tab === 'products') loadAdminProducts();
   if(tab === 'stats') loadAdminStats();
@@ -2944,11 +3005,33 @@ async function loadAdminOrders(){
       <div class="admin-order-items">${itemsHtml}</div>
       ${o.coupon_code ? `<div class="admin-card-meta">کد تخفیف: ${escapeHtml(o.coupon_code)} (${toFa(o.discount_amount || 0)} تومان تخفیف)</div>` : ''}
       <div class="admin-card-meta"><b style="color:var(--coffee);">${toFa(o.total)} تومان</b> · ${date}</div>
+      ${o.status === 'لغو شده' ? '' : `<div class="ship-box">
+        <select id="shipCarrier-${o.id}">${SHIP_CARRIERS.map(c => `<option${(o.post_carrier || 'پست') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
+        <input id="shipCode-${o.id}" maxlength="60" placeholder="کد رهگیری مرسوله" value="${escapeHtml(o.post_tracking || '')}">
+        <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره و ارسال دوباره‌ی پیامک' : 'ثبت ارسال و پیامک به مشتری'}</button>
+        ${o.shipped_sms_at ? `<span class="ship-note">پیامک کد رهگیری ${new Date(o.shipped_sms_at).toLocaleString('fa-IR')} برای مشتری رفت.</span>` : ''}
+      </div>`}
       <div class="admin-prod-actions" style="margin-top:8px;">
         <button onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
       </div>
     </div>`;
   }).join('');
+}
+
+const SHIP_CARRIERS = ['پست', 'تیپاکس', 'چاپار', 'پیک', 'سایر'];
+// save carrier + tracking code, mark the order shipped and text the customer
+async function saveShipping(orderId){
+  const code = document.getElementById('shipCode-' + orderId).value.trim();
+  const carrier = document.getElementById('shipCarrier-' + orderId).value;
+  if(!code){ showToast('کد رهگیری مرسوله رو وارد کن'); return; }
+  const { error } = await db.from('orders').update({ post_tracking: code, post_carrier: carrier, status: 'ارسال شده' }).eq('id', orderId);
+  if(error){ console.error(error); showToast('ذخیره نشد، دوباره امتحان کن'); return; }
+  logAdminAction('ثبت کد رهگیری', `سفارش #${orderId}: ${carrier} ${code}`);
+  const { data, error: smsErr } = await db.functions.invoke('notify-shipped', { body: { orderId } });
+  if(!smsErr && data && data.sent) showToast('ثبت شد و پیامک کد رهگیری برای مشتری رفت');
+  else if(!smsErr && data && data.skipped) showToast('ثبت شد؛ پیامک ارسال هنوز تنظیم نشده');
+  else { console.error(smsErr || data); showToast('ثبت شد، ولی پیامک نرفت'); }
+  loadAdminOrders();
 }
 
 async function deleteAdminOrder(id){
@@ -2989,7 +3072,7 @@ async function loadAdminProducts(){
   listEl.innerHTML = data.map(p => `
     <div class="admin-prod-row">
       <div>
-        <b>${escapeHtml(p.name)}</b> — <span>${escapeHtml(p.category_label || p.category)} · ${toFa(p.price)} تومان · موجودی: ${toFa(p.stock)}</span>
+        <b>${escapeHtml(p.name)}</b> — <span>${escapeHtml(p.category_label || p.category)} · ${toFa(p.price)} تومان · موجودی: ${toFa(p.stock)}${adminSaleTag(p)}</span>
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
@@ -3010,6 +3093,8 @@ function resetAdminProductForm(){
   document.getElementById('adminProdVariants').value = '';
   document.getElementById('adminProdDesc').value = '';
   document.getElementById('adminProdIsNew').checked = false;
+  document.getElementById('adminProdSaleStart').value = '';
+  document.getElementById('adminProdSaleEnd').value = '';
   document.getElementById('adminProdError').classList.remove('show');
   adminPendingUploads = [];
   renderAdminProdImagePreview();
@@ -3187,6 +3272,23 @@ document.getElementById('adminProdCancelBtn').addEventListener('click', () => {
   document.getElementById('adminProductForm').style.display = 'none';
 });
 
+// ISO timestamp -> value for <input type="datetime-local"> in the admin's own time zone
+function toLocalInputValue(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+function adminSaleTag(p){
+  if(!p.sale_price || !(Number(p.sale_price) < Number(p.price))) return '';
+  const now = Date.now();
+  const st = p.sale_starts_at ? new Date(p.sale_starts_at).getTime() : null;
+  const en = p.sale_ends_at ? new Date(p.sale_ends_at).getTime() : null;
+  const fmt = t => new Date(t).toLocaleString('fa-IR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+  if(st && st > now) return ` · <span style="color:#8a6d2b;">حراج از ${fmt(st)}</span>`;
+  if(en && en <= now) return ` · <span style="color:var(--coffee-70);">حراج تموم شده</span>`;
+  return ` · <span style="color:#8B3A3A;">حراج فعال${en ? ' تا ' + fmt(en) : ''}</span>`;
+}
 async function editAdminProduct(id){
   const { data: p } = await db.from('products').select('*').eq('id', id).maybeSingle();
   if(!p) return;
@@ -3200,6 +3302,8 @@ async function editAdminProduct(id){
   document.getElementById('adminProdVariants').value = p.variants || '';
   document.getElementById('adminProdDesc').value = p.description || '';
   document.getElementById('adminProdIsNew').checked = !!p.is_new;
+  document.getElementById('adminProdSaleStart').value = toLocalInputValue(p.sale_starts_at);
+  document.getElementById('adminProdSaleEnd').value = toLocalInputValue(p.sale_ends_at);
   renderAdminProdImagePreview();
   document.getElementById('adminProductForm').style.display = 'block';
   document.getElementById('adminProductForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3220,9 +3324,21 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
   const variants = document.getElementById('adminProdVariants').value.trim();
   const description = document.getElementById('adminProdDesc').value.trim();
   const isNew = document.getElementById('adminProdIsNew').checked;
+  const saleStartRaw = document.getElementById('adminProdSaleStart').value;
+  const saleEndRaw = document.getElementById('adminProdSaleEnd').value;
 
   if(!name || !price){
     errorEl.textContent = 'نام و قیمت محصول الزامیه.';
+    errorEl.classList.add('show');
+    return;
+  }
+  if((saleStartRaw || saleEndRaw) && !salePriceRaw){
+    errorEl.textContent = 'برای زمان‌بندی حراج، قیمت تخفیف‌خورده رو هم وارد کن.';
+    errorEl.classList.add('show');
+    return;
+  }
+  if(saleStartRaw && saleEndRaw && new Date(saleEndRaw) <= new Date(saleStartRaw)){
+    errorEl.textContent = 'زمان پایان حراج باید بعد از زمان شروعش باشه.';
     errorEl.classList.add('show');
     return;
   }
@@ -3238,6 +3354,8 @@ document.getElementById('adminProdSaveBtn').addEventListener('click', async () =
     variants: variants || null,
     description: description || null,
     is_new: isNew,
+    sale_starts_at: saleStartRaw ? new Date(saleStartRaw).toISOString() : null,
+    sale_ends_at: saleEndRaw ? new Date(saleEndRaw).toISOString() : null,
   };
 
   const btn = document.getElementById('adminProdSaveBtn');
@@ -3551,6 +3669,77 @@ async function deleteCoupon(code){
   loadAdminCoupons();
   showToast('کد تخفیف حذف شد');
 }
+
+/* ================= اطلاعیه‌ی بالای سایت ================= */
+function safeAnnounceLink(link){
+  const l = String(link || '').trim();
+  return /^https?:\/\//i.test(l) || /^#[\w-]*$/.test(l) ? l : '';
+}
+function fillAnnounceBar(bar, value, forPreview){
+  bar.innerHTML = '';
+  const span = document.createElement('span');
+  span.textContent = value.text || '';
+  bar.appendChild(span);
+  const link = safeAnnounceLink(value.link);
+  if(link){
+    const a = document.createElement('a');
+    a.href = link; a.textContent = 'مشاهده';
+    if(/^https?:/i.test(link)){ a.target = '_blank'; a.rel = 'noopener'; }
+    bar.appendChild(a);
+  }
+  if(!forPreview){
+    const x = document.createElement('button');
+    x.className = 'announce-close'; x.setAttribute('aria-label', 'بستن اطلاعیه'); x.textContent = '×';
+    x.addEventListener('click', () => {
+      bar.hidden = true;
+      try{ localStorage.setItem('hg-announce-closed', value.text || ''); }catch(e){}
+    });
+    bar.appendChild(x);
+  }
+}
+async function loadAnnouncement(){
+  const bar = document.getElementById('announceBar');
+  const { data } = await db.from('site_settings').select('value').eq('key', 'announcement').maybeSingle();
+  const v = data && data.value;
+  let closed = '';
+  try{ closed = localStorage.getItem('hg-announce-closed') || ''; }catch(e){}
+  if(!v || !v.active || !String(v.text || '').trim() || closed === v.text){ bar.hidden = true; return; }
+  fillAnnounceBar(bar, v, false);
+  bar.hidden = false;
+}
+loadAnnouncement();
+
+function renderAnnouncePreview(){
+  fillAnnounceBar(document.getElementById('announcePreview'), {
+    text: document.getElementById('announceTextInput').value.trim() || 'متن اطلاعیه این‌جا دیده می‌شه',
+    link: document.getElementById('announceLinkInput').value,
+  }, true);
+}
+async function loadAdminAnnouncement(){
+  const { data } = await db.from('site_settings').select('value').eq('key', 'announcement').maybeSingle();
+  const v = (data && data.value) || {};
+  document.getElementById('announceTextInput').value = v.text || '';
+  document.getElementById('announceLinkInput').value = v.link || '';
+  document.getElementById('announceActiveInput').checked = !!v.active;
+  document.getElementById('announceError').classList.remove('show');
+  renderAnnouncePreview();
+}
+['announceTextInput', 'announceLinkInput'].forEach(id => document.getElementById(id).addEventListener('input', renderAnnouncePreview));
+document.getElementById('announceSaveBtn').addEventListener('click', async () => {
+  const errorEl = document.getElementById('announceError');
+  errorEl.classList.remove('show');
+  const text = document.getElementById('announceTextInput').value.trim();
+  const link = document.getElementById('announceLinkInput').value.trim();
+  const active = document.getElementById('announceActiveInput').checked;
+  if(active && !text){ errorEl.textContent = 'برای نمایش، متن اطلاعیه رو بنویس.'; errorEl.classList.add('show'); return; }
+  if(link && !safeAnnounceLink(link)){ errorEl.textContent = 'لینک باید با https:// شروع بشه (یا مثل #shop باشه).'; errorEl.classList.add('show'); return; }
+  const { error } = await db.from('site_settings').upsert({ key: 'announcement', value: { active, text, link }, updated_at: new Date().toISOString() });
+  if(error){ console.error(error); errorEl.textContent = 'ذخیره نشد، دوباره امتحان کن.'; errorEl.classList.add('show'); return; }
+  try{ localStorage.removeItem('hg-announce-closed'); }catch(e){}
+  logAdminAction(active ? 'نمایش اطلاعیه' : 'خاموش کردن اطلاعیه', text);
+  loadAnnouncement();
+  showToast(active ? 'اطلاعیه روی سایت نمایش داده می‌شه' : 'اطلاعیه از سایت برداشته شد');
+});
 
 /* ================= لاگ فعالیت مدیرها ================= */
 async function logAdminAction(action, details){
