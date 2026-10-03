@@ -2889,6 +2889,7 @@ function customerStatusText(o){
 function payBadgeHtml(o, withRef){
   const test = o.pay_sandbox ? ' test' : '';
   if(o.payment_status === 'paid'){
+    if(!withRef && o.status === 'پرداخت شده' && !o.pay_sandbox) return ''; // the status already says it
     return `<span class="pay-badge paid${test}">پرداخت آنلاین${o.pay_sandbox ? ' (آزمایشی)' : ''}${withRef && o.pay_ref_number ? ` · پیگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.pay_ref_number)}</span>` : ''}</span>`;
   }
   if(o.status === PAY_PENDING) return `<span class="pay-badge wait${test}">${o.payment_status === 'failed' ? 'پرداخت ناموفق' : 'پرداخت نشده'}</span>`;
@@ -3126,7 +3127,8 @@ document.querySelectorAll('.admin-tab').forEach(btn => {
   btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab));
 });
 
-const ORDER_STATUSES = ['در انتظار پرداخت', 'جدید', 'تایید شده', 'ارسال شده', 'تحویل داده شده', 'لغو شده'];
+// «پرداخت شده» is set automatically when Zibal confirms a payment; the shop then confirms or cancels by hand
+const ORDER_STATUSES = ['در انتظار پرداخت', 'پرداخت شده', 'جدید', 'تایید شده', 'ارسال شده', 'تحویل داده شده', 'لغو شده'];
 
 function escapeHtml(str){
   if(str === null || str === undefined) return '';
