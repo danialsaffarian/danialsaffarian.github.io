@@ -858,6 +858,57 @@
   .drawer-cta:not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,240,214,.28),transparent);transform:skewX(-18deg);animation:ctaGloss 4.5s ease-in-out 1.2s infinite;}
   @keyframes ctaGloss{0%{left:-50%;}35%,100%{left:130%;}}
   @media(prefers-reduced-motion:reduce){.drawer.anim-in .drawer-item,.drawer.anim-in .drawer-foot,.drawer.anim-in .drawer-head h3,.drawer-item.just-added::after,.drawer-cta::after,.cart-hit,.cart-hit .cart-count,.drawer .qty-ctrl span.bump{animation:none;}}
+
+  /* ---------- site motion ---------- */
+  .hero-mark .hm-leg{animation:hmLeg .9s cubic-bezier(.2,.8,.2,1) both;}
+  .hero-mark .hm-leg.r{animation-delay:.15s;}
+  .hero-mark .hm-chain{stroke-dasharray:1;stroke-dashoffset:1;animation:hmDraw .6s ease-in-out .6s forwards;}
+  .hero-mark .hm-bead{transform-box:fill-box;transform-origin:center;animation:hmBead .45s cubic-bezier(.3,1.6,.5,1) both;animation-delay:calc(.85s + var(--k) * .08s);}
+  .hero-mark .hm-pend{transform-box:view-box;transform-origin:60px 63.1px;animation:hmDrop 1.8s cubic-bezier(.3,.7,.4,1) 1.1s both,hmIdle 5s ease-in-out 3.2s infinite;}
+  @keyframes hmLeg{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  @keyframes hmDraw{to{stroke-dashoffset:0;}}
+  @keyframes hmBead{from{opacity:0;transform:scale(0);}to{opacity:1;transform:none;}}
+  @keyframes hmDrop{0%{opacity:0;transform:translateY(-12px) rotate(0);}22%{opacity:1;transform:translateY(0) rotate(14deg);}42%{transform:rotate(-9deg);}60%{transform:rotate(5deg);}78%{transform:rotate(-2deg);}100%{opacity:1;transform:rotate(0);}}
+  @keyframes hmIdle{0%,100%{transform:rotate(0);}25%{transform:rotate(3deg);}75%{transform:rotate(-3deg);}}
+  .header-top .bl-word{animation:blWord 1.1s cubic-bezier(.2,.8,.2,1) 1.2s both;}
+  .header-top .bl-div i{animation:blLine .6s ease-out 1.75s both;}
+  .header-top .bl-div svg{animation:blDiamond .6s cubic-bezier(.3,1.5,.5,1) 1.7s both;}
+  .header-top .bl-tag{animation:blTag .8s ease-out 2s both;}
+  @keyframes blWord{from{opacity:0;letter-spacing:.62em;padding-left:.62em;}to{opacity:1;letter-spacing:.34em;padding-left:.34em;}}
+  @keyframes blLine{from{width:0;opacity:0;}to{width:34px;opacity:1;}}
+  @keyframes blDiamond{from{opacity:0;transform:scale(0) rotate(-90deg);}to{opacity:1;transform:none;}}
+  @keyframes blTag{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  .filter-row.pop-row{opacity:1;transform:none;}
+  .filter-row.pop-row .filter-btn{opacity:0;transform:translateY(14px) scale(.9);}
+  .filter-row.pop-row.revealed .filter-btn{animation:catPop .6s cubic-bezier(.3,1.4,.5,1) both;}
+  .filter-row.pop-row.revealed .filter-btn:nth-child(2){animation-delay:.07s;}
+  .filter-row.pop-row.revealed .filter-btn:nth-child(3){animation-delay:.14s;}
+  .filter-row.pop-row.revealed .filter-btn:nth-child(4){animation-delay:.21s;}
+  .filter-row.pop-row.revealed .filter-btn:nth-child(5){animation-delay:.28s;}
+  .filter-row.pop-row.revealed .filter-btn:nth-child(6){animation-delay:.35s;}
+  @keyframes catPop{to{opacity:1;transform:none;}}
+  .cat-art{transform-origin:50% 22%;}
+  .filter-btn:hover .cat-art,.filter-btn:active .cat-art{animation:catSwing .9s ease-in-out;}
+  @keyframes catSwing{0%,100%{transform:rotate(0);}25%{transform:rotate(7deg);}55%{transform:rotate(-5deg);}80%{transform:rotate(2deg);}}
+
+  .sec-head .newest-title{position:relative;}
+  .sec-head .newest-title::after{content:"";position:absolute;right:0;bottom:-8px;height:2px;width:0;background:var(--gold);transition:width .8s cubic-bezier(.2,.8,.2,1) .35s;}
+  .sec-head.revealed .newest-title::after{width:36px;}
+
+  .card.rv{opacity:0;transform:translateY(28px);transition:opacity .75s cubic-bezier(.16,.84,.44,1),transform .75s cubic-bezier(.16,.84,.44,1);}
+  .card.rv.in{opacity:1;transform:none;}
+
+  .wish-btn{position:relative;}
+  .wish-btn.burst svg{animation:heartPop .55s cubic-bezier(.3,1.6,.5,1);}
+  .wish-btn.burst::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid #C9A46A;animation:heartRing .6s ease-out forwards;pointer-events:none;}
+  @keyframes heartPop{0%{transform:scale(.6);}50%{transform:scale(1.35);}100%{transform:scale(1);}}
+  @keyframes heartRing{from{opacity:1;transform:scale(.7);}to{opacity:0;transform:scale(1.7);}}
+
+  @media(prefers-reduced-motion:reduce){
+    .hero-mark *,.header-top .bl-word,.header-top .bl-div i,.header-top .bl-div svg,.header-top .bl-tag,.filter-row.pop-row .filter-btn,.filter-btn:hover .cat-art,.wish-btn.burst svg,.wish-btn.burst::after{animation:none!important;opacity:1;transform:none;}
+    .hero-mark .hm-chain{stroke-dashoffset:0;}
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -972,7 +1023,18 @@
 </header>
   <div class="header-top">
     <a href="#" class="brand-lockup" aria-label="Hana Gallery">
-      <svg class="bl-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
+      <svg class="bl-mark hero-mark" viewBox="0 0 120 120" aria-hidden="true">
+        <path class="hm-leg l" d="M22 20 H46 V21.4 C41 21.6 38 23 38 26 V94 C38 97 41 98.4 46 98.6 V100 H22 V98.6 C27 98.4 30 97 30 94 V26 C30 23 27 21.6 22 21.4 Z" fill="#3A2F26"/>
+        <path class="hm-leg r" d="M98 20 H74 V21.4 C79 21.6 82 23 82 26 V94 C82 97 79 98.4 74 98.6 V100 H98 V98.6 C93 98.4 90 97 90 94 V26 C90 23 93 21.6 98 21.4 Z" fill="#3A2F26"/>
+        <path class="hm-chain" pathLength="1" d="M38 50 Q60 72 82 50" stroke="#A9855E" stroke-width="0.9" fill="none"/>
+        <circle class="hm-bead" style="--k:0" cx="44.6" cy="55.6" r="1.25" fill="#A9855E"/><circle class="hm-bead" style="--k:1" cx="51.2" cy="59.2" r="1.6" fill="#A9855E"/>
+        <circle class="hm-bead" style="--k:2" cx="68.8" cy="59.2" r="1.6" fill="#A9855E"/><circle class="hm-bead" style="--k:3" cx="75.4" cy="55.6" r="1.25" fill="#A9855E"/>
+        <g class="hm-pend">
+          <circle cx="60" cy="63.1" r="1.7" stroke="#A9855E" stroke-width="1" fill="none"/>
+          <path d="M60 65 C63.5 69.6 66.5 73.3 66.5 77 C66.5 80.8 63.6 83.5 60 83.5 C56.4 83.5 53.5 80.8 53.5 77 C53.5 73.3 56.5 69.6 60 65 Z" fill="#A9855E"/>
+          <path d="M57.4 77.4 C57.4 74.8 58.4 72.4 60 70.2" stroke="#F7F2EA" stroke-width="0.9" stroke-linecap="round" opacity="0.75" fill="none"/>
+        </g>
+      </svg>
       <span class="bl-word">HANA GALLERY</span>
       <span class="bl-div"><i></i><svg viewBox="0 0 10 10"><path d="M5 0 L10 5 L5 10 L0 5 Z"/></svg><i></i></span>
       <span class="bl-tag">HANDCRAFTED JEWELRY</span>
@@ -985,7 +1047,7 @@
       <h2 class="section-eyebrow" style="margin:0;">COLLECTION</h2>
     </div>
 
-    <div class="filter-row" id="filterRow">
+    <div class="filter-row pop-row reveal-on-scroll" id="filterRow">
       <button class="filter-btn" data-cat="earring"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><path d="M36 20a4 4 0 1 1 3.6 5.7" class="l"/><line x1="36" y1="27" x2="36" y2="35" class="l"/><circle cx="36" cy="38" r="2.6" class="g"/><path d="M36 44C40.5 50 43 54 43 58.5 43 62.6 40 66 36 66S29 62.6 29 58.5C29 54 31.5 50 36 44Z" class="g"/><path d="M64 24a4 4 0 1 1 3.6 5.7" class="l"/><line x1="64" y1="31" x2="64" y2="39" class="l"/><circle cx="64" cy="42" r="2.6" class="g"/><path d="M64 48C68.5 54 71 58 71 62.5 71 66.6 68 70 64 70S57 66.6 57 62.5C57 58 59.5 54 64 48Z" class="g"/></svg></span><span class="fb-label">گوشواره</span></button>
       <button class="filter-btn" data-cat="necklace"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><path d="M20 24Q50 74 80 24" class="l"/><circle cx="30.5" cy="38.5" r="1.7" class="g"/><circle cx="40" cy="45.3" r="2" class="g"/><circle cx="60" cy="45.3" r="2" class="g"/><circle cx="69.5" cy="38.5" r="1.7" class="g"/><circle cx="50" cy="51" r="2.4" class="l"/><path d="M50 54C54.5 60 57.5 64 57.5 68 57.5 72.2 54.2 75 50 75S42.5 72.2 42.5 68C42.5 64 45.5 60 50 54Z" class="g"/></svg></span><span class="fb-label">گردنبند</span></button>
       <button class="filter-btn" data-cat="bracelet"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="30" ry="15" class="l w"/><ellipse cx="50" cy="50" rx="25" ry="11" class="l t"/><circle cx="26" cy="58.5" r="2.4" class="g"/><circle cx="36.5" cy="63" r="2.6" class="g"/><circle cx="63.5" cy="63" r="2.6" class="g"/><circle cx="74" cy="58.5" r="2.4" class="g"/><line x1="50" y1="65" x2="50" y2="69" class="l"/><path d="M50 69C53 73 55 75.6 55 78.2 55 81 52.8 83 50 83S45 81 45 78.2C45 75.6 47 73 50 69Z" class="g"/></svg></span><span class="fb-label">دستبند</span></button>
@@ -995,12 +1057,12 @@
     </div>
 
     <div class="newest-section" id="newestSection">
-      <div class="sec-head"><h3 class="newest-title">جدیدترین محصولات</h3><button type="button" class="sec-more" onclick="enterCategoryFocus('all')">همه محصولات ←</button></div>
+      <div class="sec-head reveal-on-scroll"><h3 class="newest-title">جدیدترین محصولات</h3><button type="button" class="sec-more" onclick="enterCategoryFocus('all')">همه محصولات ←</button></div>
       <div class="product-grid" id="newestGrid"></div>
     </div>
 
     <div class="newest-section" id="saleSection" style="display:none;">
-      <div class="sec-head"><h3 class="newest-title">محصولات تخفیف‌خورده</h3></div>
+      <div class="sec-head reveal-on-scroll"><h3 class="newest-title">محصولات تخفیف‌خورده</h3></div>
       <div class="product-grid" id="saleGrid"></div>
     </div>
 
@@ -1855,6 +1917,7 @@ const IMG_THUMB = '/storage/v1/object/public/image/thumbs/';
 function thumbUrl(url){ return typeof url === 'string' && url.includes(IMG_FULL) ? url.replace(IMG_FULL, IMG_THUMB) : url; }
 function thumbFallback(img){ if(img.src.includes(IMG_THUMB)) img.src = img.src.replace(IMG_THUMB, IMG_FULL); }
 
+let wishBurstId = null;
 function productCardHtml(p){
   const soldOut = p.stock === 0;
   const lowStock = !soldOut && p.stock <= LOW_STOCK_THRESHOLD;
@@ -1866,7 +1929,7 @@ function productCardHtml(p){
   let rightBadges = '';
   if(onSale && !soldOut) rightBadges += `<span class="tag-sale">${toFa(discountPct)}٪ تخفیف</span>`;
   const wishActive = wishlistIds.has(p.id);
-  const heartBtn = `<button class="wish-btn${wishActive ? ' active' : ''}" onclick="toggleWishlist(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
+  const heartBtn = `<button class="wish-btn${wishActive ? ' active' : ''}${wishActive && wishBurstId === p.id ? ' burst' : ''}" onclick="toggleWishlist(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
   const badge = (leftBadges ? `<div class="badge-col badge-left">${leftBadges}</div>` : '')
     + `<div class="badge-col badge-right">${heartBtn}</div>`
     + (rightBadges ? `<div class="badge-col badge-right badge-bottom">${rightBadges}</div>` : '');
@@ -2325,6 +2388,37 @@ const scrollRevealObserver = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15 });
 document.querySelectorAll('.reveal-on-scroll').forEach(el => scrollRevealObserver.observe(el));
+
+// product cards rise in as they scroll into view, once per grid
+(function(){
+  if(!('IntersectionObserver' in window) || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+  const seen = new Set();
+  const io = new IntersectionObserver(entries => {
+    let k = 0;
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      const el = e.target;
+      el.style.transitionDelay = (k++ * 90) + 'ms';
+      el.classList.add('in');
+      seen.add(el.dataset.key);
+      io.unobserve(el);
+      setTimeout(() => { el.style.transitionDelay = ''; }, 1400);
+    });
+  }, { threshold: .12, rootMargin: '0px 0px -30px 0px' });
+  const tag = grid => grid.querySelectorAll('.card[data-id]').forEach(c => {
+    const key = grid.id + ':' + c.dataset.id;
+    c.dataset.key = key;
+    if(seen.has(key)) return;
+    c.classList.add('rv');
+    io.observe(c);
+  });
+  ['newestGrid', 'saleGrid', 'productGrid', 'wishlistGrid'].forEach(id => {
+    const g = document.getElementById(id);
+    if(!g) return;
+    tag(g);
+    new MutationObserver(() => tag(g)).observe(g, { childList: true });
+  });
+})();
 
 const heroDecoEl = document.getElementById('heroDeco');
 if(heroDecoEl){
@@ -3097,7 +3191,9 @@ async function toggleWishlist(id){
   } else {
     wishlistIds.add(id);
     wishlistOrder = [id, ...wishlistOrder.filter(x => x !== id)];
+    wishBurstId = id;
     refreshAllProductGrids();
+    wishBurstId = null;
     const { error } = await db.from('wishlists').insert({ user_id: currentUser.id, product_id: id });
     if(error){ wishlistIds.delete(id); refreshAllProductGrids(); }
   }
