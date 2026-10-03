@@ -580,6 +580,16 @@
   .pay-mode-box{border:1px solid var(--line);padding:14px;margin-bottom:18px;font-size:13px;color:var(--coffee);}
   .pay-mode-box label{display:flex;gap:8px;align-items:flex-start;margin-top:8px;cursor:pointer;line-height:1.7;}
   .pay-mode-box small{color:var(--coffee-70);}
+  .admin-todo{border:1px solid var(--line);background:#fff;padding:14px 16px;margin-bottom:14px;font-size:13px;color:var(--coffee);}
+  .admin-todo b{display:block;font-size:14px;margin-bottom:8px;}
+  .admin-todo .todo-row{display:flex;flex-wrap:wrap;gap:8px;}
+  .todo-chip{font:inherit;font-size:12.5px;padding:7px 12px;border:1px solid var(--line);background:var(--cream);color:var(--coffee);cursor:pointer;}
+  .todo-chip.hot{border-color:#b08a3e;background:#fbf3e4;color:#7a5a1c;font-weight:700;}
+  .todo-done{color:#3f5e3a;}
+  .admin-order-search{width:100%;font:inherit;font-size:13.5px;padding:11px 12px;border:1px solid var(--line);background:#fff;color:var(--coffee);margin-bottom:10px;}
+  .admin-order-chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin-bottom:10px;}
+  .admin-order-chips button{flex:none;font:inherit;font-size:12.5px;padding:6px 12px;border:1px solid var(--line);background:transparent;color:var(--coffee-70);cursor:pointer;white-space:nowrap;}
+  .admin-order-chips button.on{background:var(--coffee);border-color:var(--coffee);color:#fff;}
   .admin-orders-filter{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--coffee-70);margin-bottom:14px;cursor:pointer;}
 
   ::selection{background:var(--blush);color:var(--coffee);}
@@ -1127,6 +1137,9 @@
         <label><input type="radio" name="payMode" value="test"> <span>آزمایشی <small>— فقط خودِ مدیرها با درگاه آزمایشی زیبال (بدون پول واقعی) پرداخت می‌کنن؛ مشتری‌ها مثل قبل</small></span></label>
         <label><input type="radio" name="payMode" value="live"> <span>فعال <small>— همه‌ی مشتری‌ها باید آنلاین پرداخت کنن؛ سفارشِ پرداخت‌نشده بعد از مهلت خودکار لغو می‌شه</small></span></label>
       </div>
+      <div id="adminTodo" class="admin-todo"></div>
+      <input type="search" id="adminOrderSearch" class="admin-order-search" placeholder="جستجو: اسم، موبایل، کد پیگیری یا اسم محصول" autocomplete="off">
+      <div id="adminOrderChips" class="admin-order-chips"></div>
       <label class="admin-orders-filter"><input type="checkbox" id="adminShowUnpaid"> نمایش سفارش‌های پرداخت‌نشده و رهاشده</label>
       <button class="hero-btn" style="display:inline-block;color:#8B3A3A;border-color:#8B3A3A;margin-bottom:18px;" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
       <div id="adminOrdersList"></div>
@@ -3253,27 +3266,91 @@ function escapeHtml(str){
     .replace(/'/g, '&#39;');
 }
 
+let adminOrdersCache = [];
+let adminOrdersProductMap = {};
+let adminOrderFilter = 'all';
+const TODO_CONFIRM = ['پرداخت شده', 'جدید'];   // money in (or a card-to-card order): confirm it
+const TODO_SHIP = ['تایید شده'];                // confirmed: pack it and enter the tracking code
+
 async function loadAdminOrders(){
   const listEl = document.getElementById('adminOrdersList');
   listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
   syncPayModeRadios();
   const { data: rows, error } = await db.from('orders').select('*').order('created_at', { ascending: false });
-  // orders still waiting for payment, or dropped without paying, stay out of the way unless asked for
-  const showUnpaid = document.getElementById('adminShowUnpaid').checked;
-  const data = (rows || []).filter(o => showUnpaid || !isAbandonedOrder(o));
-  const hidden = (rows || []).length - data.length;
-  if(error || data.length === 0){
-    listEl.innerHTML = `<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نشده.${hidden ? ` (${toFa(hidden)} سفارش پرداخت‌نشده مخفیه)` : ''}</p>`;
-    return;
-  }
-
-  const allIds = [...new Set(data.flatMap(o => (o.items || []).map(i => i.id)))];
-  let productMap = {};
+  if(error){ listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">خواندن سفارش‌ها ناموفق بود.</p>'; return; }
+  adminOrdersCache = rows || [];
+  const allIds = [...new Set(adminOrdersCache.flatMap(o => (o.items || []).map(i => i.id)))];
+  adminOrdersProductMap = {};
   if(allIds.length){
     const { data: productsData } = await db.from('products').select('id, image_url').in('id', allIds);
-    (productsData || []).forEach(p => { productMap[p.id] = p; });
+    (productsData || []).forEach(p => { adminOrdersProductMap[p.id] = p; });
   }
+  renderAdminOrders();
+}
 
+const latinDigits = v => String(v || '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+function orderMatches(o, q){
+  if(!q) return true;
+  const digits = latinDigits(q).replace(/\D/g, '');
+  const hay = normFa([o.customer_name, o.customer_address, o.customer_note, o.tracking_code, o.post_tracking, o.pay_ref_number,
+    ...(o.items || []).map(i => i.name + ' ' + (i.variant || ''))].join(' '));
+  if(hay.includes(normFa(latinDigits(q)))) return true;
+  if(digits.length >= 4){
+    const phone = latinDigits(o.customer_phone).replace(/\D/g, '').replace(/^98/, '0');
+    if(phone.includes(digits.replace(/^98/, '0')) || String(o.tracking_code || '').includes(digits)) return true;
+  }
+  return false;
+}
+
+function renderAdminTodo(rows){
+  const confirm = rows.filter(o => TODO_CONFIRM.includes(o.status)).length;
+  const ship = rows.filter(o => TODO_SHIP.includes(o.status)).length;
+  const waiting = adminOrdersCache.filter(o => o.status === PAY_PENDING).length;
+  const chip = (key, n, text) => `<button type="button" class="todo-chip${n ? ' hot' : ''}" onclick="setAdminOrderFilter('${key}')">${toFa(n)} ${text}</button>`;
+  document.getElementById('adminTodo').innerHTML = (confirm || ship)
+    ? `<b>کارهای مونده</b><div class="todo-row">${chip('todo-confirm', confirm, 'سفارش منتظر تایید')}${chip('todo-ship', ship, 'سفارش منتظر ارسال')}${waiting ? `<button type="button" class="todo-chip" onclick="showUnpaidOrders()">${toFa(waiting)} سفارش منتظر پرداخت مشتری</button>` : ''}</div>`
+    : `<b class="todo-done">همه‌ی سفارش‌ها رسیدگی شدن ✓</b>${waiting ? `<div class="todo-row"><button type="button" class="todo-chip" onclick="showUnpaidOrders()">${toFa(waiting)} سفارش منتظر پرداخت مشتری</button></div>` : ''}`;
+}
+
+function setAdminOrderFilter(key){
+  adminOrderFilter = key;
+  renderAdminOrders();
+  document.getElementById('adminOrderChips').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function showUnpaidOrders(){
+  document.getElementById('adminShowUnpaid').checked = true;
+  setAdminOrderFilter(PAY_PENDING);
+}
+
+function renderAdminOrders(){
+  const listEl = document.getElementById('adminOrdersList');
+  // orders still waiting for payment, or dropped without paying, stay out of the way unless asked for
+  const showUnpaid = document.getElementById('adminShowUnpaid').checked;
+  const visible = adminOrdersCache.filter(o => showUnpaid || !isAbandonedOrder(o));
+  const hidden = adminOrdersCache.length - visible.length;
+  renderAdminTodo(visible);
+
+  // status chips with counts
+  const counts = {};
+  visible.forEach(o => { counts[o.status] = (counts[o.status] || 0) + 1; });
+  const chips = [['all', 'همه', visible.length], ['todo-confirm', 'منتظر تایید', visible.filter(o => TODO_CONFIRM.includes(o.status)).length],
+    ['todo-ship', 'منتظر ارسال', visible.filter(o => TODO_SHIP.includes(o.status)).length],
+    ...ORDER_STATUSES.filter(st => counts[st]).map(st => [st, st, counts[st]])];
+  if(!chips.some(c => c[0] === adminOrderFilter)) adminOrderFilter = 'all';
+  document.getElementById('adminOrderChips').innerHTML = chips.map(([key, label, n]) =>
+    `<button type="button" class="${key === adminOrderFilter ? 'on' : ''}" onclick="setAdminOrderFilter(${escapeHtml(JSON.stringify(key))})">${label} (${toFa(n)})</button>`).join('');
+
+  const q = document.getElementById('adminOrderSearch').value.trim();
+  const data = visible.filter(o =>
+    (adminOrderFilter === 'all' || (adminOrderFilter === 'todo-confirm' ? TODO_CONFIRM.includes(o.status)
+      : adminOrderFilter === 'todo-ship' ? TODO_SHIP.includes(o.status) : o.status === adminOrderFilter))
+    && orderMatches(o, q));
+
+  if(data.length === 0){
+    listEl.innerHTML = `<p style="font-size:13px;color:var(--coffee-70);">${adminOrdersCache.length === 0 ? 'هنوز سفارشی ثبت نشده.' : q ? 'سفارشی با این مشخصات پیدا نشد.' : 'سفارشی در این بخش نیست.'}${hidden && !showUnpaid ? ` (${toFa(hidden)} سفارش پرداخت‌نشده مخفیه)` : ''}</p>`;
+    return;
+  }
+  const productMap = adminOrdersProductMap;
   listEl.innerHTML = data.map(o => {
     const date = new Date(o.created_at).toLocaleString('fa-IR');
     const statusOptions = ORDER_STATUSES.map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('');
@@ -3314,6 +3391,7 @@ async function loadAdminOrders(){
     </div>`;
   }).join('');
 }
+document.getElementById('adminOrderSearch').addEventListener('input', renderAdminOrders);
 
 function isAbandonedOrder(o){
   return o.status === PAY_PENDING || (o.status === 'لغو شده' && (o.cancel_reason === 'expired' || o.cancel_reason === 'replaced'));
@@ -3345,7 +3423,7 @@ document.querySelectorAll('input[name="payMode"]').forEach(r => r.addEventListen
   logAdminAction('تغییر پرداخت آنلاین', { off: 'خاموش', test: 'آزمایشی', live: 'فعال' }[mode]);
   showToast(mode === 'live' ? 'پرداخت آنلاین برای همه فعال شد' : mode === 'test' ? 'حالت آزمایشی فعال شد؛ فقط مدیرها با درگاه آزمایشی پرداخت می‌کنن' : 'پرداخت آنلاین خاموش شد');
 }));
-document.getElementById('adminShowUnpaid').addEventListener('change', loadAdminOrders);
+document.getElementById('adminShowUnpaid').addEventListener('change', renderAdminOrders);
 
 const SHIP_CARRIERS = ['پست', 'تیپاکس', 'چاپار', 'پیک', 'سایر'];
 // save carrier + tracking code and mark the order shipped; the customer sees it under My orders
@@ -3384,6 +3462,8 @@ async function updateOrderStatus(orderId, status){
   const { error } = await db.from('orders').update({ status }).eq('id', orderId);
   if(error){ console.error(error); showToast('تغییر وضعیت ناموفق بود'); loadAdminOrders(); return; }
   logAdminAction('تغییر وضعیت سفارش', `سفارش #${orderId} به «${status}»`);
+  const cached = adminOrdersCache.find(o => String(o.id) === String(orderId));
+  if(cached){ cached.status = status; renderAdminTodo(adminOrdersCache.filter(o => document.getElementById('adminShowUnpaid').checked || !isAbandonedOrder(o))); }
   showToast(status === 'لغو شده' ? 'سفارش لغو شد و موجودی‌اش به انبار برگشت' : 'وضعیت سفارش به‌روزرسانی شد');
 }
 
