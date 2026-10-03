@@ -593,6 +593,112 @@
   .admin-orders-filter{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--coffee-70);margin-bottom:14px;cursor:pointer;}
 
   ::selection{background:var(--blush);color:var(--coffee);}
+
+  /* ---------- Admin panel ---------- */
+  .adm{--ink:#3A2F26;--adm-bg:#F4EEE5;--adm-card:#fff;--adm-line:#E8DFD1;--adm-shadow:0 1px 2px rgba(91,66,45,.06),0 6px 20px -8px rgba(91,66,45,.14);background:var(--adm-bg);}
+  .adm .product-head{flex-wrap:wrap;gap:10px 12px;padding:14px 16px 0;background:rgba(251,248,243,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--adm-line);}
+  .adm-title{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+  .adm-mark{width:38px;height:38px;flex:none;}
+  .adm-title b{display:block;font-size:16px;font-weight:800;color:var(--ink);line-height:1.3;}
+  .adm-title small{display:block;font-size:11.5px;color:var(--coffee-70);}
+  .adm .admin-tabs{flex-basis:100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:4px;margin:0 -16px;padding:0 12px;border:0;}
+  .adm .admin-tabs::-webkit-scrollbar{display:none;}
+  .adm .admin-tab{flex:none;padding:11px 12px 12px;font-size:13.5px;border-bottom:2.5px solid transparent;transition:color .2s,border-color .2s;}
+  .adm .admin-tab.active{color:var(--ink);border-color:var(--ink);}
+  .adm .product-body{padding:18px 16px 60px;}
+  .adm .admin-tab-panel{animation:admIn .25s ease;}
+  @keyframes admIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+  /* KPI tiles */
+  .adm .admin-todo{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;border:0;background:none;padding:0;margin-bottom:12px;}
+  .kpi{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;border-radius:14px;background:var(--adm-card);box-shadow:var(--adm-shadow);text-align:start;font:inherit;color:var(--ink);transition:transform .15s;}
+  .kpi:not(:disabled):active{transform:scale(.97);}
+  .kpi:disabled{cursor:default;opacity:1;}
+  .kpi b{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.4;}
+  .kpi span{font-size:12px;color:var(--coffee-70);line-height:1.5;}
+  .kpi:not(:first-child){padding:12px;}
+  .kpi:not(:first-child) b{font-size:20px;}
+  .kpi:first-child{grid-column:1/-1;background:var(--ink);color:#F7F2EA;}
+  .kpi:first-child b{font-size:26px;}
+  .kpi:first-child span{color:#CDBBA6;}
+  .kpi.hot{background:#FBF0DC;box-shadow:inset 0 0 0 1px #EBCF9E;}
+  .kpi.hot b{color:#8A5A12;}
+  @media(min-width:700px){.adm .admin-todo{grid-template-columns:1.6fr 1fr 1fr 1fr;}.kpi:first-child{grid-column:auto;}}
+
+  /* payment-mode setting, folded away */
+  .adm .pay-mode-box{background:var(--adm-card);border:0;border-radius:14px;box-shadow:var(--adm-shadow);padding:0;margin-bottom:16px;}
+  .adm .pay-mode-box summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 14px;font-weight:700;color:var(--ink);cursor:pointer;list-style:none;}
+  .adm .pay-mode-box summary::-webkit-details-marker{display:none;}
+  .adm .pay-mode-box summary em{font-style:normal;font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:#F2EDE4;color:var(--coffee);}
+  .adm .pay-mode-box summary em.pm-live{background:#E6EFE1;color:#3F5E3A;}
+  .adm .pay-mode-box summary em.pm-test{background:#FBF0DC;color:#8A5A12;}
+  .adm .pay-mode-box summary em::after{content:"⌄";margin-inline-start:6px;}
+  .adm .pay-mode-box[open] summary{border-bottom:1px solid var(--adm-line);}
+  .adm .pay-mode-box label{padding:0 14px;}
+  .adm .pay-mode-box label:last-child{padding-bottom:14px;}
+
+  /* search + chips */
+  .adm .admin-order-search{border:0;border-radius:12px;background:var(--adm-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23A6907E' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") no-repeat right 13px center;padding:12px 40px 12px 14px;box-shadow:var(--adm-shadow);}
+  .adm .admin-order-search:focus{outline:2px solid var(--gold-soft);}
+  .adm .admin-order-chips{gap:6px;margin:12px -16px 12px;padding:0 16px 2px;scrollbar-width:none;}
+  .adm .admin-order-chips button{border-radius:99px;border-color:var(--adm-line);background:var(--adm-card);color:var(--coffee);padding:7px 13px;}
+  .adm .admin-order-chips button.on{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .adm .admin-orders-filter{margin-bottom:12px;}
+
+  /* order cards */
+  .adm .admin-card{position:relative;border:0;border-radius:16px;background:var(--adm-card);box-shadow:var(--adm-shadow);padding:16px;margin-bottom:12px;overflow:hidden;}
+  .adm .admin-card[class*="tone-"]::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--tone-fg);}
+  .tone-wait{--tone-bg:#F2EDE4;--tone-fg:#A6907E;}
+  .tone-paid{--tone-bg:#FBF0DC;--tone-fg:#B07A1E;}
+  .tone-ok{--tone-bg:#E8EDF3;--tone-fg:#3F5A78;}
+  .tone-sent{--tone-bg:#E1EEEC;--tone-fg:#2F6A62;}
+  .tone-done{--tone-bg:#E6EFE1;--tone-fg:#4C7046;}
+  .tone-cancel{--tone-bg:#F6E3E1;--tone-fg:#9B3F3F;}
+  .ao-who{min-width:0;}
+  .ao-who b{display:block;font-size:15.5px;font-weight:800;color:var(--ink);}
+  .ao-who span{font-size:12px;color:var(--coffee-70);}
+  .ao-code{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;color:var(--coffee);font-weight:600;}
+  .adm .admin-status-select{appearance:none;-webkit-appearance:none;border:0;border-radius:99px;padding:6px 14px 6px 28px;font-weight:700;font-size:12.5px;background:var(--tone-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath d='M1 3l4 4 4-4' fill='none' stroke='%238E6E58' stroke-width='1.5'/%3E%3C/svg%3E") no-repeat left 11px center;color:var(--tone-fg);cursor:pointer;}
+  .ao-info{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;margin:10px 0 4px;font-size:13px;line-height:1.7;}
+  .ao-info dt{color:var(--coffee-70);}
+  .ao-info dd{margin:0;color:var(--ink);}
+  .ao-phone{color:var(--ink);direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;text-decoration:none;border-bottom:1px dashed var(--gold-soft);}
+  .adm .admin-order-items{background:#FAF6F0;border-radius:12px;padding:10px;margin:12px 0;}
+  .adm .admin-order-item-visual{width:44px;height:44px;border-radius:9px;}
+  .ao-total{display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:1px dashed var(--adm-line);margin-top:8px;}
+  .ao-total span{font-size:12.5px;color:var(--coffee-70);}
+  .ao-total b{font-size:17px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ao-total small{font-size:11.5px;font-weight:500;color:var(--coffee-70);}
+  .adm .ship-box{border:0;border-radius:12px;background:#FAF6F0;padding:10px;margin-top:12px;}
+  .adm .ship-box select,.adm .ship-box input{border-radius:9px;border-color:var(--adm-line);background:#fff;}
+  .adm .ship-box button{border-radius:9px;background:var(--ink);border-color:var(--ink);font-weight:700;}
+  .adm-danger-link{display:block;margin:12px 0 0;margin-inline-start:auto;padding:4px 0;font:inherit;font-size:12px;color:#9B3F3F;background:none;border:0;opacity:.75;}
+  .adm-danger-link:hover{opacity:1;text-decoration:underline;}
+  #adminOrdersList + .adm-danger-link{margin:20px auto 0;}
+
+  /* product list */
+  .adm-primary{display:block!important;width:100%;margin:0 0 14px!important;padding:13px 18px!important;border-radius:12px;background:var(--ink)!important;border-color:var(--ink)!important;color:#F7F2EA!important;font-weight:700;letter-spacing:0;}
+  .adm #adminProductForm,.adm #adminCouponForm{background:var(--adm-card);border:0!important;border-radius:16px!important;box-shadow:var(--adm-shadow);}
+  .adm .admin-optimize .hero-btn{margin:10px 14px 0!important;padding:9px 16px;border-radius:9px;font-size:13px;}
+  #adminProductsList .admin-prod-row{display:grid;grid-template-columns:60px 1fr auto;align-items:center;gap:12px;border:0;border-radius:14px;background:var(--adm-card);box-shadow:var(--adm-shadow);padding:10px;margin-bottom:10px;}
+  .ap-img{width:60px;height:60px;border-radius:10px;overflow:hidden;background:var(--tan);display:flex;align-items:center;justify-content:center;}
+  .ap-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ap-img svg{width:55%;}
+  .ap-info{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+  .ap-info b{font-size:14px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;}
+  #adminProductsList .ap-info span{font-size:12px;}
+  .ap-stock{font-style:normal;font-size:11px;font-weight:700;padding:2px 9px;border-radius:99px;background:#E6EFE1;color:#4C7046;margin-top:3px;}
+  .ap-stock.low{background:#FBF0DC;color:#8A5A12;}
+  .ap-stock.out{background:#F6E3E1;color:#9B3F3F;}
+  #adminProductsList .admin-prod-actions{display:flex;flex-direction:column;gap:6px;}
+  #adminProductsList .admin-prod-actions button{margin:0;border-radius:9px;border-color:var(--adm-line);color:var(--ink);padding:6px 12px;font-weight:600;}
+  #adminProductsList .admin-prod-actions button.del{color:#9B3F3F;border-color:transparent;}
+
+  /* other tabs pick up the same surfaces */
+  .adm .stat-item,.adm .admin-status-row,.adm .coupon-row,.adm .admin-prod-row{background:var(--adm-card);border:0;border-radius:14px;box-shadow:var(--adm-shadow);}
+  .adm .stat-item{text-align:start;}
+  .adm .stat-item b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;}
+  .adm .admin-prod-actions button{border-radius:9px;}
 </style>
 <script type="application/ld+json">
 {
@@ -1112,12 +1218,13 @@
   </div>
 </div>
 
-<div class="product-page" id="adminPage">
+<div class="product-page adm" id="adminPage">
   <div class="product-head">
-    <button class="product-back" id="adminBackBtn">→</button>
-    <h3 class="brand-font">پنل مدیریت</h3>
-  </div>
-  <div class="product-body" style="max-width:900px;">
+    <button class="product-back" id="adminBackBtn" aria-label="بازگشت">→</button>
+    <div class="adm-title">
+      <svg class="adm-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
+      <div><b>پنل مدیریت</b><small id="admToday"></small></div>
+    </div>
     <div class="admin-tabs" id="adminTabs">
       <button class="admin-tab active" data-tab="orders">سفارش‌ها</button>
       <button class="admin-tab" data-tab="products">محصولات</button>
@@ -1129,24 +1236,26 @@
       <button class="admin-tab" data-tab="admins">مدیرها</button>
       <button class="admin-tab" data-tab="announce">اطلاعیه سایت</button>
     </div>
+  </div>
+  <div class="product-body" style="max-width:900px;">
 
     <div id="adminTabOrders" class="admin-tab-panel">
-      <div class="pay-mode-box">
-        <b>پرداخت آنلاین (زیبال)</b>
+      <div id="adminTodo" class="admin-todo"></div>
+      <details class="pay-mode-box">
+        <summary><span>پرداخت آنلاین (زیبال)</span><em id="payModeNow"></em></summary>
         <label><input type="radio" name="payMode" value="off"> <span>خاموش <small>— مثل قبل، کارت‌به‌کارت و هماهنگی تلفنی</small></span></label>
         <label><input type="radio" name="payMode" value="test"> <span>آزمایشی <small>— فقط خودِ مدیرها با درگاه آزمایشی زیبال (بدون پول واقعی) پرداخت می‌کنن؛ مشتری‌ها مثل قبل</small></span></label>
         <label><input type="radio" name="payMode" value="live"> <span>فعال <small>— همه‌ی مشتری‌ها باید آنلاین پرداخت کنن؛ سفارشِ پرداخت‌نشده بعد از مهلت خودکار لغو می‌شه</small></span></label>
-      </div>
-      <div id="adminTodo" class="admin-todo"></div>
+      </details>
       <input type="search" id="adminOrderSearch" class="admin-order-search" placeholder="جستجو: اسم، موبایل، کد پیگیری یا اسم محصول" autocomplete="off">
       <div id="adminOrderChips" class="admin-order-chips"></div>
       <label class="admin-orders-filter"><input type="checkbox" id="adminShowUnpaid"> نمایش سفارش‌های پرداخت‌نشده و رهاشده</label>
-      <button class="hero-btn" style="display:inline-block;color:#8B3A3A;border-color:#8B3A3A;margin-bottom:18px;" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
       <div id="adminOrdersList"></div>
+      <button class="adm-danger-link" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
     </div>
 
     <div id="adminTabProducts" class="admin-tab-panel" style="display:none;">
-      <button class="hero-btn" style="display:inline-block;color:var(--coffee);border-color:var(--coffee);margin-bottom:18px;" id="adminAddProductBtn">+ افزودن محصول جدید</button>
+      <button class="hero-btn adm-primary" id="adminAddProductBtn">+ افزودن محصول جدید</button>
       <div id="adminProductForm" style="display:none;margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:6px;">
         <input type="hidden" id="adminProdId">
         <div class="form-field"><label>نام محصول</label><input type="text" id="adminProdName"></div>
@@ -1187,11 +1296,12 @@
         <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="adminProdSaveBtn">ذخیره</button>
         <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="adminProdCancelBtn">انصراف</button>
       </div>
-      <div class="admin-optimize" style="margin:0 0 18px;padding:14px;border:1px dashed var(--line);border-radius:6px;font-size:13px;color:var(--coffee-70);">
-        <p style="margin:0 0 10px;">عکس‌هایی که قبلاً آپلود شده‌اند خیلی حجیم‌اند و دیر باز می‌شوند. این دکمه یک بار همه را کوچک می‌کند (کیفیت روی صفحه تغییری نمی‌کند). تا تمام نشده این صفحه را نبندید.</p>
+      <details class="admin-optimize pay-mode-box">
+        <summary><span>بهینه‌سازی عکس‌ها</span><em>ابزار</em></summary>
+        <p style="margin:0;padding:12px 14px 0;font-size:12.5px;color:var(--coffee-70);line-height:1.9;">عکس‌هایی که قبلاً آپلود شده‌اند خیلی حجیم‌اند و دیر باز می‌شوند. این دکمه یک بار همه را کوچک می‌کند (کیفیت روی صفحه تغییری نمی‌کند). تا تمام نشده این صفحه را نبندید.</p>
         <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);margin:0;" id="adminOptimizeImagesBtn">کوچک کردن عکس‌های قبلی</button>
-        <p id="adminOptimizeStatus" style="margin:10px 0 0;"></p>
-      </div>
+        <p id="adminOptimizeStatus" style="margin:0;padding:8px 14px 14px;font-size:12.5px;"></p>
+      </details>
       <input type="search" id="adminProductSearch" class="admin-order-search" placeholder="جستجوی محصول: اسم، رنگ یا مدل" autocomplete="off">
       <div id="adminProductChips" class="admin-order-chips"></div>
       <div id="adminProductsList"></div>
@@ -1221,7 +1331,7 @@
     </div>
 
     <div id="adminTabCoupons" class="admin-tab-panel" style="display:none;">
-      <button class="hero-btn" style="display:inline-block;color:var(--coffee);border-color:var(--coffee);margin-bottom:18px;" id="adminAddCouponBtn">+ ساخت کد تخفیف جدید</button>
+      <button class="hero-btn adm-primary" id="adminAddCouponBtn">+ ساخت کد تخفیف جدید</button>
       <div id="adminCouponForm" style="display:none;margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:6px;">
         <div class="form-field"><label>کد تخفیف</label><input type="text" id="couponCode" placeholder="مثلاً HANA20" style="direction:ltr;text-align:left;"></div>
         <div class="form-field"><label>نوع تخفیف</label>
@@ -3225,6 +3335,7 @@ function stopHeartbeat(){
 }
 
 function openAdminPage(){
+  document.getElementById('admToday').textContent = new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
   adminPage.classList.add('open');
   adminPage.scrollTop = 0;
   switchAdminTab('orders');
@@ -3308,10 +3419,14 @@ function renderAdminTodo(rows){
   const confirm = rows.filter(o => TODO_CONFIRM.includes(o.status)).length;
   const ship = rows.filter(o => TODO_SHIP.includes(o.status)).length;
   const waiting = adminOrdersCache.filter(o => o.status === PAY_PENDING).length;
-  const chip = (key, n, text) => `<button type="button" class="todo-chip${n ? ' hot' : ''}" onclick="setAdminOrderFilter('${key}')">${toFa(n)} ${text}</button>`;
-  document.getElementById('adminTodo').innerHTML = (confirm || ship)
-    ? `<b>کارهای مونده</b><div class="todo-row">${chip('todo-confirm', confirm, 'سفارش منتظر تایید')}${chip('todo-ship', ship, 'سفارش منتظر ارسال')}${waiting ? `<button type="button" class="todo-chip" onclick="showUnpaidOrders()">${toFa(waiting)} سفارش منتظر پرداخت مشتری</button>` : ''}</div>`
-    : `<b class="todo-done">همه‌ی سفارش‌ها رسیدگی شدن ✓</b>${waiting ? `<div class="todo-row"><button type="button" class="todo-chip" onclick="showUnpaidOrders()">${toFa(waiting)} سفارش منتظر پرداخت مشتری</button></div>` : ''}`;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
+  const sold = adminOrdersCache.filter(o => new Date(o.created_at) >= today && o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
+  const tile = (key, n, text, hot) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><b>${toFa(n)}</b><span>${text}</span></button>`;
+  document.getElementById('adminTodo').innerHTML =
+    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`)
+    + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true)
+    + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true)
+    + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری');
 }
 
 function setAdminOrderFilter(key){
@@ -3324,6 +3439,14 @@ function showUnpaidOrders(){
   setAdminOrderFilter(PAY_PENDING);
 }
 
+const STATUS_TONE = { 'در انتظار پرداخت': 'wait', 'پرداخت شده': 'paid', 'جدید': 'paid', 'تایید شده': 'ok', 'ارسال شده': 'sent', 'تحویل داده شده': 'done', 'لغو شده': 'cancel' };
+function admWhen(iso){
+  const d = new Date(iso), t = new Date(); t.setHours(0, 0, 0, 0);
+  const time = d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+  if(d >= t) return 'امروز، ' + time;
+  if(d >= t - 864e5) return 'دیروز، ' + time;
+  return d.toLocaleDateString('fa-IR', { day: 'numeric', month: 'long' }) + '، ' + time;
+}
 function renderAdminOrders(){
   const listEl = document.getElementById('adminOrdersList');
   // orders still waiting for payment, or dropped without paying, stay out of the way unless asked for
@@ -3354,7 +3477,7 @@ function renderAdminOrders(){
   }
   const productMap = adminOrdersProductMap;
   listEl.innerHTML = data.map(o => {
-    const date = new Date(o.created_at).toLocaleString('fa-IR');
+    const tone = STATUS_TONE[o.status] || 'ok';
     const statusOptions = ORDER_STATUSES.map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('');
     const itemsHtml = (o.items || []).map(i => {
       const prod = productMap[i.id];
@@ -3368,28 +3491,27 @@ function renderAdminOrders(){
           </div>
         </div>`;
     }).join('');
-    return `<div class="admin-card">
+    return `<div class="admin-card tone-${tone}">
       <div class="admin-card-top">
-        <b>${escapeHtml(o.customer_name) || '-'}</b>
-        <select class="admin-status-select" onchange="updateOrderStatus('${o.id}', this.value)">${statusOptions}</select>
+        <div class="ao-who"><b>${escapeHtml(o.customer_name) || '-'}</b><span>${admWhen(o.created_at)}${o.tracking_code ? ` — کد <span class="ao-code">${escapeHtml(o.tracking_code)}</span>` : ''}</span></div>
+        <select class="admin-status-select tone-${tone}" onchange="updateOrderStatus('${o.id}', this.value)">${statusOptions}</select>
       </div>
-      <div class="admin-card-meta">
-        تلفن: ${escapeHtml(o.customer_phone) || '-'} · آدرس: ${escapeHtml(o.customer_address) || '-'}${o.customer_note ? ' · یادداشت: ' + escapeHtml(o.customer_note) : ''}
-        ${o.tracking_code ? ` · کد پیگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.tracking_code)}</span>` : ''}
-      </div>
+      <dl class="ao-info">
+        <dt>موبایل</dt><dd><a class="ao-phone" href="tel:${escapeHtml(o.customer_phone || '')}">${escapeHtml(o.customer_phone) || '-'}</a></dd>
+        <dt>آدرس</dt><dd>${escapeHtml(o.customer_address) || '-'}</dd>
+        ${o.customer_note ? `<dt>یادداشت</dt><dd>${escapeHtml(o.customer_note)}</dd>` : ''}
+      </dl>
       <div class="admin-order-items">${itemsHtml}</div>
       ${adminPayLine(o)}
       ${o.coupon_code ? `<div class="admin-card-meta">کد تخفیف: ${escapeHtml(o.coupon_code)} (${toFa(o.discount_amount || 0)} تومان تخفیف)</div>` : ''}
-      <div class="admin-card-meta"><b style="color:var(--coffee);">${toFa(o.total)} تومان</b> · ${date}</div>
+      <div class="ao-total"><span>جمع سفارش</span><b>${toFa(o.total)} <small>تومان</small></b></div>
       ${o.status === 'لغو شده' || o.status === PAY_PENDING ? '' : `<div class="ship-box">
         <select id="shipCarrier-${o.id}">${SHIP_CARRIERS.map(c => `<option${(o.post_carrier || 'پست') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
         <input id="shipCode-${o.id}" maxlength="60" placeholder="کد رهگیری مرسوله" value="${escapeHtml(o.post_tracking || '')}">
         <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره‌ی تغییر' : 'ثبت ارسال'}</button>
         <span class="ship-note">مشتری کد رو در «سفارش‌های من» می‌بینه.</span>
       </div>`}
-      <div class="admin-prod-actions" style="margin-top:8px;">
-        <button onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
-      </div>
+      <button class="adm-danger-link" onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
     </div>`;
   }).join('');
 }
@@ -3411,6 +3533,9 @@ function adminPayLine(o){
 }
 function syncPayModeRadios(){
   document.querySelectorAll('input[name="payMode"]').forEach(r => { r.checked = r.value === paymentMode; });
+  const now = document.getElementById('payModeNow');
+  now.textContent = { off: 'خاموش', test: 'آزمایشی', live: 'فعال' }[paymentMode] || '';
+  now.className = 'pm-' + paymentMode;
 }
 document.querySelectorAll('input[name="payMode"]').forEach(r => r.addEventListener('change', async () => {
   const mode = r.value;
@@ -3504,17 +3629,23 @@ function renderAdminProducts(){
     listEl.innerHTML = `<p style="font-size:13px;color:var(--coffee-70);">${all.length ? 'محصولی با این مشخصات پیدا نشد.' : 'هنوز محصولی اضافه نشده.'}</p>`;
     return;
   }
-  listEl.innerHTML = data.map(p => `
+  listEl.innerHTML = data.map(p => {
+    const img = (p.image_url || '').split(/[,،]/).map(x => x.trim()).filter(Boolean)[0];
+    const stock = Number(p.stock) || 0;
+    return `
     <div class="admin-prod-row">
-      <div>
-        <b>${escapeHtml(p.name)}</b> — <span>${escapeHtml(p.category_label || p.category)} · ${toFa(p.price)} تومان · موجودی: ${toFa(p.stock)}${adminSaleTag(p)}</span>
+      <div class="ap-img">${img ? `<img src="${thumbUrl(img)}" alt="" loading="lazy" onerror="thumbFallback(this)">` : icons.necklace}</div>
+      <div class="ap-info">
+        <b>${escapeHtml(p.name)}</b>
+        <span>${escapeHtml(p.category_label || p.category)}، ${toFa(p.price)} تومان${adminSaleTag(p)}</span>
+        <em class="ap-stock ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
-        <button onclick="deleteAdminProduct(${p.id})">حذف</button>
+        <button class="del" onclick="deleteAdminProduct(${p.id})" aria-label="حذف ${escapeHtml(p.name)}">حذف</button>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 document.getElementById('adminProductSearch').addEventListener('input', renderAdminProducts);
 
