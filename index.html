@@ -968,6 +968,12 @@
     .pdp .detail-name{font-size:30px;}
     .pdp .reviews-section{max-width:none;margin-top:48px;}
   }
+
+  /* full-screen panels reach under Safari's floating bottom toolbar (iOS 26), so the page behind never shows through */
+  .overlay,.drawer,.checkout-page,.product-page{bottom:auto;height:100vh;height:100lvh;}
+  .drawer-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
+  .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + (100lvh - 100dvh));}
+  @media(max-width:899px){.pd-buybar{bottom:calc(100lvh - 100dvh);}}
 </style>
 <script type="application/ld+json">
 {
