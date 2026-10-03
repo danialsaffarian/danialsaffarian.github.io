@@ -800,7 +800,7 @@
   .drawer-close:hover{background:var(--tan);border-color:var(--tan);}
   .drawer-close svg{width:16px;height:16px;fill:none;stroke:var(--coffee);stroke-width:1.8;stroke-linecap:round;}
   .drawer-items{padding:6px 22px;gap:0;}
-  .drawer-item{align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);animation:fadeUp .3s ease;}
+  .drawer-item{align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid var(--line);overflow:hidden;}
   .drawer-item:last-child{border-bottom:0;}
   .drawer-item .mini-visual{width:76px;height:92px;border-radius:4px;}
   .drawer-item-info{min-width:0;display:flex;flex-direction:column;gap:6px;}
@@ -837,6 +837,27 @@
   .drawer-secure{display:flex;align-items:center;justify-content:center;gap:6px;margin:10px 0 0;font-size:11.5px;color:var(--coffee-70);}
   .drawer-secure svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;}
   @media(prefers-reduced-motion:reduce){.drawer-empty svg{animation:none;}}
+
+  /* cart motion */
+  .drawer.anim-in .drawer-item{animation:diIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i) * 70ms + 140ms);}
+  .drawer.anim-in .drawer-head h3,.drawer.anim-in .drawer-foot{animation:diFade .5s ease both .1s;}
+  @keyframes diIn{from{opacity:0;transform:translateX(-24px);}to{opacity:1;transform:none;}}
+  @keyframes diFade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .drawer-item.just-added{position:relative;}
+  .drawer-item.just-added::after{content:"";position:absolute;inset:4px -10px;background:linear-gradient(90deg,rgba(201,164,106,0),rgba(201,164,106,.22),rgba(201,164,106,0));pointer-events:none;animation:justAdded 1.6s ease .5s both;}
+  @keyframes justAdded{0%{opacity:0;transform:translateX(60%);}30%{opacity:1;}100%{opacity:0;transform:translateX(-60%);}}
+  .drawer-item.leaving{transition:opacity .25s ease,transform .3s ease,height .3s ease .12s,padding .3s ease .12s,border-color .3s;opacity:0;transform:translateX(-40px);height:0!important;padding-block:0;border-color:transparent;}
+  .drawer .qty-ctrl span.bump{animation:qtyBump .35s cubic-bezier(.3,1.6,.5,1);}
+  @keyframes qtyBump{0%{transform:scale(1);}40%{transform:scale(1.45);color:var(--gold);}100%{transform:scale(1);}}
+  .fly-ghost{position:fixed;z-index:9999;object-fit:cover;pointer-events:none;box-shadow:0 10px 30px rgba(46,32,22,.3);transform-origin:center;}
+  .cart-hit{animation:cartHit .5s cubic-bezier(.3,1.5,.5,1);}
+  .cart-hit .cart-count{animation:badgePop .5s cubic-bezier(.3,1.8,.5,1);}
+  @keyframes cartHit{0%,100%{transform:none;}30%{transform:scale(1.18) rotate(-8deg);}60%{transform:scale(.95) rotate(4deg);}}
+  @keyframes badgePop{0%{transform:scale(1);}40%{transform:scale(1.6);background:var(--gold);}100%{transform:scale(1);}}
+  .drawer-cta{position:relative;overflow:hidden;}
+  .drawer-cta:not(:disabled)::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,240,214,.28),transparent);transform:skewX(-18deg);animation:ctaGloss 4.5s ease-in-out 1.2s infinite;}
+  @keyframes ctaGloss{0%{left:-50%;}35%,100%{left:130%;}}
+  @media(prefers-reduced-motion:reduce){.drawer.anim-in .drawer-item,.drawer.anim-in .drawer-foot,.drawer.anim-in .drawer-head h3,.drawer-item.just-added::after,.drawer-cta::after,.cart-hit,.cart-hit .cart-count,.drawer .qty-ctrl span.bump{animation:none;}}
 </style>
 <script type="application/ld+json">
 {
@@ -2223,9 +2244,8 @@ function addToCartDetail(){
   if(existing){ existing.qty++; }
   else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
   trackEvent('cart', p.id);
-  updateCart();
-  closeProductDetail();
-  openDrawer();
+  cartJustAdded = p.id + '|' + variant;
+  flyToCart(document.querySelector('#productPage .detail-photo'), () => { updateCart(); closeProductDetail(); openDrawer(); });
 }
 
 // کلیک روی هر کارت محصول (به‌جز دکمه‌ها/سلکت/اسلایدر عکس) → باز شدن صفحه‌ی جزئیات محصول
@@ -2512,8 +2532,38 @@ function addToCart(id, el){
   if(existing){ existing.qty++; }
   else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
   trackEvent('cart', p.id);
-  updateCart();
-  openDrawer();
+  cartJustAdded = id + '|' + variant;
+  const card = el && el.closest('.card');
+  flyToCart(card && card.querySelector('.card-photo'), () => { updateCart(); openDrawer(); });
+}
+let cartJustAdded = null, cartBumpIdx = -1;
+// the product photo shrinks into the cart icon, then the badge pops
+function flyToCart(img, done){
+  const target = document.getElementById('cartOpenBtn');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!img || !target || reduce || !img.complete){ done(); return; }
+  const a = img.getBoundingClientRect(), b = target.getBoundingClientRect();
+  if(!a.width || a.bottom < 0 || a.top > innerHeight){ done(); return; }
+  const ghost = img.cloneNode(false);
+  ghost.removeAttribute('onerror');
+  ghost.className = 'fly-ghost';
+  Object.assign(ghost.style, { left: a.left + 'px', top: a.top + 'px', width: a.width + 'px', height: a.height + 'px' });
+  document.body.appendChild(ghost);
+  const dx = b.left + b.width / 2 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+  const anim = ghost.animate([
+    { transform: 'translate(0,0) scale(1)', opacity: 1, borderRadius: '4px' },
+    { transform: `translate(${dx * .55}px,${dy * .35 - 60}px) scale(.5)`, opacity: 1, borderRadius: '30%', offset: .55 },
+    { transform: `translate(${dx}px,${dy}px) scale(.08)`, opacity: .4, borderRadius: '50%' }
+  ], { duration: 650, easing: 'cubic-bezier(.5,0,.3,1)' });
+  let finished = false;
+  const finish = () => {
+    if(finished) return; finished = true;
+    ghost.remove();
+    target.classList.remove('cart-hit'); void target.offsetWidth; target.classList.add('cart-hit');
+    done();
+  };
+  anim.onfinish = finish;
+  setTimeout(finish, 900);
 }
 function changeQty(id, delta, variant){
   const item = cart.find(i=>i.id===id && i.variant===(variant || null));
@@ -2528,7 +2578,30 @@ function changeQty(id, delta, variant){
 }
 function changeQtyAt(idx, delta){
   const item = cart[idx];
-  if(item) changeQty(item.id, delta, item.variant);
+  if(!item) return;
+  cartBumpIdx = idx;
+  changeQty(item.id, delta, item.variant);
+}
+// the row slides away and collapses, then leaves the cart
+function removeCartLine(idx, btn){
+  const row = btn.closest('.drawer-item');
+  const item = cart[idx];
+  if(!row || !item){ return; }
+  row.style.height = row.offsetHeight + 'px';
+  requestAnimationFrame(() => row.classList.add('leaving'));
+  setTimeout(() => changeQty(item.id, -item.qty, item.variant), 380);
+}
+function animateNumber(el, to, suffix){
+  const from = Number(el.dataset.v || 0);
+  el.dataset.v = to;
+  if(from === to || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)){ el.textContent = toFa(to) + suffix; return; }
+  const t0 = performance.now(), dur = 450;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    el.textContent = toFa(Math.round(from + (to - from) * e)) + suffix;
+    if(k < 1 && el.dataset.v == to) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 function updateCart(){
   const count = cart.reduce((s,i)=>s+i.qty,0);
@@ -2545,18 +2618,18 @@ function updateCart(){
     itemsEl.innerHTML = cart.map((i, idx)=>{
       const atLimit = i.qty >= lineLimit(products.find(p => p.id === i.id) || i, i.variant);
       return `
-      <div class="drawer-item">
+      <div class="drawer-item${cartJustAdded === i.id + '|' + i.variant ? ' just-added' : ''}" style="--i:${idx}">
         <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${escapeHtml(thumbUrl(i.imageUrl))}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="thumbFallback(this)">` : icons[i.icon]}</div>
         <div class="drawer-item-info">
           <div class="di-top">
             <div class="name">${escapeHtml(i.name)}</div>
-            <button class="di-remove" onclick="changeQtyAt(${idx},-${i.qty})" aria-label="حذف ${escapeHtml(i.name)} از سبد"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button>
+            <button class="di-remove" onclick="removeCartLine(${idx}, this)" aria-label="حذف ${escapeHtml(i.name)} از سبد"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12"/></svg></button>
           </div>
           ${i.variant ? `<span class="di-variant">${escapeHtml(i.variant)}</span>` : ''}
           <div class="di-bottom">
             <div class="qty-ctrl">
               <button onclick="changeQtyAt(${idx},-1)" aria-label="کم کردن">−</button>
-              <span>${toFa(i.qty)}</span>
+              <span${idx === cartBumpIdx ? ' class="bump"' : ''}>${toFa(i.qty)}</span>
               <button onclick="changeQtyAt(${idx},1)"${atLimit ? ' class="at-limit" aria-disabled="true"' : ''} aria-label="اضافه کردن">+</button>
             </div>
             <div class="price">${toFa(i.price * i.qty)} <small>تومان</small></div>
@@ -2567,7 +2640,8 @@ function updateCart(){
     `;}).join('');
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  document.getElementById('drawerTotal').textContent = toFa(total) + ' تومان';
+  animateNumber(document.getElementById('drawerTotal'), total, ' تومان');
+  cartJustAdded = null; cartBumpIdx = -1;
   document.getElementById('drawerCount').textContent = count ? toFa(count) + ' محصول' : '';
   document.getElementById('drawerFoot').hidden = cart.length === 0;
   const proceedBtn = document.getElementById('proceedCheckoutBtn');
@@ -2579,6 +2653,10 @@ updateCart();
 const drawer = document.getElementById('drawer');
 const overlay = document.getElementById('overlay');
 function openDrawer(){
+  if(!drawer.classList.contains('open')){
+    drawer.classList.remove('anim-in'); void drawer.offsetWidth; drawer.classList.add('anim-in');
+    clearTimeout(drawer._animT); drawer._animT = setTimeout(() => drawer.classList.remove('anim-in'), 1200);
+  }
   drawer.classList.add('open'); overlay.classList.add('open');
 }
 function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
