@@ -711,7 +711,7 @@
   .filter-btn:hover .fb-img{border-color:var(--gold);transform:translateY(-2px);}
   .filter-btn.active{background:none;color:var(--coffee);}
   .filter-btn.active .fb-img{border:1.5px solid var(--coffee);}
-  @media(max-width:700px){.filter-row{justify-content:flex-start;gap:16px;margin:0 -20px 44px;padding:4px 20px;}.fb-img{width:70px;height:70px;}.filter-btn{font-size:12.5px;gap:8px;}}
+  @media(max-width:700px){.filter-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px 10px;overflow:visible;margin-bottom:44px;padding:0;}.fb-img{width:84px;height:84px;}.filter-btn{font-size:13px;gap:8px;}}
 
   .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:24px;}
   .sec-head .newest-title{margin:0;}
