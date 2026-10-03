@@ -699,6 +699,47 @@
   .adm .stat-item{text-align:start;}
   .adm .stat-item b{color:var(--ink);font-weight:800;font-variant-numeric:tabular-nums;}
   .adm .admin-prod-actions button{border-radius:9px;}
+
+  /* ---------- Storefront polish ---------- */
+  .filter-row{display:flex;justify-content:center;gap:22px;margin-bottom:56px;overflow-x:auto;scrollbar-width:none;padding:4px 2px;}
+  .filter-row::-webkit-scrollbar{display:none;}
+  .filter-btn{flex:none;display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--coffee);font-size:13.5px;font-weight:600;transition:none;}
+  .filter-btn:hover{background:none;}
+  .fb-img{width:92px;height:92px;border-radius:50%;padding:3px;border:1px solid var(--line);display:block;transition:border-color .25s,transform .25s;}
+  .fb-img img,.fb-img svg{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:var(--tan);}
+  .fb-img svg{padding:22%;background:var(--cream-soft);}
+  .filter-btn:hover .fb-img{border-color:var(--gold);transform:translateY(-2px);}
+  .filter-btn.active{background:none;color:var(--coffee);}
+  .filter-btn.active .fb-img{border:1.5px solid var(--coffee);}
+  @media(max-width:700px){.filter-row{justify-content:flex-start;gap:16px;margin:0 -20px 44px;padding:4px 20px;}.fb-img{width:70px;height:70px;}.filter-btn{font-size:12.5px;gap:8px;}}
+
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:24px;}
+  .sec-head .newest-title{margin:0;}
+  .newest-title{font-family:'Vazirmatn',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.2px;}
+  .sec-more{font:inherit;font-size:13px;font-weight:600;color:var(--coffee-70);background:none;border:0;border-bottom:1px solid var(--line);padding:0 0 2px;cursor:pointer;transition:color .2s,border-color .2s;}
+  .sec-more:hover{color:var(--coffee);border-color:var(--coffee);}
+
+  .card-visual{aspect-ratio:4/5;}
+  .card:hover .card-visual{transform:none;}
+  .card-photo{transition:transform .6s cubic-bezier(.2,.7,.2,1),opacity .2s;}
+  .card:hover .card-photo{transform:scale(1.04);}
+  .tag-new,.tag-sale,.tag-soldout{font-size:10.5px;font-weight:700;padding:4px 10px;letter-spacing:0;}
+  .tag-new{background:rgba(251,248,243,.94);color:var(--coffee);}
+  .tag-soldout{background:rgba(58,47,38,.78);}
+  .badge-col{top:12px;}.badge-col.badge-right{right:12px;}.badge-col.badge-left{left:12px;}.badge-col.badge-bottom{top:auto;bottom:12px;}
+  .wish-btn{width:34px;height:34px;background:rgba(251,248,243,.94);box-shadow:0 1px 4px rgba(58,47,38,.12);}
+  .wish-btn svg{width:16px;height:16px;}
+  .card-body{flex:1;padding:14px 2px 0;gap:4px;}
+  .card-cat{font-size:11px;letter-spacing:0;}
+  .card-name{font-size:15.5px;line-height:1.6;}
+  .card-price{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:14.5px;font-weight:600;color:var(--coffee);margin-bottom:8px;}
+  .card-price .price-sale{order:-1;}
+  .card-price .price-old{margin:0;font-size:12px;font-weight:400;}
+  .card-stock{font-size:11.5px;color:#8B3A3A;margin:-4px 0 6px;}
+  .card .variant-select{margin-bottom:8px;}
+  .card .buy-btn{margin-top:auto;padding:11px;font-size:13px;}
+  .buy-btn:not(:disabled):hover{background:var(--coffee);color:var(--cream);}
+  @media(max-width:560px){.card-name{font-size:14px;}.card-price{font-size:13.5px;}.card .buy-btn{font-size:12.5px;padding:10px 6px;}}
 </style>
 <script type="application/ld+json">
 {
@@ -828,21 +869,21 @@
     </div>
 
     <div class="filter-row" id="filterRow">
-      <button class="filter-btn" data-cat="earring">گوشواره</button>
-      <button class="filter-btn" data-cat="necklace">گردنبند</button>
-      <button class="filter-btn" data-cat="bracelet">دستبند</button>
-      <button class="filter-btn" data-cat="ring">انگشتر</button>
-      <button class="filter-btn" data-cat="anklet">پابند</button>
-      <button class="filter-btn" data-cat="all">همه محصولات</button>
+      <button class="filter-btn" data-cat="earring"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">گوشواره</span></button>
+      <button class="filter-btn" data-cat="necklace"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">گردنبند</span></button>
+      <button class="filter-btn" data-cat="bracelet"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">دستبند</span></button>
+      <button class="filter-btn" data-cat="ring"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">انگشتر</span></button>
+      <button class="filter-btn" data-cat="anklet"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">پابند</span></button>
+      <button class="filter-btn" data-cat="all"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">همه محصولات</span></button>
     </div>
 
     <div class="newest-section" id="newestSection">
-      <h3 class="newest-title">جدیدترین محصولات</h3>
+      <div class="sec-head"><h3 class="newest-title">جدیدترین محصولات</h3><button type="button" class="sec-more" onclick="enterCategoryFocus('all')">همه محصولات ←</button></div>
       <div class="product-grid" id="newestGrid"></div>
     </div>
 
     <div class="newest-section" id="saleSection" style="display:none;">
-      <h3 class="newest-title">محصولات تخفیف‌خورده</h3>
+      <div class="sec-head"><h3 class="newest-title">محصولات تخفیف‌خورده</h3></div>
       <div class="product-grid" id="saleGrid"></div>
     </div>
 
@@ -1574,6 +1615,7 @@ async function fetchProducts(){
   });
   renderNewest();
   renderSaleProducts();
+  paintCategoryThumbs();
   injectProductsJsonLd();
 }
 
@@ -1697,7 +1739,6 @@ function productCardHtml(p){
   let leftBadges = '';
   if(p.isNew) leftBadges += '<span class="tag-new">تازه</span>';
   if(soldOut) leftBadges += '<span class="tag-soldout">ناموجود</span>';
-  else if(lowStock) leftBadges += `<span class="tag-stock">فقط ${toFa(p.stock)} عدد باقی مانده</span>`;
   let rightBadges = '';
   if(onSale && !soldOut) rightBadges += `<span class="tag-sale">${toFa(discountPct)}٪ تخفیف</span>`;
   const wishActive = wishlistIds.has(p.id);
@@ -1735,6 +1776,7 @@ function productCardHtml(p){
       <span class="card-cat">${escapeHtml(p.catLabel)}</span>
       <span class="card-name">${escapeHtml(p.name)}</span>
       ${priceHtmlStr}
+      ${lowStock ? `<span class="card-stock">فقط ${toFa(p.stock)} عدد باقی مونده</span>` : ''}
       ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
       ${variantSelect}
       <button class="buy-btn" onclick="addToCart(${p.id}, this)" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
@@ -2217,6 +2259,18 @@ if(heroStatsEl){
     });
   }, { threshold: 0.4 });
   statsObserver.observe(heroStatsEl);
+}
+
+function paintCategoryThumbs(){
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    const cat = btn.dataset.cat;
+    const p = products.find(x => (cat === 'all' || x.cat === normCat(cat)) && x.images && x.images.length);
+    const box = btn.querySelector('.fb-img');
+    if(!box) return;
+    box.innerHTML = p && cat !== 'all'
+      ? `<img src="${escapeHtml(thumbUrl(p.images[0]))}" alt="" loading="lazy" decoding="async" onerror="thumbFallback(this)">`
+      : '<svg viewBox="0 0 120 120"><use href="#hg-mark"/></svg>';
+  });
 }
 
 let currentCat = null; // null یعنی هنوز دسته‌ای انتخاب نشده (حالت صفحه اصلی)
