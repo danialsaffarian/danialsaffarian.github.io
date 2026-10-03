@@ -706,8 +706,14 @@
   .filter-btn{flex:none;display:flex;flex-direction:column;align-items:center;gap:10px;background:none;border:0;padding:0;color:var(--coffee);font-size:13.5px;font-weight:600;transition:none;}
   .filter-btn:hover{background:none;}
   .fb-img{width:92px;height:92px;border-radius:50%;padding:3px;border:1px solid var(--line);display:block;transition:border-color .25s,transform .25s;}
-  .fb-img img,.fb-img svg{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;background:var(--tan);}
-  .fb-img svg{padding:22%;background:var(--cream-soft);}
+  .cat-art{width:100%;height:100%;border-radius:50%;display:block;padding:3%;background:radial-gradient(circle at 34% 28%,#FDFBF7 0%,#F1E8DA 70%,#EADDC8 100%);}
+  .cat-art.mark{padding:19%;}
+  .cat-art .l{fill:none;stroke:#8E6E58;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .cat-art .l.w{stroke-width:2.4;}
+  .cat-art .l.t{stroke-width:.9;stroke:#B8956F;}
+  .cat-art .l.dots{stroke-width:2.6;stroke-dasharray:0 4.2;stroke:#A9855E;}
+  .cat-art .g{fill:#C9A46A;stroke:#8E6E58;stroke-width:1.1;}
+  .filter-btn:hover .cat-art .g{fill:#B8956F;}
   .filter-btn:hover .fb-img{border-color:var(--gold);transform:translateY(-2px);}
   .filter-btn.active{background:none;color:var(--coffee);}
   .filter-btn.active .fb-img{border:1.5px solid var(--coffee);}
@@ -869,12 +875,12 @@
     </div>
 
     <div class="filter-row" id="filterRow">
-      <button class="filter-btn" data-cat="earring"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">گوشواره</span></button>
-      <button class="filter-btn" data-cat="necklace"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">گردنبند</span></button>
-      <button class="filter-btn" data-cat="bracelet"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">دستبند</span></button>
-      <button class="filter-btn" data-cat="ring"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">انگشتر</span></button>
-      <button class="filter-btn" data-cat="anklet"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">پابند</span></button>
-      <button class="filter-btn" data-cat="all"><span class="fb-img" aria-hidden="true"></span><span class="fb-label">همه محصولات</span></button>
+      <button class="filter-btn" data-cat="earring"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><path d="M36 20a4 4 0 1 1 3.6 5.7" class="l"/><line x1="36" y1="27" x2="36" y2="35" class="l"/><circle cx="36" cy="38" r="2.6" class="g"/><path d="M36 44C40.5 50 43 54 43 58.5 43 62.6 40 66 36 66S29 62.6 29 58.5C29 54 31.5 50 36 44Z" class="g"/><path d="M64 24a4 4 0 1 1 3.6 5.7" class="l"/><line x1="64" y1="31" x2="64" y2="39" class="l"/><circle cx="64" cy="42" r="2.6" class="g"/><path d="M64 48C68.5 54 71 58 71 62.5 71 66.6 68 70 64 70S57 66.6 57 62.5C57 58 59.5 54 64 48Z" class="g"/></svg></span><span class="fb-label">گوشواره</span></button>
+      <button class="filter-btn" data-cat="necklace"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><path d="M20 24Q50 74 80 24" class="l"/><circle cx="30.5" cy="38.5" r="1.7" class="g"/><circle cx="40" cy="45.3" r="2" class="g"/><circle cx="60" cy="45.3" r="2" class="g"/><circle cx="69.5" cy="38.5" r="1.7" class="g"/><circle cx="50" cy="51" r="2.4" class="l"/><path d="M50 54C54.5 60 57.5 64 57.5 68 57.5 72.2 54.2 75 50 75S42.5 72.2 42.5 68C42.5 64 45.5 60 50 54Z" class="g"/></svg></span><span class="fb-label">گردنبند</span></button>
+      <button class="filter-btn" data-cat="bracelet"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="30" ry="15" class="l w"/><ellipse cx="50" cy="50" rx="25" ry="11" class="l t"/><circle cx="26" cy="58.5" r="2.4" class="g"/><circle cx="36.5" cy="63" r="2.6" class="g"/><circle cx="63.5" cy="63" r="2.6" class="g"/><circle cx="74" cy="58.5" r="2.4" class="g"/><line x1="50" y1="65" x2="50" y2="69" class="l"/><path d="M50 69C53 73 55 75.6 55 78.2 55 81 52.8 83 50 83S45 81 45 78.2C45 75.6 47 73 50 69Z" class="g"/></svg></span><span class="fb-label">دستبند</span></button>
+      <button class="filter-btn" data-cat="ring"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><circle cx="50" cy="62" r="19" class="l w"/><circle cx="50" cy="62" r="15.5" class="l t"/><path d="M41 38L45.5 31H54.5L59 38L50 47Z" class="g"/><path d="M41 38H59M45.5 31L50 38L54.5 31M50 38V47" class="l t"/></svg></span><span class="fb-label">انگشتر</span></button>
+      <button class="filter-btn" data-cat="anklet"><span class="fb-img" aria-hidden="true"><svg class="cat-art" viewBox="0 0 100 100"><path d="M14 36Q50 66 86 36" class="l dots"/><line x1="32" y1="47.5" x2="32" y2="53" class="l"/><path d="M32 53C34.6 56.5 36.2 58.8 36.2 61 36.2 63.4 34.3 65 32 65S27.8 63.4 27.8 61C27.8 58.8 29.4 56.5 32 53Z" class="g"/><line x1="50" y1="51" x2="50" y2="58" class="l"/><path d="M50 58C53 62 55 64.6 55 67.2 55 70 52.8 72 50 72S45 70 45 67.2C45 64.6 47 62 50 58Z" class="g"/><line x1="68" y1="47.5" x2="68" y2="53" class="l"/><path d="M68 53C70.6 56.5 72.2 58.8 72.2 61 72.2 63.4 70.3 65 68 65S63.8 63.4 63.8 61C63.8 58.8 65.4 56.5 68 53Z" class="g"/></svg></span><span class="fb-label">پابند</span></button>
+      <button class="filter-btn" data-cat="all"><span class="fb-img" aria-hidden="true"><svg class="cat-art mark" viewBox="0 0 120 120"><use href="#hg-mark"/></svg></span><span class="fb-label">همه محصولات</span></button>
     </div>
 
     <div class="newest-section" id="newestSection">
@@ -1615,7 +1621,6 @@ async function fetchProducts(){
   });
   renderNewest();
   renderSaleProducts();
-  paintCategoryThumbs();
   injectProductsJsonLd();
 }
 
@@ -2259,18 +2264,6 @@ if(heroStatsEl){
     });
   }, { threshold: 0.4 });
   statsObserver.observe(heroStatsEl);
-}
-
-function paintCategoryThumbs(){
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    const cat = btn.dataset.cat;
-    const p = products.find(x => (cat === 'all' || x.cat === normCat(cat)) && x.images && x.images.length);
-    const box = btn.querySelector('.fb-img');
-    if(!box) return;
-    box.innerHTML = p && cat !== 'all'
-      ? `<img src="${escapeHtml(thumbUrl(p.images[0]))}" alt="" loading="lazy" decoding="async" onerror="thumbFallback(this)">`
-      : '<svg viewBox="0 0 120 120"><use href="#hg-mark"/></svg>';
-  });
 }
 
 let currentCat = null; // null یعنی هنوز دسته‌ای انتخاب نشده (حالت صفحه اصلی)
