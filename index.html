@@ -540,6 +540,18 @@
   .order-item .oi-top{display:flex;justify-content:space-between;font-weight:700;margin-bottom:6px;}
   .order-item .oi-items{color:var(--coffee-70);}
   .order-item .oi-status{display:inline-block;margin-top:6px;font-size:11.5px;padding:3px 10px;background:var(--tan);color:var(--coffee);}
+  .pay-badge{display:inline-block;margin-top:6px;margin-inline-start:6px;font-size:11.5px;padding:3px 10px;border:1px solid var(--line);color:var(--coffee-70);}
+  .pay-badge.paid{border-color:#5f7f5a;color:#3f5e3a;}
+  .pay-badge.wait{border-color:#b08a3e;color:#7a5a1c;}
+  .pay-badge.test{border-style:dashed;}
+  .oi-pay-btn{display:inline-block;margin-top:8px;margin-inline-start:6px;font:inherit;font-size:12px;font-weight:700;padding:5px 14px;border:1px solid var(--coffee);background:var(--coffee);color:#fff;cursor:pointer;}
+  .oi-pay-btn:disabled{opacity:.6;cursor:wait;}
+  .order-result-title{font-size:17px;font-weight:700;color:var(--coffee);margin-bottom:8px;}
+  .order-result-title.warn{color:#8B3A3A;}
+  .pay-mode-box{border:1px solid var(--line);padding:14px;margin-bottom:18px;font-size:13px;color:var(--coffee);}
+  .pay-mode-box label{display:flex;gap:8px;align-items:flex-start;margin-top:8px;cursor:pointer;line-height:1.7;}
+  .pay-mode-box small{color:var(--coffee-70);}
+  .admin-orders-filter{display:flex;gap:8px;align-items:center;font-size:12.5px;color:var(--coffee-70);margin-bottom:14px;cursor:pointer;}
 
   ::selection{background:var(--blush);color:var(--coffee);}
 </style>
@@ -1062,6 +1074,13 @@
     </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
+      <div class="pay-mode-box">
+        <b>پرداخت آنلاین (زیبال)</b>
+        <label><input type="radio" name="payMode" value="off"> <span>خاموش <small>— مثل قبل، کارت‌به‌کارت و هماهنگی تلفنی</small></span></label>
+        <label><input type="radio" name="payMode" value="test"> <span>آزمایشی <small>— فقط خودِ مدیرها با درگاه آزمایشی زیبال (بدون پول واقعی) پرداخت می‌کنن؛ مشتری‌ها مثل قبل</small></span></label>
+        <label><input type="radio" name="payMode" value="live"> <span>فعال <small>— همه‌ی مشتری‌ها باید آنلاین پرداخت کنن؛ سفارشِ پرداخت‌نشده بعد از مهلت خودکار لغو می‌شه</small></span></label>
+      </div>
+      <label class="admin-orders-filter"><input type="checkbox" id="adminShowUnpaid"> نمایش سفارش‌های پرداخت‌نشده و رهاشده</label>
       <button class="hero-btn" style="display:inline-block;color:#8B3A3A;border-color:#8B3A3A;margin-bottom:18px;" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
       <div id="adminOrdersList"></div>
     </div>
@@ -1225,17 +1244,16 @@
       </div>
       <p class="form-error" id="formError"></p>
 
-      <button class="hero-btn pay-disabled" type="button" disabled style="display:block;width:100%;text-align:center;color:var(--coffee-70);border-color:var(--line);cursor:not-allowed;margin-bottom:10px;">
-        پرداخت آنلاین <span style="font-size:11.5px;">(به‌زودی)</span>
-      </button>
       <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="submitOrderBtn">ثبت سفارش</button>
-      <p class="checkout-note">پرداخت به‌صورت کارت‌به‌کارت است؛ بعد از ثبت سفارش برای هماهنگی با شما تماس می‌گیریم.</p>
+      <p class="checkout-note" id="checkoutPayNote">پرداخت به‌صورت کارت‌به‌کارت است؛ بعد از ثبت سفارش برای هماهنگی با شما تماس می‌گیریم.</p>
     </div>
 
     <div id="orderSuccess" style="display:none;text-align:center;padding:20px 0;">
-      <p style="font-size:17px;font-weight:700;color:var(--coffee);margin-bottom:8px;">سفارش شما ثبت شد ✓</p>
-      <p style="font-size:14px;color:var(--coffee-70);">به‌زودی برای هماهنگی پرداخت و ارسال با شما تماس می‌گیریم.</p>
+      <p id="orderResultTitle" class="order-result-title">سفارش شما ثبت شد ✓</p>
+      <p id="orderResultText" style="font-size:14px;color:var(--coffee-70);line-height:1.9;">به‌زودی برای هماهنگی پرداخت و ارسال با شما تماس می‌گیریم.</p>
       <p id="orderTrackingCodeText" style="font-size:14px;font-weight:700;color:var(--coffee);margin-top:12px;direction:ltr;unicode-bidi:isolate;"></p>
+      <p id="orderPayRefText" style="font-size:13px;color:var(--coffee-70);margin-top:6px;"></p>
+      <button class="hero-btn" style="display:none;margin:18px auto 0;color:#fff;background:var(--coffee);border-color:var(--coffee);" id="retryPayBtn">پرداخت دوباره</button>
       <button class="hero-btn" style="display:inline-block;margin-top:18px;color:var(--coffee);border-color:var(--coffee);" id="backToShopBtn">بازگشت به فروشگاه</button>
     </div>
   </div>
@@ -2259,6 +2277,7 @@ function openCheckoutPage(){
   document.getElementById('checkoutForm').style.display = 'block';
   document.getElementById('orderSuccess').style.display = 'none';
   renderCheckoutSummary();
+  updatePayLabels();
   if(currentProfile){
     document.getElementById('custName').value = currentProfile.full_name || '';
     document.getElementById('custAddress').value = currentProfile.address || '';
@@ -2294,6 +2313,125 @@ function orderErrorMessage(error){
   if(/HG_REQUIRED/.test(m)) return 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
   return 'مشکلی پیش اومد، لطفاً دوباره امتحان کن.';
 }
+
+/* ================= پرداخت آنلاین (زیبال) ================= */
+const PAY_PENDING = 'در انتظار پرداخت';
+// off = کارت‌به‌کارت مثل قبل، test = فقط ادمین با درگاه آزمایشی زیبال، live = همه با درگاه واقعی
+let paymentMode = 'off';
+async function loadPaymentMode(){
+  const { data } = await db.from('site_settings').select('value').eq('key', 'payment').maybeSingle();
+  paymentMode = (data && data.value && data.value.mode) || 'off';
+  updatePayLabels();
+}
+function onlinePaymentOn(){ return paymentMode === 'live' || (paymentMode === 'test' && isAdmin); }
+function submitBtnLabel(){ return onlinePaymentOn() ? 'ثبت سفارش و پرداخت' : 'ثبت سفارش'; }
+function updatePayLabels(){
+  const btn = document.getElementById('submitOrderBtn');
+  if(!btn.disabled) btn.textContent = submitBtnLabel();
+  document.getElementById('checkoutPayNote').textContent = onlinePaymentOn()
+    ? 'پرداخت امن با درگاه زیبال و همه‌ی کارت‌های عضو شتاب. بعد از پرداخت به سایت برمی‌گردی و سفارشت قطعی می‌شه.'
+      + (paymentMode === 'test' ? ' (حالت آزمایشی مدیر: پول واقعی کم نمی‌شه)' : '')
+    : 'پرداخت به‌صورت کارت‌به‌کارت است؛ بعد از ثبت سفارش برای هماهنگی با شما تماس می‌گیریم.';
+}
+// sends the customer to Zibal; on failure returns a message to show (on success the page navigates away)
+async function startPayment(trackingCode){
+  const { data, error } = await db.functions.invoke('payment', {
+    body: { action: 'start', trackingCode, returnUrl: location.origin + location.pathname },
+  });
+  if(!error && data && typeof data.url === 'string' && /^https:\/\/gateway\.zibal\.ir\/start\/\d+$/.test(data.url)){
+    location.href = data.url;
+    return null;
+  }
+  let reason = data && data.error;
+  if(!reason && error && error.context && typeof error.context.json === 'function'){
+    try{ reason = (await error.context.json()).error; }catch(e){}
+  }
+  if(reason === 'login'){ requireLoginForCheckout(); return 'برای پرداخت اول وارد حسابت شو.'; }
+  if(reason === 'already_paid') return 'این سفارش قبلاً پرداخت شده.';
+  if(reason === 'not_payable') return 'مهلت پرداخت این سفارش تموم شده؛ لطفاً دوباره سفارش بده.';
+  if(reason === 'too_many') return 'چند بار پشت سر هم تلاش کردی؛ چند دقیقه دیگه دوباره امتحان کن.';
+  if(reason === 'disabled' || reason === 'not_configured') return 'پرداخت آنلاین الان در دسترس نیست؛ لطفاً با فروشگاه تماس بگیر.';
+  return 'اتصال به درگاه پرداخت برقرار نشد. چند لحظه دیگه دوباره امتحان کن.';
+}
+function showOrderResult({ title, text, code, refText, retryCode, warn }){
+  document.getElementById('checkoutSummary').style.display = 'none';
+  document.getElementById('checkoutForm').style.display = 'none';
+  document.getElementById('orderSuccess').style.display = 'block';
+  const titleEl = document.getElementById('orderResultTitle');
+  titleEl.textContent = title;
+  titleEl.classList.toggle('warn', !!warn);
+  document.getElementById('orderResultText').textContent = text || '';
+  document.getElementById('orderTrackingCodeText').textContent = code ? 'کد پیگیری سفارش شما: ' + code : '';
+  document.getElementById('orderPayRefText').textContent = refText || '';
+  const retryBtn = document.getElementById('retryPayBtn');
+  retryBtn.style.display = retryCode ? 'block' : 'none';
+  retryBtn.dataset.code = retryCode || '';
+  retryBtn.disabled = false;
+  retryBtn.textContent = 'پرداخت دوباره';
+  checkoutPage.classList.add('open');
+  checkoutPage.scrollTop = 0;
+}
+document.getElementById('retryPayBtn').addEventListener('click', async (e) => {
+  const btn = e.currentTarget;
+  btn.disabled = true;
+  btn.textContent = 'در حال انتقال به درگاه...';
+  const msg = await startPayment(btn.dataset.code);
+  if(msg){ btn.disabled = false; btn.textContent = 'پرداخت دوباره'; showToast(msg); }
+});
+// pay an order that is still waiting for payment (from My orders)
+async function payOrderAgain(trackingCode, btn){
+  if(btn){ btn.disabled = true; btn.textContent = 'در حال انتقال...'; }
+  const msg = await startPayment(trackingCode);
+  if(msg){ if(btn){ btn.disabled = false; btn.textContent = 'پرداخت'; } showToast(msg); }
+}
+// back from Zibal: ?trackId=...&success=... — the server asks Zibal itself, the URL is never trusted
+async function handlePaymentReturn(){
+  const m = location.search.match(/[?&]trackId=(\d{1,18})(?:&|$)/);
+  if(!m) return;
+  history.replaceState(null, '', location.pathname + location.hash);
+  showOrderResult({ title: 'در حال بررسی پرداخت...', text: 'چند لحظه صبر کن، داریم نتیجه رو از درگاه می‌گیریم.' });
+  document.getElementById('backToShopBtn').style.display = 'none';
+  let res = null;
+  for(let i = 0; i < 6 && !res; i++){
+    const { data, error } = await db.functions.invoke('payment', { body: { action: 'verify', trackId: Number(m[1]) } });
+    if(!error && data && data.status && data.status !== 'busy') res = data;
+    else await new Promise(r => setTimeout(r, 2500));
+  }
+  document.getElementById('backToShopBtn').style.display = 'inline-block';
+  const code = res && res.trackingCode;
+  if(res && res.status === 'paid'){
+    cart = []; resetCouponState(); updateCart();
+    showOrderResult({
+      title: 'پرداخت موفق بود و سفارشت ثبت شد ✓',
+      text: 'به‌زودی سفارشت آماده و ارسال می‌شه. وضعیتش رو از «سفارش‌های من» می‌تونی ببینی.',
+      code,
+      refText: res.refNumber ? 'شماره پیگیری پرداخت: ' + res.refNumber : '',
+    });
+  } else if(res && res.status === 'failed'){
+    showOrderResult({
+      warn: true,
+      title: 'پرداخت انجام نشد',
+      text: 'سفارشت تا حدود یک ساعت برات نگه داشته می‌شه و می‌تونی دوباره پرداختش کنی. اگه مبلغی از حسابت کم شده، بانک حداکثر ظرف ۷۲ ساعت برش می‌گردونه.',
+      code,
+      retryCode: code,
+    });
+  } else if(res && res.status === 'cancelled'){
+    showOrderResult({
+      warn: true,
+      title: 'مهلت پرداخت این سفارش تموم شده بود',
+      text: 'این سفارش لغو شده و پرداختش تایید نشد؛ اگه مبلغی از حسابت کم شده، حداکثر ظرف ۷۲ ساعت به حسابت برمی‌گرده. لطفاً دوباره سفارش بده.',
+      code,
+    });
+  } else {
+    showOrderResult({
+      warn: true,
+      title: 'نتیجه‌ی پرداخت هنوز مشخص نیست',
+      text: 'اگه پرداخت کردی نگران نباش؛ پرداخت‌های موفق خودکار ثبت می‌شن. چند دقیقه دیگه وضعیت سفارش رو از «سفارش‌های من» ببین.',
+      code,
+    });
+  }
+}
+loadPaymentMode().then(handlePaymentReturn);
 
 document.getElementById('submitOrderBtn').addEventListener('click', async () => {
   const errorEl = document.getElementById('formError');
@@ -2392,7 +2530,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   }
 
   btn.disabled = false;
-  btn.textContent = 'ثبت سفارش';
+  btn.textContent = submitBtnLabel();
 
   if(error && /HG_LOGIN|permission denied/.test(error.message || '')){ requireLoginForCheckout(); return; }
   if(error || !placed){
@@ -2403,6 +2541,28 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     return;
   }
   const trackingCode = placed.tracking_code;
+  const totalNote = Number(placed.total) !== shownTotal ? ` مبلغ نهایی: ${toFa(Number(placed.total))} تومان.` : '';
+  ['custName', 'custPhone', 'custAddress', 'custNote'].forEach(id => { document.getElementById(id).value = ''; });
+
+  if(placed.needs_payment){
+    // the order holds its items while the customer pays; SMS goes out once the payment is confirmed
+    cart = [];
+    resetCouponState();
+    updateCart();
+    fetchProducts();
+    showOrderResult({ title: 'در حال انتقال به درگاه پرداخت...', text: 'سفارشت ثبت شد و موجودی‌اش برات نگه داشته شده.' + totalNote, code: trackingCode });
+    const msg = await startPayment(trackingCode);
+    if(msg){
+      showOrderResult({
+        warn: true,
+        title: 'سفارشت ثبت شد ولی هنوز پرداخت نشده',
+        text: msg + ' سفارش تا ۳۰ دقیقه برات نگه داشته می‌شه؛ از «سفارش‌های من» هم می‌تونی پرداختش کنی.',
+        code: trackingCode,
+        retryCode: trackingCode,
+      });
+    }
+    return;
+  }
 
   // اطلاع‌رسانی پیامکی به مالک فروشگاه و تاییدیه به مشتری؛ سرور اطلاعات رو خودش از روی کد پیگیری می‌خونه
   db.functions.invoke('notify-order', { body: { trackingCode } }).catch(() => {});
@@ -2410,16 +2570,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   cart = [];
   resetCouponState();
   updateCart();
-  document.getElementById('checkoutForm').style.display = 'none';
-  document.getElementById('checkoutSummary').style.display = 'none';
-  document.getElementById('orderSuccess').style.display = 'block';
-  document.getElementById('orderTrackingCodeText').textContent = 'کد پیگیری سفارش شما: ' + trackingCode
-    + (Number(placed.total) !== shownTotal ? ` · مبلغ نهایی: ${toFa(Number(placed.total))} تومان` : '');
+  showOrderResult({
+    title: 'سفارش شما ثبت شد ✓',
+    text: (placed.payment_status === 'free' ? 'به‌زودی سفارشت آماده و ارسال می‌شه.' : 'به‌زودی برای هماهنگی پرداخت و ارسال با شما تماس می‌گیریم.') + totalNote,
+    code: trackingCode,
+  });
   fetchProducts(); // stock changed
-  document.getElementById('custName').value = '';
-  document.getElementById('custPhone').value = '';
-  document.getElementById('custAddress').value = '';
-  document.getElementById('custNote').value = '';
 });
 
 ['custName', 'custPhone', 'custAddress'].forEach(id => {
@@ -2707,8 +2863,13 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نکردی.</p>';
     return;
   }
-  myOrdersCache = data;
-  listEl.innerHTML = data.map(o => {
+  // checkouts the customer abandoned and replaced with a newer one are just noise here
+  myOrdersCache = data.filter(o => o.cancel_reason !== 'replaced');
+  if(myOrdersCache.length === 0){
+    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نکردی.</p>';
+    return;
+  }
+  listEl.innerHTML = myOrdersCache.map(o => {
     const itemsText = (o.items || []).map(i => `${escapeHtml(i.name)}${i.variant ? ` (${escapeHtml(i.variant)})` : ''} × ${toFa(Number(i.qty) || 0)}`).join('، ');
     const date = new Date(o.created_at).toLocaleDateString('fa-IR');
     return `<div class="order-item" onclick="openOrderDetail(${o.id})" style="cursor:pointer;">
@@ -2716,10 +2877,23 @@ document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
       <div class="oi-items">${itemsText}</div>
       ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
       ${o.post_tracking ? `<div style="font-size:11.5px;color:var(--coffee);margin-top:4px;">ارسال شد با ${escapeHtml(o.post_carrier || 'پست')} · کد رهگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.post_tracking)}</span></div>` : ''}
-      <span class="oi-status">${escapeHtml(o.status || 'جدید')}</span>
+      <span class="oi-status">${escapeHtml(customerStatusText(o))}</span>${payBadgeHtml(o)}
+      ${o.status === PAY_PENDING ? `<button type="button" class="oi-pay-btn" onclick="event.stopPropagation(); payOrderAgain('${escapeHtml(o.tracking_code)}', this)">پرداخت</button>` : ''}
     </div>`;
   }).join('');
 });
+function customerStatusText(o){
+  if(o.status === 'لغو شده' && o.cancel_reason === 'expired') return 'لغو شده (پرداخت نشد)';
+  return o.status || 'جدید';
+}
+function payBadgeHtml(o, withRef){
+  const test = o.pay_sandbox ? ' test' : '';
+  if(o.payment_status === 'paid'){
+    return `<span class="pay-badge paid${test}">پرداخت آنلاین${o.pay_sandbox ? ' (آزمایشی)' : ''}${withRef && o.pay_ref_number ? ` · پیگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.pay_ref_number)}</span>` : ''}</span>`;
+  }
+  if(o.status === PAY_PENDING) return `<span class="pay-badge wait${test}">${o.payment_status === 'failed' ? 'پرداخت ناموفق' : 'پرداخت نشده'}</span>`;
+  return '';
+}
 document.getElementById('myOrdersBackBtn').addEventListener('click', () => {
   document.getElementById('myOrdersPage').classList.remove('open');
 });
@@ -2765,8 +2939,9 @@ async function openOrderDetail(orderId){
     </div>` : ''}
     <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);margin-bottom:8px;">
       <span>${date}</span>
-      <span class="oi-status">${escapeHtml(order.status || 'جدید')}</span>
+      <span><span class="oi-status">${escapeHtml(customerStatusText(order))}</span>${payBadgeHtml(order, true)}</span>
     </div>
+    ${order.status === PAY_PENDING ? `<div style="text-align:center;margin:10px 0 4px;"><button type="button" class="oi-pay-btn" style="font-size:14px;padding:9px 28px;" onclick="payOrderAgain('${escapeHtml(order.tracking_code)}', this)">پرداخت ${toFa(order.total)} تومان</button><div style="font-size:11.5px;color:var(--coffee-70);margin-top:6px;">اگه تا یک ساعت پرداخت نشه، سفارش خودکار لغو می‌شه.</div></div>` : ''}
     <div>${itemsHtml}</div>
     <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin-top:18px;padding-top:18px;border-top:2px solid var(--coffee);">
       <span>جمع کل</span><span>${toFa(order.total)} تومان</span>
@@ -2836,6 +3011,7 @@ function refreshAuthUI(){
     loginLinkBtn.textContent = 'ورود و ثبت‌نام';
   }
   document.getElementById('adminPanelBtn').style.display = isAdmin ? 'flex' : 'none';
+  updatePayLabels();
 }
 
 db.auth.getSession().then(({ data }) => {
@@ -2950,7 +3126,7 @@ document.querySelectorAll('.admin-tab').forEach(btn => {
   btn.addEventListener('click', () => switchAdminTab(btn.dataset.tab));
 });
 
-const ORDER_STATUSES = ['جدید', 'تایید شده', 'ارسال شده', 'تحویل داده شده', 'لغو شده'];
+const ORDER_STATUSES = ['در انتظار پرداخت', 'جدید', 'تایید شده', 'ارسال شده', 'تحویل داده شده', 'لغو شده'];
 
 function escapeHtml(str){
   if(str === null || str === undefined) return '';
@@ -2965,9 +3141,14 @@ function escapeHtml(str){
 async function loadAdminOrders(){
   const listEl = document.getElementById('adminOrdersList');
   listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
-  const { data, error } = await db.from('orders').select('*').order('created_at', { ascending: false });
-  if(error || !data || data.length === 0){
-    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نشده.</p>';
+  syncPayModeRadios();
+  const { data: rows, error } = await db.from('orders').select('*').order('created_at', { ascending: false });
+  // orders still waiting for payment, or dropped without paying, stay out of the way unless asked for
+  const showUnpaid = document.getElementById('adminShowUnpaid').checked;
+  const data = (rows || []).filter(o => showUnpaid || !isAbandonedOrder(o));
+  const hidden = (rows || []).length - data.length;
+  if(error || data.length === 0){
+    listEl.innerHTML = `<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نشده.${hidden ? ` (${toFa(hidden)} سفارش پرداخت‌نشده مخفیه)` : ''}</p>`;
     return;
   }
 
@@ -3003,9 +3184,10 @@ async function loadAdminOrders(){
         ${o.tracking_code ? ` · کد پیگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.tracking_code)}</span>` : ''}
       </div>
       <div class="admin-order-items">${itemsHtml}</div>
+      ${adminPayLine(o)}
       ${o.coupon_code ? `<div class="admin-card-meta">کد تخفیف: ${escapeHtml(o.coupon_code)} (${toFa(o.discount_amount || 0)} تومان تخفیف)</div>` : ''}
       <div class="admin-card-meta"><b style="color:var(--coffee);">${toFa(o.total)} تومان</b> · ${date}</div>
-      ${o.status === 'لغو شده' ? '' : `<div class="ship-box">
+      ${o.status === 'لغو شده' || o.status === PAY_PENDING ? '' : `<div class="ship-box">
         <select id="shipCarrier-${o.id}">${SHIP_CARRIERS.map(c => `<option${(o.post_carrier || 'پست') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
         <input id="shipCode-${o.id}" maxlength="60" placeholder="کد رهگیری مرسوله" value="${escapeHtml(o.post_tracking || '')}">
         <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره‌ی تغییر' : 'ثبت ارسال'}</button>
@@ -3017,6 +3199,38 @@ async function loadAdminOrders(){
     </div>`;
   }).join('');
 }
+
+function isAbandonedOrder(o){
+  return o.status === PAY_PENDING || (o.status === 'لغو شده' && (o.cancel_reason === 'expired' || o.cancel_reason === 'replaced'));
+}
+function adminPayLine(o){
+  const test = o.pay_sandbox ? ' <span class="pay-badge test" style="margin:0;">آزمایشی</span>' : '';
+  if(o.payment_status === 'paid'){
+    return `<div class="admin-card-meta" style="color:#3f5e3a;">✓ پرداخت آنلاین شد: ${toFa(Math.round((o.pay_amount || 0) / 10))} تومان${o.pay_ref_number ? ` · شماره پیگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.pay_ref_number)}</span>` : ''}${o.pay_card ? ` · کارت: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.pay_card)}</span>` : ''}${test}</div>`;
+  }
+  if(o.status === PAY_PENDING) return `<div class="admin-card-meta" style="color:#7a5a1c;">منتظر پرداخت مشتری${o.payment_status === 'failed' ? ' (آخرین تلاش ناموفق بود)' : o.payment_status === 'pending' ? ' (رفته به درگاه)' : ''} — اگه پرداخت نشه خودکار لغو می‌شه.${test}</div>`;
+  if(o.status === 'لغو شده' && o.cancel_reason === 'expired') return `<div class="admin-card-meta">لغو خودکار: مهلت پرداخت تموم شد.${test}</div>`;
+  if(o.status === 'لغو شده' && o.cancel_reason === 'replaced') return `<div class="admin-card-meta">رها شد: مشتری سفارش تازه‌تری ثبت کرد.${test}</div>`;
+  if(o.payment_status === 'free') return '<div class="admin-card-meta">مبلغ صفر (با کد تخفیف)</div>';
+  return '';
+}
+function syncPayModeRadios(){
+  document.querySelectorAll('input[name="payMode"]').forEach(r => { r.checked = r.value === paymentMode; });
+}
+document.querySelectorAll('input[name="payMode"]').forEach(r => r.addEventListener('change', async () => {
+  const mode = r.value;
+  if(mode === 'live' && !confirm('پرداخت آنلاین برای همه‌ی مشتری‌ها فعال بشه؟\nقبلش مطمئن شو کد پذیرنده‌ی زیبال (ZIBAL_MERCHANT) رو در Supabase گذاشتی و یه بار در حالت آزمایشی تست کردی.')){
+    syncPayModeRadios();
+    return;
+  }
+  const { error } = await db.from('site_settings').upsert({ key: 'payment', value: { mode }, updated_at: new Date().toISOString() });
+  if(error){ console.error(error); showToast('ذخیره نشد، دوباره امتحان کن'); syncPayModeRadios(); return; }
+  paymentMode = mode;
+  updatePayLabels();
+  logAdminAction('تغییر پرداخت آنلاین', { off: 'خاموش', test: 'آزمایشی', live: 'فعال' }[mode]);
+  showToast(mode === 'live' ? 'پرداخت آنلاین برای همه فعال شد' : mode === 'test' ? 'حالت آزمایشی فعال شد؛ فقط مدیرها با درگاه آزمایشی پرداخت می‌کنن' : 'پرداخت آنلاین خاموش شد');
+}));
+document.getElementById('adminShowUnpaid').addEventListener('change', loadAdminOrders);
 
 const SHIP_CARRIERS = ['پست', 'تیپاکس', 'چاپار', 'پیک', 'سایر'];
 // save carrier + tracking code and mark the order shipped; the customer sees it under My orders
@@ -3437,8 +3651,9 @@ async function deleteAdminReview(id){
 async function loadAdminStats(){
   const box = document.getElementById('adminStatsBox');
   box.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
-  const { data: allOrders } = await db.from('orders').select('total, created_at, items, status');
-  const orders = (allOrders || []).filter(o => o.status !== 'لغو شده'); // cancelled orders are not sales
+  const { data: allOrders } = await db.from('orders').select('total, created_at, items, status, pay_sandbox');
+  // cancelled, still-unpaid and test-gateway orders are not sales
+  const orders = (allOrders || []).filter(o => o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
   const { data: stats } = await db.from('site_stats').select('visits').eq('id', 1).maybeSingle();
 
   const totalRevenue = (orders || []).reduce((s, o) => s + (o.total || 0), 0);
@@ -3782,26 +3997,37 @@ function playNotifyBeep(){
 }
 function startOrdersRealtime(){
   if(ordersRealtimeChannel) return;
+  const announced = new Set(); // a paid order fires a few UPDATEs (payment, SMS flag): alert once
+  const announce = (row) => {
+    if(!row || announced.has(row.id)) return;
+    announced.add(row.id);
+    newOrderCount++;
+    const ordersTabBtn = document.querySelector('.admin-tab[data-tab="orders"]');
+    if(ordersTabBtn){
+      let badgeEl = document.getElementById('newOrderBadge');
+      if(!badgeEl){
+        badgeEl = document.createElement('span');
+        badgeEl.id = 'newOrderBadge';
+        badgeEl.className = 'admin-tab-badge';
+        ordersTabBtn.appendChild(badgeEl);
+      }
+      badgeEl.textContent = toFa(newOrderCount);
+    }
+    if(adminPage.classList.contains('open') && document.getElementById('adminTabOrders').style.display !== 'none'){
+      loadAdminOrders();
+      clearNewOrderBadge();
+    }
+    showToast(row.payment_status === 'paid' ? 'سفارش جدید پرداخت شد' : 'سفارش جدید ثبت شد');
+    playNotifyBeep();
+  };
   ordersRealtimeChannel = db.channel('admin-orders-realtime')
+    // orders waiting for online payment are announced once they're paid, not when they're created
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, (payload) => {
-      newOrderCount++;
-      const ordersTabBtn = document.querySelector('.admin-tab[data-tab="orders"]');
-      if(ordersTabBtn){
-        let badgeEl = document.getElementById('newOrderBadge');
-        if(!badgeEl){
-          badgeEl = document.createElement('span');
-          badgeEl.id = 'newOrderBadge';
-          badgeEl.className = 'admin-tab-badge';
-          ordersTabBtn.appendChild(badgeEl);
-        }
-        badgeEl.textContent = toFa(newOrderCount);
-      }
-      if(adminPage.classList.contains('open') && document.getElementById('adminTabOrders').style.display !== 'none'){
-        loadAdminOrders();
-        clearNewOrderBadge();
-      }
-      showToast('سفارش جدید ثبت شد');
-      playNotifyBeep();
+      if(payload.new && payload.new.status !== PAY_PENDING) announce(payload.new);
+    })
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
+      const row = payload.new;
+      if(row && row.payment_status === 'paid' && row.paid_at && Date.now() - new Date(row.paid_at).getTime() < 2 * 60 * 1000) announce(row);
     })
     .subscribe();
 }
