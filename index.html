@@ -339,6 +339,8 @@
   .checkout-summary-item{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:8px 0;border-bottom:1px solid var(--line);}
   .checkout-summary-item:last-of-type{border-bottom:none;}
   .checkout-summary-total{display:flex;justify-content:space-between;font-weight:700;font-size:15px;padding-top:12px;margin-top:4px;border-top:1px solid var(--coffee-70);}
+  .ship-fee-note{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;line-height:1.8;color:var(--coffee);background:var(--tan);padding:9px 12px;margin:10px 0 0;}
+  .ship-fee-note svg{flex:none;width:18px;height:18px;margin-top:2px;stroke:var(--coffee);fill:none;stroke-width:1.6;}
   .product-page{position:fixed;inset:0;background:var(--cream-soft);z-index:105;transform:translateX(100%);transition:transform .35s ease;overflow-y:auto;}
   .product-page.open{transform:translateX(0);}
   .product-head{display:flex;align-items:center;gap:14px;padding:26px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--cream-soft);z-index:2;}
@@ -596,17 +598,17 @@
     {
       "@type": "Question",
       "name": "آیا برای سفارش باید در سایت ثبت‌نام کنم؟",
-      "acceptedAnswer": { "@type": "Answer", "text": "نه. کافی‌ست محصول موردنظرتان را به سبد اضافه کنید، اطلاعات تماس‌تان را وارد کنید و سفارش را همان‌جا ثبت کنید." }
+      "acceptedAnswer": { "@type": "Answer", "text": "بله، برای ثبت سفارش باید وارد حساب‌تان شوید. اگر حساب ندارید، با ورود با کد پیامکی و فقط با شماره موبایل در چند ثانیه ساخته می‌شود." }
     },
     {
       "@type": "Question",
       "name": "هزینه‌ی سفارش را چطور پرداخت کنم؟",
-      "acceptedAnswer": { "@type": "Answer", "text": "در حال حاضر پرداخت به‌صورت کارت‌به‌کارت انجام می‌شود؛ بعد از ثبت سفارش، با شماره‌ای که وارد کرده‌اید برای هماهنگی پرداخت تماس می‌گیریم." }
+      "acceptedAnswer": { "@type": "Answer", "text": "پرداخت به‌صورت آنلاین و از طریق درگاه امن زیبال با همه‌ی کارت‌های عضو شتاب انجام می‌شود. هزینه‌ی ارسال جداست و هنگام تحویل، درب منزل پرداخت می‌شود." }
     },
     {
       "@type": "Question",
       "name": "ارسال سفارش چقدر طول می‌کشد؟",
-      "acceptedAnswer": { "@type": "Answer", "text": "سفارش‌ها معمولاً طی چند روز کاری آماده و ارسال می‌شوند." }
+      "acceptedAnswer": { "@type": "Answer", "text": "سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و با پست یا تیپاکس ارسال می‌شوند. هزینه‌ی ارسال به عهده‌ی خریدار است و درب منزل پرداخت می‌شود." }
     },
     {
       "@type": "Question",
@@ -857,7 +859,7 @@
       <div class="ship-card">
         <div class="why-icon"><svg viewBox="0 0 100 100" fill="none" style="stroke:var(--gold)" stroke-width="2.4"><rect x="15" y="35" width="50" height="35"/><path d="M65 45 L85 45 L85 70 L65 70"/><circle cx="30" cy="75" r="6"/><circle cx="72" cy="75" r="6"/></svg></div>
         <h3>ارسال به سراسر کشور</h3>
-        <p>سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و از طریق پست یا تیپاکس ارسال می‌شوند.</p>
+        <p>سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و از طریق پست یا تیپاکس ارسال می‌شوند. هزینه‌ی ارسال به عهده‌ی خریدار است و هنگام تحویل، درب منزل پرداخت می‌شود.</p>
       </div>
       <div class="ship-card">
         <div class="why-icon"><svg viewBox="0 0 100 100" fill="none" style="stroke:var(--gold)" stroke-width="2.4"><path d="M50 20 A30 30 0 1 0 78 40" /><path d="M78 15 L78 40 L55 40"/></svg></div>
@@ -882,15 +884,15 @@
     <div class="faq-list">
       <details class="faq-item">
         <summary>آیا برای سفارش باید در سایت ثبت‌نام کنم؟</summary>
-        <p>نه. کافی‌ست محصول موردنظرتان را به سبد اضافه کنید، اطلاعات تماس‌تان را وارد کنید و سفارش را همان‌جا ثبت کنید.</p>
+        <p>بله، برای ثبت سفارش باید وارد حساب‌تان شوید. اگر حساب ندارید، با «ورود با کد پیامکی» و فقط با شماره موبایل در چند ثانیه ساخته می‌شود. بعد از آن سفارش‌ها، کد رهگیری مرسوله و علاقه‌مندی‌هایتان در حساب‌تان می‌ماند.</p>
       </details>
       <details class="faq-item">
         <summary>هزینه‌ی سفارش را چطور پرداخت کنم؟</summary>
-        <p>در حال حاضر پرداخت به‌صورت کارت‌به‌کارت انجام می‌شود؛ بعد از ثبت سفارش، با شماره‌ای که وارد کرده‌اید برای هماهنگی پرداخت تماس می‌گیریم.</p>
+        <p>پرداخت به‌صورت آنلاین و از طریق درگاه امن زیبال با همه‌ی کارت‌های عضو شتاب انجام می‌شود. بعد از پرداخت موفق، پیامک تایید سفارش برایتان ارسال می‌شود. هزینه‌ی ارسال جداست و هنگام تحویل، درب منزل پرداخت می‌شود.</p>
       </details>
       <details class="faq-item">
         <summary>ارسال سفارش چقدر طول می‌کشد؟</summary>
-        <p>سفارش‌ها معمولاً طی چند روز کاری آماده و ارسال می‌شوند.</p>
+        <p>سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و با پست یا تیپاکس ارسال می‌شوند. هزینه‌ی ارسال به عهده‌ی خریدار است و درب منزل پرداخت می‌شود. بعد از ارسال، کد رهگیری مرسوله در بخش «سفارش‌های من» نمایش داده می‌شود.</p>
       </details>
       <details class="faq-item">
         <summary>امکان سفارش طرح دلخواه هم هست؟</summary>
@@ -933,7 +935,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <span class="footer-copyright">© ۱۴۰۴ حنا گالری. تمام حقوق محفوظ است.</span>
+      <span class="footer-copyright">© <span id="footerYear">۱۴۰۵</span> حنا گالری. تمام حقوق محفوظ است.</span>
       <div class="footer-enamad"><a referrerpolicy='origin' target='_blank' href='https://trustseal.enamad.ir/?id=7873446&Code=Rz2q68ct5gtjN06oOHCAoNZTbgCCcydN'><img referrerpolicy='origin' src='https://trustseal.enamad.ir/logo.aspx?id=7873446&Code=Rz2q68ct5gtjN06oOHCAoNZTbgCCcydN' alt='' style='cursor:pointer' code='Rz2q68ct5gtjN06oOHCAoNZTbgCCcydN'></a></div>
       <span class="footer-note">سفارش‌ها مستقیم از همین سایت ثبت می‌شود</span>
     </div>
@@ -1237,6 +1239,7 @@
   <div class="drawer-items" id="drawerItems"></div>
   <div class="drawer-foot" id="drawerFoot">
     <div class="drawer-total"><span>جمع کل</span><span id="drawerTotal">۰ تومان</span></div>
+    <p class="ship-fee-note" style="margin:-8px 0 16px;"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>
     <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="proceedCheckoutBtn">تکمیل خرید</button>
   </div>
 </div>
@@ -1277,7 +1280,7 @@
       <p class="form-error" id="formError"></p>
 
       <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="submitOrderBtn">ثبت سفارش</button>
-      <p class="checkout-note" id="checkoutPayNote">پرداخت به‌صورت کارت‌به‌کارت است؛ بعد از ثبت سفارش برای هماهنگی با شما تماس می‌گیریم.</p>
+      <p class="checkout-note" id="checkoutPayNote">پرداخت امن با درگاه زیبال و همه‌ی کارت‌های عضو شتاب. بعد از پرداخت به سایت برمی‌گردی و سفارشت قطعی می‌شه.</p>
     </div>
 
     <div id="orderSuccess" style="display:none;text-align:center;padding:20px 0;">
@@ -1379,6 +1382,7 @@ async function fetchProducts(){
     isNew: p.is_new,
     imageUrl: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0] || null : null,
     images: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [],
+    thumbs: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean).map(thumbUrl) : [],
     variants: p.variants ? p.variants.split(/[,،]/).map(v => v.trim()).filter(Boolean).map(v => {
       const parts = v.split(':');
       const name = parts[0].trim();
@@ -1513,6 +1517,13 @@ function saleEndsText(iso){
   const left = d >= 1 ? `${toFa(d)} روز` : h >= 1 ? `${toFa(h)} ساعت` : `${toFa(Math.max(1, Math.floor(ms / 60000)))} دقیقه`;
   return `<span class="sale-ends">حراج تا ${left} دیگه</span>`;
 }
+// product cards load a ~640px copy (thumbs/…) instead of the full photo: about 3x lighter.
+// if a copy is missing, the <img> falls back to the full photo by itself (onerror)
+const IMG_FULL = '/storage/v1/object/public/image/products/';
+const IMG_THUMB = '/storage/v1/object/public/image/thumbs/';
+function thumbUrl(url){ return typeof url === 'string' && url.includes(IMG_FULL) ? url.replace(IMG_FULL, IMG_THUMB) : url; }
+function thumbFallback(img){ if(img.src.includes(IMG_THUMB)) img.src = img.src.replace(IMG_THUMB, IMG_FULL); }
+
 function productCardHtml(p){
   const soldOut = p.stock === 0;
   const lowStock = !soldOut && p.stock <= LOW_STOCK_THRESHOLD;
@@ -1549,7 +1560,7 @@ function productCardHtml(p){
     <div class="card-visual" ${hasMultiImages ? `data-visual="${p.id}" onpointerenter="preloadProductImages(${p.id})"` : ''} style="background:${hasImages ? '#fff' : p.bg}">
       <div class="card-shine"></div>
       ${badge}
-      ${hasImages ? `<img src="${escapeHtml(images[shownIdx])}" alt="${escapeHtml(p.name)}" class="card-photo" data-pid="${p.id}">` : icons[p.icon]}
+      ${hasImages ? `<img src="${escapeHtml(thumbUrl(images[shownIdx]))}" alt="${escapeHtml(p.name)}" class="card-photo" data-pid="${p.id}" loading="lazy" decoding="async" onerror="thumbFallback(this)">` : icons[p.icon]}
       ${hasMultiImages ? `
         <button class="img-nav right" onclick="event.stopPropagation(); changeCardImage(${p.id}, 1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
         <div class="img-dots">${images.map((_,i) => `<span class="img-dot${i===shownIdx?' active':''}" onclick="event.stopPropagation(); setCardImage(${p.id}, ${i})"></span>`).join('')}</div>
@@ -1619,7 +1630,7 @@ const cardPreloadObserver = 'IntersectionObserver' in window ? new IntersectionO
     if(!e.isIntersecting) return;
     cardPreloadObserver.unobserve(e.target);
     const p = products.find(p => p.id === Number(e.target.dataset.id));
-    if(p) preloadNextImage(p.images, 0);
+    if(p) preloadNextImage(p.thumbs, 0);
   });
 }, { rootMargin: '200px' }) : null;
 function observeCardPreloads(){
@@ -1634,8 +1645,8 @@ function setCardImage(productId, idx){
   if(!p || !p.images || !p.images.length) return;
   cardImageIndex[productId] = idx;
   // the same product can be on the page several times (newest, on sale, all products): update every copy
-  document.querySelectorAll(`.card-photo[data-pid="${productId}"]`).forEach(img => swapImageSrc(img, p.images[idx]));
-  preloadNextImage(p.images, idx);
+  document.querySelectorAll(`.card-photo[data-pid="${productId}"]`).forEach(img => swapImageSrc(img, p.thumbs[idx]));
+  preloadNextImage(p.thumbs, idx);
   document.querySelectorAll(`.card-visual[data-visual="${productId}"]`).forEach(visual => {
     visual.querySelectorAll('.img-dot').forEach((dot, i) => dot.classList.toggle('active', i === idx));
   });
@@ -1701,6 +1712,7 @@ function renderProductDetail(){
     ${p.saleEndsAt ? saleEndsText(p.saleEndsAt) : ''}
     ${variantSelect}
     <button class="buy-btn" id="detail-buy-btn" onclick="addToCartDetail()" ${buyDisabled?'disabled':''}>${soldOut?'ناموجود':(buyDisabled?'ناموجود':'افزودن به سبد خرید')}</button>
+    <p class="ship-fee-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>
     ${p.description ? `<div class="detail-desc"><div class="detail-desc-title">توضیحات محصول</div>${escapeHtml(p.description)}</div>` : ''}
     <div class="reviews-section">
       <div class="detail-desc-title">نظر خریداران</div>
@@ -2178,7 +2190,7 @@ function updateCart(){
       const atLimit = i.qty >= lineLimit(products.find(p => p.id === i.id) || i, i.variant);
       return `
       <div class="drawer-item">
-        <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${escapeHtml(i.imageUrl)}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;">` : icons[i.icon]}</div>
+        <div class="mini-visual" style="background:${i.imageUrl ? '#fff' : i.bg}">${i.imageUrl ? `<img src="${escapeHtml(thumbUrl(i.imageUrl))}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="thumbFallback(this)">` : icons[i.icon]}</div>
         <div class="drawer-item-info">
           <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
           <div class="price">${toFa(i.price)} تومان</div>
@@ -2238,7 +2250,8 @@ function renderCheckoutSummary(){
   if(discount > 0){
     html += `<div class="checkout-summary-item"><span>تخفیف (${escapeHtml(appliedCoupon.code)})</span><span>- ${toFa(discount)} تومان</span></div>`;
   }
-  html += `<div class="checkout-summary-total"><span>جمع کل</span><span>${toFa(total)} تومان</span></div>`;
+  html += `<div class="checkout-summary-total"><span>جمع کل (بدون هزینه‌ی ارسال)</span><span>${toFa(total)} تومان</span></div>`;
+  html += `<p class="ship-fee-note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg><span>هزینه‌ی ارسال به عهده‌ی خریداره و موقع تحویل، درب منزل پرداخت می‌شه (پس‌کرایه).</span></p>`;
   summaryEl.innerHTML = html;
 }
 function resetCouponState(){
@@ -2464,6 +2477,7 @@ async function handlePaymentReturn(){
   }
 }
 loadPaymentMode().then(handlePaymentReturn);
+try{ document.getElementById('footerYear').textContent = new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric' }).format(new Date()).replace(/[^۰-۹0-9]/g, ''); }catch(e){}
 
 document.getElementById('submitOrderBtn').addEventListener('click', async () => {
   const errorEl = document.getElementById('formError');
@@ -2948,10 +2962,10 @@ async function openOrderDetail(orderId){
   const date = new Date(order.created_at).toLocaleDateString('fa-IR');
   const itemsHtml = (order.items || []).map(i => {
     const prod = productMap[i.id];
-    const img = prod && prod.image_url ? prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0] : null;
+    const img = prod && prod.image_url ? thumbUrl(prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0]) : null;
     return `
       <div class="drawer-item" style="padding:14px 0;border-bottom:1px solid var(--line);align-items:center;">
-        <div class="mini-visual" style="width:70px;height:70px;">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;">` : icons.necklace}</div>
+        <div class="mini-visual" style="width:70px;height:70px;">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="thumbFallback(this)">` : icons.necklace}</div>
         <div class="drawer-item-info">
           <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
           <div class="price">${toFa(i.price)} تومان × ${toFa(i.qty)}</div>
@@ -3198,10 +3212,10 @@ async function loadAdminOrders(){
     const statusOptions = ORDER_STATUSES.map(s => `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`).join('');
     const itemsHtml = (o.items || []).map(i => {
       const prod = productMap[i.id];
-      const img = prod && prod.image_url ? prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0] : null;
+      const img = prod && prod.image_url ? thumbUrl(prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0]) : null;
       return `
         <div class="admin-order-item">
-          <div class="admin-order-item-visual">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}">` : icons.necklace}</div>
+          <div class="admin-order-item-visual">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}" onerror="thumbFallback(this)">` : icons.necklace}</div>
           <div class="admin-order-item-info">
             <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span class="variant">(${escapeHtml(i.variant)})</span>` : ''}</div>
             <div class="qty-price">${toFa(i.qty)} عدد × ${toFa(i.price)} تومان = ${toFa(i.qty * i.price)} تومان</div>
@@ -3404,6 +3418,17 @@ async function compressImageFile(file, maxSide = 1600, quality = 0.82){
   }
 }
 
+// card-size copy of a product photo, stored as thumbs/<same name>
+async function uploadThumbFor(path, source){
+  if(!/^products\/[^/]+\.jpg$/.test(path)) return false;
+  const thumb = await compressImageFile(source, 640, 0.8);
+  if(!thumb) return false;
+  const { error } = await db.storage.from('image').upload(path.replace(/^products\//, 'thumbs/'), thumb, {
+    cacheControl: '31536000', upsert: false, contentType: 'image/jpeg'
+  });
+  return !error;
+}
+
 async function handleAdminImageFiles(files){
   if(!files.length) return;
   const statusEl = document.getElementById('adminProdImageUploadStatus');
@@ -3425,6 +3450,7 @@ async function handleAdminImageFiles(files){
       renderAdminProdImagePreview();
       continue;
     }
+    if(small) await uploadThumbFor(path, file);
     const { data: pub } = db.storage.from('image').getPublicUrl(path);
     const imgs = getAdminProdImages();
     imgs.push(pub.publicUrl);
@@ -3467,7 +3493,7 @@ async function optimizeExistingProductImages(){
   }
   const split = v => (v || '').split(/[,،]/).map(s => s.trim()).filter(Boolean);
   const total = data.reduce((n, p) => n + split(p.image_url).length, 0);
-  let done = 0, shrunk = 0, failed = 0, savedBytes = 0;
+  let done = 0, shrunk = 0, failed = 0, savedBytes = 0, thumbsMade = 0;
   for(const p of data){
     const urls = split(p.image_url);
     const out = [];
@@ -3481,10 +3507,19 @@ async function optimizeExistingProductImages(){
         if(!res.ok) throw new Error('download ' + res.status);
         const blob = await res.blob();
         const small = blob.size > 600 * 1024 ? await compressImageFile(blob) : null;
-        if(!small){ out.push(url); continue; }
+        if(!small){
+          out.push(url);
+          const m = url.match(/\/image\/(products\/[^/?#]+\.jpg)$/);
+          if(m){
+            const head = await fetch(thumbUrl(url), { method: 'HEAD', cache: 'no-store' }).catch(() => null);
+            if(!head || !head.ok){ if(await uploadThumbFor(m[1], blob)) thumbsMade++; }
+          }
+          continue;
+        }
         const path = `products/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.jpg`;
         const up = await db.storage.from('image').upload(path, small, { cacheControl: '31536000', upsert: false, contentType: 'image/jpeg' });
         if(up.error) throw up.error;
+        if(await uploadThumbFor(path, small)) thumbsMade++;
         out.push(db.storage.from('image').getPublicUrl(path).data.publicUrl);
         savedBytes += blob.size - small.size;
         shrunk++;
@@ -3501,7 +3536,7 @@ async function optimizeExistingProductImages(){
     }
   }
   const mb = (savedBytes / 1048576).toFixed(1);
-  statusEl.textContent = `تمام شد: ${toFa(shrunk)} عکس کوچک شد (${toFaDigits(mb)} مگابایت کمتر)` + (failed ? `، ${toFa(failed)} مورد ناموفق بود؛ دوباره بزنید.` : '.');
+  statusEl.textContent = `تمام شد: ${toFa(shrunk)} عکس کوچک شد (${toFaDigits(mb)} مگابایت کمتر)` + (thumbsMade ? `، ${toFa(thumbsMade)} نسخه‌ی سبک برای کارت‌ها ساخته شد` : '') + (failed ? `، ${toFa(failed)} مورد ناموفق بود؛ دوباره بزنید.` : '.');
   logAdminAction('کوچک کردن عکس‌ها', `${shrunk} عکس، ${mb} MB`);
   btn.disabled = false;
   loadAdminProducts();
