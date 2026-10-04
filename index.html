@@ -1088,6 +1088,8 @@
   .mobile-nav.open .mn-anim{animation:mnIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.12s + var(--k) * .045s);}
   @keyframes mnIn{to{opacity:1;transform:none;}}
   @media(prefers-reduced-motion:reduce){.mobile-nav,.menu-overlay,.burger svg path{transition:none;}.mobile-nav .mn-anim{opacity:1;transform:none;animation:none!important;}}
+
+  #authModal.locked .auth-seg{display:none;}
 </style>
 <script type="application/ld+json">
 {
@@ -3559,7 +3561,48 @@ function openAuthModal(){
   document.getElementById('authOtpError').classList.remove('show');
   document.getElementById('authSetupError').classList.remove('show');
 }
-function closeAuthModal(){ authModal.classList.remove('open'); authOverlay.classList.remove('open'); resumeCheckoutIfPending(); }
+// while a new account is being set up (name + password) the sheet can't simply be dismissed:
+// closing it cancels the sign-up and signs the half-made session out
+let authSetupLocked = false;
+function lockAuthSetup(on){ authSetupLocked = on; authModal.classList.toggle('locked', on); }
+async function closeAuthModal(){
+  if(authSetupLocked){
+    lockAuthSetup(false);
+    authModal.classList.remove('open'); authOverlay.classList.remove('open');
+    pendingCheckout = false;
+    document.getElementById('authCheckoutNote').style.display = 'none';
+    await db.auth.signOut();
+    showToast('ثبت‌نام کامل نشد. هر وقت خواستی دوباره شماره‌ت رو وارد کن.');
+    return;
+  }
+  authModal.classList.remove('open'); authOverlay.classList.remove('open'); resumeCheckoutIfPending();
+}
+function showProfileSetup(forgot){
+  const setupIntro = document.getElementById('authSetupIntro');
+  const nameField = document.getElementById('authSetupNameField');
+  const addressField = document.getElementById('authSetupAddressField');
+  if(forgot){
+    setupIntro.textContent = 'یه رمز جدید برای حسابت انتخاب کن.';
+    nameField.style.display = 'none';
+    addressField.style.display = 'none';
+  } else {
+    setupIntro.textContent = 'برای تکمیل ثبت‌نام، این اطلاعات رو وارد کن. تا وقتی کامل نشه، ورود انجام نمی‌شه.';
+    nameField.style.display = 'block';
+    addressField.style.display = 'block';
+    document.getElementById('authSetupName').value = currentProfile ? (currentProfile.full_name || '') : '';
+    document.getElementById('authSetupAddress').value = currentProfile ? (currentProfile.address || '') : '';
+  }
+  lockAuthSetup(true);
+  showAuthStep('authStepSetup');
+  authModal.classList.add('open'); authOverlay.classList.add('open');
+}
+// a phone account that never finished sign-up (no name yet) is sent back to the setup step
+function enforceProfileSetup(){
+  if(!currentUser || !currentUser.phone || (currentProfile && currentProfile.full_name)) return;
+  if(authSetupLocked) return;
+  authOtpPurpose = 'login';
+  showProfileSetup(false);
+}
 function openAccountPanel(){ accountPanel.classList.add('open'); authOverlay.classList.add('open'); }
 function closeAccountPanel(){ accountPanel.classList.remove('open'); authOverlay.classList.remove('open'); }
 
@@ -3681,22 +3724,10 @@ document.getElementById('authVerifyBtn').addEventListener('click', async () => {
 
   // بعد از تایید کد، پروفایل رو چک می‌کنیم ببینیم قبلاً تکمیل شده یا نه
   await loadProfile();
-  const setupIntro = document.getElementById('authSetupIntro');
-  const nameField = document.getElementById('authSetupNameField');
-  const addressField = document.getElementById('authSetupAddressField');
-
   if(authOtpPurpose === 'forgot'){
-    setupIntro.textContent = 'یه رمز جدید برای حسابت انتخاب کن.';
-    nameField.style.display = 'none';
-    addressField.style.display = 'none';
-    showAuthStep('authStepSetup');
+    showProfileSetup(true);
   } else if(!currentProfile || !currentProfile.full_name){
-    setupIntro.textContent = 'برای تکمیل حساب، این اطلاعات رو وارد کن.';
-    nameField.style.display = 'block';
-    addressField.style.display = 'block';
-    document.getElementById('authSetupName').value = currentProfile ? (currentProfile.full_name || '') : '';
-    document.getElementById('authSetupAddress').value = currentProfile ? (currentProfile.address || '') : '';
-    showAuthStep('authStepSetup');
+    showProfileSetup(false);
   } else {
     closeAuthModal();
   }
@@ -3754,6 +3785,7 @@ document.getElementById('authSetupSubmitBtn').addEventListener('click', async ()
     errorEl.classList.add('show');
     return;
   }
+  lockAuthSetup(false);
   closeAuthModal();
 });
 
@@ -3936,7 +3968,7 @@ db.auth.getSession().then(({ data }) => {
 db.auth.onAuthStateChange((_event, session) => {
   currentUser = session ? session.user : null;
   refreshAuthUI();
-  if(currentUser) loadProfile().then(() => checkAdmin()).then(refreshAuthUI); else { currentProfile = null; isAdmin = false; }
+  if(currentUser) loadProfile().then(() => checkAdmin()).then(() => { refreshAuthUI(); enforceProfileSetup(); }); else { currentProfile = null; isAdmin = false; }
   loadWishlist().then(refreshAllProductGrids);
 });
 
