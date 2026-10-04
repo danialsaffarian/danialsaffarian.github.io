@@ -1040,6 +1040,54 @@
     #authModal .auth-head::before{display:none;}
   }
   @media(prefers-reduced-motion:reduce){#authModal,#authModal *{animation:none!important;transition:none!important;}}
+
+  /* ---------- side menu ---------- */
+  .burger svg path{transition:transform .35s cubic-bezier(.3,1.2,.4,1),opacity .2s;transform-box:fill-box;transform-origin:center;}
+  .burger.x .b1{transform:translateY(6px) rotate(45deg);}
+  .burger.x .b2{opacity:0;transform:scaleX(.2);}
+  .burger.x .b3{transform:translateY(-6px) rotate(-45deg);}
+  .menu-overlay{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;background:rgba(46,32,22,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s;z-index:96;}
+  .menu-overlay.open{opacity:1;pointer-events:auto;}
+  .mobile-nav{position:fixed;top:0;right:0;height:100vh;height:100lvh;width:min(360px,88vw);max-height:none;overflow:hidden;z-index:97;display:flex;flex-direction:column;background:var(--cream-soft);box-shadow:-20px 0 60px rgba(46,32,22,.25);border-radius:0 0 0 28px;transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.9,.25,1);padding-bottom:calc(env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
+  .mobile-nav.open{max-height:none;border-top:0;transform:none;}
+  .mn-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 14px;border-bottom:1px solid var(--line);background:radial-gradient(120% 120% at 100% 0%,#FFFDF9,var(--cream-soft));}
+  .mn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;direction:ltr;}
+  .mn-brand svg{width:40px;height:40px;}
+  .mn-brand b{display:block;font-family:'Cormorant Garamond',Georgia,serif;font-weight:500;font-size:17px;letter-spacing:.24em;color:#3A2F26;line-height:1.2;}
+  .mn-brand small{display:block;font-size:7.5px;letter-spacing:.38em;color:#6B5647;}
+  .mn-close{width:38px;height:38px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;color:var(--coffee);transition:background .2s,transform .3s;}
+  .mn-close:hover{background:var(--tan);transform:rotate(90deg);}
+  .mn-close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;}
+  .mn-scroll{flex:1;overflow-y:auto;padding:16px 18px 10px;}
+  .mn-user{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--coffee);box-shadow:0 6px 18px rgba(142,110,88,.08);transition:transform .2s,box-shadow .2s;}
+  .mn-user:active{transform:scale(.98);}
+  .mn-avatar{width:44px;height:44px;flex:none;border-radius:50%;background:linear-gradient(135deg,#C9A46A,#8E6E58);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .mn-avatar svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;}
+  .mn-user-text{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .mn-user-text b{font-size:14.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mn-user-text small{font-size:11.5px;color:var(--coffee-70);}
+  .mn-user .menu-chevron{width:15px;height:15px;color:var(--coffee-70);flex:none;}
+  .mn-title{font-size:11.5px;font-weight:700;color:var(--gold);letter-spacing:.3px;margin:16px 4px 8px;}
+  .mn-cats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .mn-cat{display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border-radius:14px;background:#fff;border:1px solid var(--line);font:inherit;font-size:12px;font-weight:700;color:var(--coffee);transition:border-color .2s,transform .15s;}
+  .mn-cat:hover{border-color:var(--gold);}
+  .mn-cat:active{transform:scale(.96);}
+  .mn-cat .cat-art{width:40px;height:40px;padding:2%;}
+  .mn-cat .cat-art.mark{padding:17%;}
+  .mobile-nav .menu-item{padding:10px 6px;border-bottom:1px solid var(--line);font-weight:600;gap:12px;}
+  .mobile-nav .menu-item:last-child{border-bottom:0;}
+  .mobile-nav .menu-item:hover{padding-inline-start:10px;background:none;}
+  .mn-ico{width:36px;height:36px;flex:none;border-radius:11px;background:#F5ECDD;display:flex;align-items:center;justify-content:center;}
+  .mn-ico .menu-icon{width:18px;height:18px;color:var(--coffee);}
+  .mn-foot{padding:12px 18px 16px;border-top:1px solid var(--line);}
+  .mn-insta{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:14px;text-decoration:none;color:var(--coffee);background:linear-gradient(135deg,#F5ECDD,#FBF8F3);}
+  .mn-insta svg{width:28px;height:28px;flex:none;fill:none;stroke:var(--gold);stroke-width:1.6;}
+  .mn-insta span{display:flex;flex-direction:column;font-size:12.5px;font-weight:700;}
+  .mn-insta small{font-size:11.5px;font-weight:500;color:var(--coffee-70);direction:ltr;text-align:right;}
+  .mobile-nav .mn-anim{opacity:0;transform:translateX(24px);}
+  .mobile-nav.open .mn-anim{animation:mnIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.12s + var(--k) * .045s);}
+  @keyframes mnIn{to{opacity:1;transform:none;}}
+  @media(prefers-reduced-motion:reduce){.mobile-nav,.menu-overlay,.burger svg path{transition:none;}.mobile-nav .mn-anim{opacity:1;transform:none;animation:none!important;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1111,8 +1159,8 @@
 <header>
   <div class="header-bar">
     <div class="wrap header-bar-inner">
-      <button class="icon-btn" id="menuToggleBtn" aria-label="منو">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <button class="icon-btn burger" id="menuToggleBtn" aria-label="منو" aria-expanded="false" aria-controls="mobileNav">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path class="b1" d="M3 6h18"/><path class="b2" d="M3 12h18"/><path class="b3" d="M3 18h18"/></svg>
       </button>
       <div class="header-bar-center">
         <button class="icon-btn" id="searchToggleBtn" aria-label="جستجو">
@@ -1128,28 +1176,6 @@
     <div class="search-bar" id="searchBar">
       <input type="text" id="searchInput" placeholder="جستجوی محصول...">
     </div>
-    <nav class="mobile-nav" id="mobileNav">
-      <a href="#" id="menuAccountLink" class="menu-item">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        حساب من
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </a>
-      <a href="#shop" class="menu-item">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-        فروشگاه
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </a>
-      <a href="#about" class="menu-item">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        درباره ما
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </a>
-      <a href="#faq" class="menu-item">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        سوالات متداول
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </a>
-    </nav>
   </div>
 </header>
   <div class="header-top">
@@ -1744,6 +1770,54 @@
     </div>
   </div>
 </div>
+<div class="menu-overlay" id="menuOverlay"></div>
+<nav class="mobile-nav" id="mobileNav" aria-label="منوی اصلی">
+  <div class="mn-head">
+    <a href="#" class="mn-brand" id="mnBrand" aria-label="Hana Gallery">
+      <svg viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
+      <span><b>HANA GALLERY</b><small>HANDCRAFTED JEWELRY</small></span>
+    </a>
+    <button type="button" class="mn-close" id="mnClose" aria-label="بستن منو"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="mn-scroll">
+    <a href="#" id="menuAccountLink" class="mn-user mn-anim" style="--k:0">
+      <span class="mn-avatar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+      <span class="mn-user-text"><b id="mnUserName">ورود و ثبت‌نام</b><small id="mnUserSub">برای سفارش و پیگیری وارد شو</small></span>
+      <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+    </a>
+    <div class="mn-title mn-anim" style="--k:1">دسته‌بندی‌ها</div>
+    <div class="mn-cats mn-anim" style="--k:2" id="mnCats"></div>
+    <div class="mn-title mn-anim" style="--k:3">منو</div>
+      <a href="#shop" class="menu-item mn-anim" style="--k:4">
+        <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg></span>
+        فروشگاه
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#" id="mnOrders" class="menu-item mn-anim" style="--k:5">
+        <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg></span>
+        سفارش‌های من
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#" id="mnWishlist" class="menu-item mn-anim" style="--k:6">
+        <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></span>
+        علاقه‌مندی‌ها
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#about" class="menu-item mn-anim" style="--k:7">
+        <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        درباره ما
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#faq" class="menu-item mn-anim" style="--k:8">
+        <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+        سوالات متداول
+        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+  </div>
+  <div class="mn-foot mn-anim" style="--k:9">
+    <a href="https://instagram.com/hana_gallery_____" target="_blank" rel="noopener" class="mn-insta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg><span>ما رو در اینستاگرام دنبال کن<small>@hana_gallery_____</small></span></a>
+  </div>
+</nav>
 <div class="overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
@@ -2750,11 +2824,37 @@ document.getElementById('sortSelect').addEventListener('change', () => {
 // منو (موبایل)
 const menuToggleBtn = document.getElementById('menuToggleBtn');
 const mobileNav = document.getElementById('mobileNav');
-menuToggleBtn.addEventListener('click', () => {
-  mobileNav.classList.toggle('open');
-  document.getElementById('searchBar').classList.remove('open');
-});
-mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
+const menuOverlay = document.getElementById('menuOverlay');
+function setMenu(open){
+  if(open){
+    // category tiles reuse the same line-art icons as the homepage circles
+    const cats = document.getElementById('mnCats');
+    if(cats && !cats.children.length){
+      cats.innerHTML = [...document.querySelectorAll('#filterRow .filter-btn')].map(b =>
+        `<button type="button" class="mn-cat" data-cat="${b.dataset.cat}">${(b.querySelector('.cat-art') || {}).outerHTML || ''}<span>${escapeHtml(b.textContent.trim())}</span></button>`).join('');
+      cats.querySelectorAll('.mn-cat').forEach(c => c.addEventListener('click', () => {
+        setMenu(false);
+        enterCategoryFocus(c.dataset.cat);
+        document.getElementById('categoryFocusBanner').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }));
+    }
+    document.getElementById('mnUserName').textContent = currentUser ? ('سلام، ' + loginLinkBtn.textContent.trim()) : 'ورود و ثبت‌نام';
+    document.getElementById('mnUserSub').textContent = currentUser ? 'حساب کاربری و تنظیمات' : 'برای سفارش و پیگیری وارد شو';
+    document.getElementById('searchBar').classList.remove('open');
+  }
+  mobileNav.classList.toggle('open', open);
+  menuOverlay.classList.toggle('open', open);
+  menuToggleBtn.classList.toggle('x', open);
+  menuToggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+menuToggleBtn.addEventListener('click', () => setMenu(!mobileNav.classList.contains('open')));
+menuOverlay.addEventListener('click', () => setMenu(false));
+document.getElementById('mnClose').addEventListener('click', () => setMenu(false));
+document.getElementById('mnBrand').addEventListener('click', e => { e.preventDefault(); setMenu(false); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+document.getElementById('mnOrders').addEventListener('click', e => { e.preventDefault(); if(currentUser) document.getElementById('viewOrdersBtn').click(); else openAuthModal(); });
+document.getElementById('mnWishlist').addEventListener('click', e => { e.preventDefault(); if(currentUser) document.getElementById('viewWishlistBtn').click(); else openAuthModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape' && mobileNav.classList.contains('open')) setMenu(false); });
 
 // جستجو
 const searchToggleBtn = document.getElementById('searchToggleBtn');
@@ -2762,7 +2862,7 @@ const searchBar = document.getElementById('searchBar');
 const searchInput = document.getElementById('searchInput');
 searchToggleBtn.addEventListener('click', () => {
   searchBar.classList.toggle('open');
-  mobileNav.classList.remove('open');
+  if(mobileNav.classList.contains('open')) setMenu(false);
   if(searchBar.classList.contains('open')) searchInput.focus();
 });
 searchInput.addEventListener('input', () => {
