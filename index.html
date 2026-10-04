@@ -974,6 +974,72 @@
   .drawer-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
   .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + (100lvh - 100dvh));}
   @media(max-width:899px){.pd-buybar{bottom:calc(100lvh - 100dvh);}}
+
+  /* ---------- login sheet (v2) ---------- */
+  #authOverlay.open{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
+  #authModal{width:min(400px,92vw);border-radius:24px;background:var(--cream-soft);box-shadow:0 30px 80px rgba(46,32,22,.35);transform:translate(50%,-46%) scale(.96);transition:opacity .3s ease,transform .45s cubic-bezier(.2,.9,.25,1.05);max-height:92vh;overflow-y:auto;}
+  #authModal.open{transform:translate(50%,-50%) scale(1);}
+  .auth-grip{display:none;}
+  #authModal .auth-head{align-items:center;text-align:center;gap:6px;padding:30px 26px 10px;background:radial-gradient(120% 90% at 50% 0%,#FFFDF9 0%,#F5EDE1 60%,var(--cream-soft) 100%);}
+  #authModal .auth-head::before{height:3px;opacity:.8;}
+  #authModal .auth-close-btn{top:16px;left:16px;width:36px;height:36px;color:var(--coffee);background:rgba(142,110,88,.08);}
+  #authModal .auth-close-btn:hover{background:rgba(142,110,88,.16);}
+  #authModal .auth-close-btn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;}
+  #authModal .auth-badge{width:76px;height:76px;background:#fff;border:1px solid var(--line);box-shadow:0 8px 24px rgba(142,110,88,.16);color:inherit;margin-bottom:6px;}
+  #authModal .auth-badge svg.auth-mark{width:46px;height:46px;}
+  .auth-mark .am-pend{transform-box:view-box;transform-origin:60px 63.1px;animation:hmIdle 3.6s ease-in-out infinite;}
+  #authModal .auth-head h3{font-family:'Vazirmatn',sans-serif;font-style:normal;direction:rtl;font-size:22px;font-weight:800;color:var(--coffee);}
+  #authModal .auth-tagline{color:var(--coffee-70);font-size:13px;}
+  #authModal .auth-body{padding:16px 24px 20px;}
+  .auth-seg{position:relative;display:grid;grid-template-columns:1fr 1fr;background:#EFE6D8;border-radius:12px;padding:4px;margin-bottom:20px;}
+  .auth-seg[hidden]{display:none;}
+  .auth-seg button{position:relative;z-index:1;font:inherit;font-size:13px;font-weight:700;color:var(--coffee-70);padding:9px 6px;border-radius:9px;transition:color .25s;}
+  .auth-seg button.on{color:var(--coffee);}
+  .auth-seg-pill{position:absolute;top:4px;bottom:4px;right:4px;width:calc(50% - 4px);background:#fff;border-radius:9px;box-shadow:0 2px 8px rgba(142,110,88,.18);transition:transform .35s cubic-bezier(.3,1.2,.4,1);}
+  .auth-seg.otp .auth-seg-pill{transform:translateX(-100%);}
+  #authUseOtpLink,#authBackToPassLink{display:none;}
+  #authModal .form-field label{font-size:12.5px;font-weight:700;color:var(--coffee);}
+  #authModal .form-field input{border-radius:12px;background:#fff;border:1.5px solid var(--line);padding-block:13px;transition:border-color .2s,box-shadow .2s;}
+  #authModal .form-field input:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(184,149,111,.16);}
+  #authModal .input-icon-wrap:focus-within .input-icon{color:var(--gold);}
+  #authModal .input-icon-wrap input[type="tel"]{direction:ltr;text-align:right;letter-spacing:.5px;padding-left:14px;padding-right:40px;}
+  #authModal .input-icon-wrap #authOtp{text-align:center;letter-spacing:.6em;font-size:20px;font-weight:700;padding-left:40px;padding-right:40px;}
+  .pw-eye{position:absolute;top:50%;inset-inline-end:8px;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--coffee-70);}
+  .pw-eye:hover{background:var(--tan);}
+  .pw-eye svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .pw-eye .slash{stroke-dasharray:23;stroke-dashoffset:0;transition:stroke-dashoffset .25s;}
+  .pw-eye.shown .slash{stroke-dashoffset:23;}
+  #authModal .input-icon-wrap:has(.pw-eye) input{padding-inline-end:46px;}
+  #authModal .auth-submit-btn{position:relative;overflow:hidden;border-radius:12px;padding:16px 20px;font-size:15px;font-weight:700;background:linear-gradient(135deg,#9A7860 0%,var(--coffee) 45%,#6F533F 100%);border:0;margin-top:6px;}
+  #authModal .auth-submit-btn::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,240,214,.3),transparent);transform:skewX(-18deg);animation:ctaGloss 4.5s ease-in-out 1.5s infinite;}
+  #authModal .auth-submit-btn svg{transition:transform .25s;}
+  #authModal .auth-submit-btn:hover svg{transform:translateX(-4px);}
+  #authModal .auth-link{font-weight:600;}
+  #authForgotLink{text-align:left;}
+  .auth-trust{display:flex;align-items:center;justify-content:center;gap:6px;margin:14px 0 0;padding-top:14px;border-top:1px dashed var(--line);font-size:11.5px;color:var(--coffee-70);}
+  .auth-trust svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;}
+  .auth-step-in{animation:authStep .4s cubic-bezier(.2,.8,.2,1);}
+  @keyframes authStep{from{opacity:0;transform:translateX(-14px);}to{opacity:1;transform:none;}}
+  #authModal .form-error.show{animation:authShake .45s;}
+  @keyframes authShake{0%,100%{transform:none;}20%{transform:translateX(6px);}40%{transform:translateX(-6px);}60%{transform:translateX(4px);}80%{transform:translateX(-2px);}}
+  #authModal.open .auth-badge{animation:authBadge .6s cubic-bezier(.3,1.5,.5,1) .12s both;}
+  #authModal.open .auth-head h3,#authModal.open .auth-tagline,#authModal.open .auth-seg,#authModal.open .auth-body > div:not([style*="none"]) .form-field,#authModal.open .auth-submit-btn{animation:authUp .5s cubic-bezier(.2,.8,.2,1) both;}
+  #authModal.open .auth-head h3{animation-delay:.18s;}
+  #authModal.open .auth-tagline{animation-delay:.24s;}
+  #authModal.open .auth-seg{animation-delay:.3s;}
+  #authModal.open .auth-body > div .form-field:nth-of-type(1){animation-delay:.36s;}
+  #authModal.open .auth-body > div .form-field:nth-of-type(2){animation-delay:.42s;}
+  #authModal.open .auth-submit-btn{animation-delay:.48s;}
+  @keyframes authBadge{from{opacity:0;transform:scale(.6) rotate(-12deg);}to{opacity:1;transform:none;}}
+  @keyframes authUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  @media(max-width:560px){
+    #authModal{top:auto;right:0;left:0;bottom:0;width:100%;max-height:92dvh;border-radius:26px 26px 0 0;transform:translateY(100%);padding-bottom:calc(env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
+    #authModal.open{transform:none;}
+    .auth-grip{display:block;width:44px;height:5px;border-radius:99px;background:#D8CBB8;margin:10px auto 0;position:relative;z-index:2;}
+    #authModal .auth-head{padding-top:18px;}
+    #authModal .auth-head::before{display:none;}
+  }
+  @media(prefers-reduced-motion:reduce){#authModal,#authModal *{animation:none!important;transition:none!important;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1365,15 +1431,27 @@
 
 <div class="overlay" id="authOverlay"></div>
 <div class="auth-modal" id="authModal">
+  <span class="auth-grip" aria-hidden="true"></span>
   <div class="auth-head">
-    <button class="auth-close-btn" id="authClose" aria-label="بستن">✕</button>
+    <button class="auth-close-btn" id="authClose" aria-label="بستن"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     <div class="auth-badge">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/><path d="M9 3l3 6 3-6"/><path d="M9 9l3 12 3-12"/></svg>
+      <svg class="auth-mark" viewBox="0 0 120 120" aria-hidden="true">
+        <path d="M22 20 H46 V21.4 C41 21.6 38 23 38 26 V94 C38 97 41 98.4 46 98.6 V100 H22 V98.6 C27 98.4 30 97 30 94 V26 C30 23 27 21.6 22 21.4 Z" fill="#3A2F26"/>
+        <path d="M98 20 H74 V21.4 C79 21.6 82 23 82 26 V94 C82 97 79 98.4 74 98.6 V100 H98 V98.6 C93 98.4 90 97 90 94 V26 C90 23 93 21.6 98 21.4 Z" fill="#3A2F26"/>
+        <path d="M38 50 Q60 72 82 50" stroke="#A9855E" stroke-width="0.9" fill="none"/>
+        <circle cx="51.2" cy="59.2" r="1.6" fill="#A9855E"/><circle cx="68.8" cy="59.2" r="1.6" fill="#A9855E"/>
+        <g class="am-pend"><circle cx="60" cy="63.1" r="1.7" stroke="#A9855E" stroke-width="1" fill="none"/><path d="M60 65 C63.5 69.6 66.5 73.3 66.5 77 C66.5 80.8 63.6 83.5 60 83.5 C56.4 83.5 53.5 80.8 53.5 77 C53.5 73.3 56.5 69.6 60 65 Z" fill="#A9855E"/></g>
+      </svg>
     </div>
-    <h3 class="brand-font" id="authTitle">ورود / ثبت‌نام</h3>
-    <p class="auth-tagline">به دنیای حنا گالری خوش اومدی</p>
+    <h3 id="authTitle">خوش اومدی</h3>
+    <p class="auth-tagline">برای ادامه وارد حساب حنا گالری شو</p>
   </div>
   <div class="auth-body">
+    <div class="auth-seg" id="authSeg" role="tablist">
+      <i class="auth-seg-pill" aria-hidden="true"></i>
+      <button type="button" class="on" data-go="pass" role="tab">با رمز عبور</button>
+      <button type="button" data-go="otp" role="tab">با کد پیامکی</button>
+    </div>
     <p class="auth-checkout-note" id="authCheckoutNote" style="display:none;">برای ثبت سفارش اول وارد حسابت شو؛ اگه حساب نداری با «ورود با کد پیامکی» در چند ثانیه ساخته می‌شه. سبد خریدت سر جاش می‌مونه.</p>
     <div id="authStepPhonePass">
       <div class="form-field">
@@ -1468,6 +1546,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
       </button>
     </div>
+    <p class="auth-trust"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>شماره و اطلاعاتت پیش ما امن می‌مونه</p>
   </div>
 </div>
 
@@ -3337,9 +3416,35 @@ function toE164(local){
 
 function showAuthStep(stepId){
   ['authStepPhonePass','authStepPhone','authStepOtp','authStepSetup'].forEach(id => {
-    document.getElementById(id).style.display = (id === stepId) ? 'block' : 'none';
+    const el = document.getElementById(id);
+    el.style.display = (id === stepId) ? 'block' : 'none';
+    if(id === stepId){ el.classList.remove('auth-step-in'); void el.offsetWidth; el.classList.add('auth-step-in'); }
   });
+  const seg = document.getElementById('authSeg');
+  if(seg){
+    seg.hidden = stepId === 'authStepSetup';
+    const otp = stepId !== 'authStepPhonePass';
+    seg.classList.toggle('otp', otp);
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', (b.dataset.go === 'otp') === otp));
+  }
 }
+document.querySelectorAll('#authSeg button').forEach(b => b.addEventListener('click', () => {
+  if(b.classList.contains('on')) return;
+  document.getElementById(b.dataset.go === 'otp' ? 'authUseOtpLink' : 'authBackToPassLink').click();
+}));
+// show / hide toggle on every password field of the login sheet
+document.querySelectorAll('#authModal input[type="password"]').forEach(inp => {
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'pw-eye'; btn.setAttribute('aria-label', 'نمایش رمز');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="slash" d="M4 4l16 16"/></svg>';
+  btn.addEventListener('click', () => {
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.classList.toggle('shown', show);
+    btn.setAttribute('aria-label', show ? 'پنهان کردن رمز' : 'نمایش رمز');
+  });
+  inp.parentNode.appendChild(btn);
+});
 
 function openAuthModal(){
   authModal.classList.add('open');
