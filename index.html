@@ -1090,6 +1090,95 @@
   @media(prefers-reduced-motion:reduce){.mobile-nav,.menu-overlay,.burger svg path{transition:none;}.mobile-nav .mn-anim{opacity:1;transform:none;animation:none!important;}}
 
   #authModal.locked .auth-seg{display:none;}
+
+  /* ---------- my orders ---------- */
+  .op .product-body{max-width:640px;}
+  .op-head-space{width:40px;flex:none;}
+  .op-count{font-size:12.5px;font-weight:700;color:var(--coffee-70);margin:2px 2px 12px;}
+  .oc{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;cursor:pointer;box-shadow:0 6px 18px rgba(142,110,88,.06);transition:transform .2s,box-shadow .2s,border-color .2s;animation:diIn .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--k) * 60ms);}
+  .oc:hover{border-color:var(--gold-soft);box-shadow:0 10px 26px rgba(142,110,88,.12);transform:translateY(-2px);}
+  .oc:active{transform:scale(.99);}
+  .oc-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .oc-status{display:inline-block;font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:99px;background:var(--tone-bg);color:var(--tone-fg);}
+  .oc-top .pay-badge{margin:0;border-radius:99px;}
+  .oc-date{margin-inline-start:auto;font-size:11.5px;color:var(--coffee-70);}
+  .oc-mid{display:flex;align-items:center;gap:12px;margin:12px 0 10px;}
+  .oc-thumbs{display:flex;flex:none;}
+  .oc-thumbs span{width:52px;height:52px;border-radius:12px;overflow:hidden;border:2px solid #fff;background:var(--tan);box-shadow:0 2px 6px rgba(46,32,22,.12);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--coffee);}
+  .oc-thumbs span + span{margin-inline-start:-18px;}
+  .oc-thumbs img{width:100%;height:100%;object-fit:cover;display:block;}
+  .oc-thumbs svg{width:55%;}
+  .oc-names{min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .oc-names b{font-size:13.5px;color:var(--coffee);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .oc-names small{font-size:11.5px;color:var(--coffee-70);}
+  .op-code{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums;letter-spacing:.5px;}
+  .oc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);}
+  .oc-total{font-size:15.5px;font-weight:800;color:var(--coffee);}
+  .oc-total small{font-size:11px;font-weight:500;color:var(--coffee-70);}
+  .oc-more{display:inline-flex;align-items:center;gap:2px;font-size:12px;font-weight:700;color:var(--coffee-70);}
+  .oc-more svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s;}
+  .oc:hover .oc-more svg{transform:translateX(-3px);}
+  .oc-foot .oi-pay-btn{margin:0;border-radius:10px;padding:7px 18px;}
+  /* progress */
+  .ot{position:relative;display:flex;justify-content:space-between;padding:0 4px;margin:4px 0 2px;}
+  .ot-line{position:absolute;top:50%;right:10px;left:10px;height:3px;margin-top:-1.5px;background:#EFE6D8;border-radius:3px;overflow:hidden;}
+  .ot-line i{position:absolute;top:0;bottom:0;right:0;width:calc(var(--p) * 100%);background:linear-gradient(270deg,#C9A46A,var(--coffee));border-radius:3px;animation:otFill 1s cubic-bezier(.2,.8,.2,1) .2s both;transform-origin:right;}
+  @keyframes otFill{from{transform:scaleX(0);}}
+  .ot-step{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+  .ot-dot{width:12px;height:12px;border-radius:50%;background:#EFE6D8;border:2px solid #fff;box-shadow:0 0 0 1px #E3D8C6;}
+  .ot-step.done .ot-dot{background:var(--coffee);box-shadow:0 0 0 1px var(--coffee);}
+  .ot-step.now .ot-dot{background:#C9A46A;box-shadow:0 0 0 4px rgba(201,164,106,.25);animation:otPulse 2s ease-in-out infinite;}
+  @keyframes otPulse{50%{box-shadow:0 0 0 7px rgba(201,164,106,.12);}}
+  .ot.big{margin:16px 0 4px;align-items:flex-start;}
+  .ot.big .ot-line{top:21px;margin:0;right:30px;left:30px;}
+  .ot.big .ot-step{width:25%;}
+  .ot.big .ot-dot{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border:3px solid #fff;color:var(--coffee-70);}
+  .ot.big .ot-step.done .ot-dot{color:#fff;}
+  .ot.big .ot-dot svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .ot.big small{font-size:11px;font-weight:700;color:var(--coffee-70);text-align:center;line-height:1.5;}
+  .ot.big .done small{color:var(--coffee);}
+  /* empty + loading */
+  .op-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:60px 16px;}
+  .op-empty svg{width:84px;height:84px;margin-bottom:6px;animation:emptyFloat 3.2s ease-in-out infinite;}
+  .op-empty .l{fill:none;stroke:var(--coffee);stroke-width:1.6;stroke-linejoin:round;}
+  .op-empty .g{fill:#C9A46A;}
+  .op-empty b{font-size:16px;color:var(--coffee);}
+  .op-empty span{font-size:13px;color:var(--coffee-70);line-height:1.9;max-width:280px;}
+  .op-empty button{margin-top:10px;font:inherit;font-size:13.5px;font-weight:700;padding:11px 26px;background:var(--coffee);color:var(--cream);border-radius:12px;}
+  .op-skel{height:150px;border-radius:18px;margin-bottom:12px;background:linear-gradient(90deg,#F1E9DD 25%,#FAF6F0 50%,#F1E9DD 75%);background-size:800px 100%;animation:skeletonShimmer 1.2s linear infinite;}
+  .op-skel.tall{height:230px;}
+  /* detail */
+  .od-hero{border-radius:20px;padding:16px;margin-bottom:12px;background:linear-gradient(160deg,#fff 0%,#FBF6EE 100%);border:1px solid var(--line);animation:diFade .5s ease both;}
+  .od-hero-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .od-hero-top .pay-badge{margin:0;border-radius:99px;}
+  .od-note{font-size:13px;line-height:1.9;color:var(--coffee);margin:10px 0 0;}
+  .od-pay{margin-top:14px;border-radius:12px;}
+  .od-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px;animation:diFade .5s ease both .1s;}
+  .od-card h4{font-size:13px;font-weight:800;color:var(--coffee);margin:0 0 4px;}
+  .od-card small{display:block;font-size:11.5px;color:var(--coffee-70);}
+  .od-code,.od-ship,.od-addr{display:flex;align-items:center;gap:12px;}
+  .od-code > div,.od-ship > div:nth-child(2),.od-addr > div:nth-child(2){flex:1;min-width:0;}
+  .od-code b{display:block;font-size:22px;font-weight:800;color:var(--coffee);text-align:right;}
+  .od-ship b{display:block;font-size:17px;font-weight:800;color:var(--coffee);text-align:right;}
+  .od-ship a{font-size:12px;font-weight:700;color:var(--gold);text-decoration:none;}
+  .od-copy{flex:none;font:inherit;font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:10px;border:1px solid var(--line);color:var(--coffee);background:var(--cream-soft);transition:background .2s;}
+  .od-copy.ok{background:#E6EFE1;border-color:#C9DCC1;color:#3F5E3A;}
+  .od-ship-ico{width:42px;height:42px;flex:none;border-radius:12px;background:#F5ECDD;display:flex;align-items:center;justify-content:center;color:var(--coffee);}
+  .od-ship-ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .od-addr p{font-size:13.5px;line-height:1.9;color:var(--coffee);margin:2px 0;}
+  .od-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);}
+  .od-img{width:60px;height:72px;flex:none;border-radius:8px;overflow:hidden;background:var(--tan);display:flex;align-items:center;justify-content:center;}
+  .od-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .od-img svg{width:55%;}
+  .od-info{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
+  .od-info b{font-size:13.5px;color:var(--coffee);}
+  .od-line{font-size:13.5px;font-weight:800;color:var(--coffee);white-space:nowrap;}
+  .od-line small{font-size:10.5px;font-weight:500;color:var(--coffee-70);}
+  .od-sum{padding-top:10px;display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--coffee-70);}
+  .od-sum div{display:flex;justify-content:space-between;}
+  .od-sum .off{color:#8B3A3A;}
+  .od-sum .tot{margin-top:4px;padding-top:10px;border-top:1px dashed var(--line);font-size:15px;font-weight:800;color:var(--coffee);}
+  @media(prefers-reduced-motion:reduce){.oc,.od-hero,.od-card,.ot-line i,.ot-step.now .ot-dot,.op-empty svg{animation:none;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1904,18 +1993,20 @@
   <div class="product-body" id="productBody"></div>
 </div>
 
-<div class="product-page" id="myOrdersPage">
+<div class="product-page pdp op" id="myOrdersPage">
   <div class="product-head">
-    <button class="product-back" id="myOrdersBackBtn">→</button>
-    <h3 class="brand-font">سفارش‌های من</h3>
+    <button class="product-back" id="myOrdersBackBtn" aria-label="بازگشت"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <h3 class="pd-head-title">سفارش‌های من</h3>
+    <span class="op-head-space"></span>
   </div>
   <div class="product-body" id="myOrdersPageBody"></div>
 </div>
 
-<div class="product-page" id="orderDetailPage">
+<div class="product-page pdp op" id="orderDetailPage">
   <div class="product-head">
-    <button class="product-back" id="orderDetailBackBtn">→</button>
-    <h3 class="brand-font">جزئیات سفارش</h3>
+    <button class="product-back" id="orderDetailBackBtn" aria-label="بازگشت"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    <h3 class="pd-head-title" id="orderDetailTitle">جزئیات سفارش</h3>
+    <span class="op-head-space"></span>
   </div>
   <div class="product-body" id="orderDetailBody"></div>
 </div>
@@ -3796,32 +3887,76 @@ document.getElementById('logoutBtn').addEventListener('click', async () => {
 
 let myOrdersCache = [];
 
+// order progress for the customer: 1 placed · 2 confirmed · 3 shipped · 4 delivered (0 = waiting for payment, -1 = cancelled)
+function orderStep(o){
+  if(o.status === 'لغو شده') return -1;
+  if(o.status === PAY_PENDING) return 0;
+  return { 'پرداخت شده': 1, 'جدید': 1, 'تایید شده': 2, 'ارسال شده': 3, 'تحویل داده شده': 4 }[o.status] || 1;
+}
+const ORDER_STEPS = [
+  ['ثبت سفارش', '<path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/>'],
+  ['تایید و آماده‌سازی', '<path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/>'],
+  ['ارسال شد', '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/>'],
+  ['تحویل', '<path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>']
+];
+function orderTrackHtml(o, big){
+  const st = orderStep(o);
+  if(st < 1) return '';
+  return `<div class="ot${big ? ' big' : ''}" style="--p:${(st - 1) / 3}">
+    <div class="ot-line"><i></i></div>
+    ${ORDER_STEPS.map(([label, ico], k) => `<div class="ot-step${k + 1 <= st ? ' done' : ''}${k + 1 === st ? ' now' : ''}"><span class="ot-dot">${big ? `<svg viewBox="0 0 24 24" aria-hidden="true">${ico}</svg>` : ''}</span>${big ? `<small>${label}</small>` : ''}</div>`).join('')}
+  </div>`;
+}
+function orderDateFa(iso){ return new Date(iso).toLocaleDateString('fa-IR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+let myOrdersImgMap = {};
+function orderThumb(i){
+  const prod = myOrdersImgMap[i.id];
+  const src = prod && prod.image_url ? thumbUrl(prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0]) : null;
+  return src ? `<img src="${src}" alt="" loading="lazy" onerror="thumbFallback(this)">` : icons.necklace;
+}
+async function loadOrderImages(orders){
+  const ids = [...new Set(orders.flatMap(o => (o.items || []).map(i => i.id)))].filter(id => !myOrdersImgMap[id]);
+  if(!ids.length) return;
+  const { data } = await db.from('products').select('id, image_url').in('id', ids);
+  (data || []).forEach(p => { myOrdersImgMap[p.id] = p; });
+}
+function myOrdersEmptyHtml(){
+  return `<div class="op-empty">
+    <svg viewBox="0 0 64 64" aria-hidden="true"><path class="l" d="M10 22l22-12 22 12v22L32 56 10 44z"/><path class="l" d="M10 22l22 12 22-12M32 34v22"/><path class="g" d="M32 13c2.4 3.1 4 5.2 4 7.2 0 2.2-1.8 3.8-4 3.8s-4-1.6-4-3.8c0-2 1.6-4.1 4-7.2z"/></svg>
+    <b>هنوز سفارشی ثبت نکردی</b>
+    <span>اولین سفارشت که ثبت بشه، این‌جا می‌تونی مرحله به مرحله دنبالش کنی.</span>
+    <button type="button" onclick="document.getElementById('myOrdersPage').classList.remove('open'); document.getElementById('shop').scrollIntoView({ behavior: 'smooth' });">مشاهده‌ی محصولات</button>
+  </div>`;
+}
 document.getElementById('viewOrdersBtn').addEventListener('click', async () => {
   closeAccountPanel();
   document.getElementById('myOrdersPage').classList.add('open');
   const listEl = document.getElementById('myOrdersPageBody');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = '<div class="op-skel"></div><div class="op-skel"></div><div class="op-skel"></div>';
   const { data, error } = await db.from('orders').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: false });
-  if(error || !data || data.length === 0){
-    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نکردی.</p>';
-    return;
-  }
   // checkouts the customer abandoned and replaced with a newer one are just noise here
-  myOrdersCache = data.filter(o => o.cancel_reason !== 'replaced');
-  if(myOrdersCache.length === 0){
-    listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز سفارشی ثبت نکردی.</p>';
-    return;
-  }
-  listEl.innerHTML = myOrdersCache.map(o => {
-    const itemsText = (o.items || []).map(i => `${escapeHtml(i.name)}${i.variant ? ` (${escapeHtml(i.variant)})` : ''} × ${toFa(Number(i.qty) || 0)}`).join('، ');
-    const date = new Date(o.created_at).toLocaleDateString('fa-IR');
-    return `<div class="order-item" onclick="openOrderDetail(${o.id})" style="cursor:pointer;">
-      <div class="oi-top"><span>${toFa(o.total)} تومان</span><span>${date}</span></div>
-      <div class="oi-items">${itemsText}</div>
-      ${o.tracking_code ? `<div style="font-size:11.5px;color:var(--coffee-70);margin-top:4px;direction:ltr;unicode-bidi:isolate;">کد پیگیری: ${escapeHtml(o.tracking_code)}</div>` : ''}
-      ${o.post_tracking ? `<div style="font-size:11.5px;color:var(--coffee);margin-top:4px;">ارسال شد با ${escapeHtml(o.post_carrier || 'پست')} · کد رهگیری: <span style="direction:ltr;unicode-bidi:isolate;">${escapeHtml(o.post_tracking)}</span></div>` : ''}
-      <span class="oi-status">${escapeHtml(customerStatusText(o))}</span>${payBadgeHtml(o)}
-      ${o.status === PAY_PENDING ? `<button type="button" class="oi-pay-btn" onclick="event.stopPropagation(); payOrderAgain('${escapeHtml(o.tracking_code)}', this)">پرداخت</button>` : ''}
+  myOrdersCache = (error || !data) ? [] : data.filter(o => o.cancel_reason !== 'replaced');
+  if(myOrdersCache.length === 0){ listEl.innerHTML = myOrdersEmptyHtml(); return; }
+  await loadOrderImages(myOrdersCache);
+  listEl.innerHTML = `<p class="op-count">${toFa(myOrdersCache.length)} سفارش</p>` + myOrdersCache.map((o, k) => {
+    const items = o.items || [];
+    const qty = items.reduce((a, i) => a + (Number(i.qty) || 0), 0);
+    const tone = STATUS_TONE[o.status] || 'ok';
+    const names = items.map(i => escapeHtml(i.name)).join('، ');
+    return `<div class="oc" style="--k:${k}" onclick="openOrderDetail(${o.id})" role="button" tabindex="0">
+      <div class="oc-top">
+        <span class="oc-status tone-${tone}">${escapeHtml(customerStatusText(o))}</span>${payBadgeHtml(o)}
+        <span class="oc-date">${orderDateFa(o.created_at)}</span>
+      </div>
+      <div class="oc-mid">
+        <div class="oc-thumbs">${items.slice(0, 3).map(i => `<span>${orderThumb(i)}</span>`).join('')}${items.length > 3 ? `<span class="more">+${toFa(items.length - 3)}</span>` : ''}</div>
+        <div class="oc-names"><b>${names}</b><small>${toFa(qty)} عدد${o.tracking_code ? ` · کد <span class="op-code">${escapeHtml(o.tracking_code)}</span>` : ''}</small></div>
+      </div>
+      ${orderTrackHtml(o, false)}
+      <div class="oc-foot">
+        <span class="oc-total">${toFa(o.total)} <small>تومان</small></span>
+        ${o.status === PAY_PENDING ? `<button type="button" class="oi-pay-btn" onclick="event.stopPropagation(); payOrderAgain('${escapeHtml(o.tracking_code)}', this)">پرداخت</button>` : `<span class="oc-more">جزئیات <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></span>`}
+      </div>
     </div>`;
   }).join('');
 });
@@ -3846,55 +3981,63 @@ async function openOrderDetail(orderId){
   const order = myOrdersCache.find(o => o.id === orderId);
   if(!order) return;
   const bodyEl = document.getElementById('orderDetailBody');
-  bodyEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  bodyEl.innerHTML = '<div class="op-skel tall"></div><div class="op-skel"></div>';
+  document.getElementById('orderDetailTitle').textContent = order.tracking_code ? 'سفارش ' + order.tracking_code : 'جزئیات سفارش';
   document.getElementById('orderDetailPage').classList.add('open');
+  await loadOrderImages([order]);
 
-  const ids = [...new Set((order.items || []).map(i => i.id))];
-  let productMap = {};
-  if(ids.length){
-    const { data } = await db.from('products').select('id, image_url').in('id', ids);
-    (data || []).forEach(p => { productMap[p.id] = p; });
-  }
-
-  const date = new Date(order.created_at).toLocaleDateString('fa-IR');
-  const itemsHtml = (order.items || []).map(i => {
-    const prod = productMap[i.id];
-    const img = prod && prod.image_url ? thumbUrl(prod.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0]) : null;
-    return `
-      <div class="drawer-item" style="padding:14px 0;border-bottom:1px solid var(--line);align-items:center;">
-        <div class="mini-visual" style="width:70px;height:70px;">${img ? `<img src="${img}" alt="${escapeHtml(i.name)}" style="width:100%;height:100%;object-fit:cover;" onerror="thumbFallback(this)">` : icons.necklace}</div>
-        <div class="drawer-item-info">
-          <div class="name">${escapeHtml(i.name)}${i.variant ? ` <span style="color:var(--gold);font-weight:500;">(${escapeHtml(i.variant)})</span>` : ''}</div>
-          <div class="price">${toFa(i.price)} تومان × ${toFa(i.qty)}</div>
-        </div>
-        <div style="font-weight:700;color:var(--coffee);white-space:nowrap;">${toFa(i.price * i.qty)} تومان</div>
-      </div>`;
-  }).join('');
+  const st = orderStep(order);
+  const items = order.items || [];
+  const subtotal = items.reduce((a, i) => a + i.price * i.qty, 0);
+  const tone = STATUS_TONE[order.status] || 'ok';
+  const itemsHtml = items.map(i => `
+      <div class="od-item">
+        <span class="od-img">${orderThumb(i)}</span>
+        <div class="od-info"><b>${escapeHtml(i.name)}</b>${i.variant ? `<span class="di-variant">${escapeHtml(i.variant)}</span>` : ''}<small>${toFa(i.qty)} × ${toFa(i.price)} تومان</small></div>
+        <span class="od-line">${toFa(i.price * i.qty)} <small>تومان</small></span>
+      </div>`).join('');
+  const statusNote = st === -1 ? (order.cancel_reason === 'expired' ? 'این سفارش چون پرداخت نشد، خودکار لغو شد.' : 'این سفارش لغو شده.')
+    : st === 0 ? 'سفارشت ثبت شده و منتظر پرداخته. اگه تا یک ساعت پرداخت نشه، خودکار لغو می‌شه.'
+    : st === 1 ? 'سفارشت ثبت شد و به‌زودی تایید و آماده‌ی ارسال می‌شه.'
+    : st === 2 ? 'سفارشت تایید شد و در حال آماده‌سازیه.'
+    : st === 3 ? 'سفارشت ارسال شد؛ کد رهگیری مرسوله پایین‌تر هست.'
+    : 'سفارشت تحویل داده شد. امیدواریم دوستش داشته باشی.';
 
   bodyEl.innerHTML = `
-    <div style="text-align:center;border:1px solid var(--line);padding:18px;margin-bottom:22px;">
-      <div style="font-size:12px;color:var(--coffee-70);margin-bottom:6px;">کد پیگیری سفارش</div>
-      <div style="font-size:24px;font-weight:800;color:var(--coffee);direction:ltr;unicode-bidi:isolate;">${order.tracking_code ? escapeHtml(order.tracking_code) : '—'}</div>
-    </div>
-    ${order.post_tracking ? `<div class="ship-track">
-      سفارشت با <b style="font-size:14px;">${escapeHtml(order.post_carrier || 'پست')}</b> ارسال شد. کد رهگیری مرسوله:<br>
-      <b>${escapeHtml(order.post_tracking)}</b><button type="button" onclick="copyText(${escapeHtml(JSON.stringify(String(order.post_tracking)))}, this)">کپی</button>
-      ${(order.post_carrier || 'پست') === 'پست' ? `<br><a href="https://tracking.post.ir/" target="_blank" rel="noopener" style="color:var(--coffee);">پیگیری در سایت پست (tracking.post.ir)</a>` : ''}
-    </div>` : ''}
-    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);margin-bottom:8px;">
-      <span>${date}</span>
-      <span><span class="oi-status">${escapeHtml(customerStatusText(order))}</span>${payBadgeHtml(order, true)}</span>
-    </div>
-    ${order.status === PAY_PENDING ? `<div style="text-align:center;margin:10px 0 4px;"><button type="button" class="oi-pay-btn" style="font-size:14px;padding:9px 28px;" onclick="payOrderAgain('${escapeHtml(order.tracking_code)}', this)">پرداخت ${toFa(order.total)} تومان</button><div style="font-size:11.5px;color:var(--coffee-70);margin-top:6px;">اگه تا یک ساعت پرداخت نشه، سفارش خودکار لغو می‌شه.</div></div>` : ''}
-    <div>${itemsHtml}</div>
-    <div style="display:flex;justify-content:space-between;font-weight:700;font-size:16px;margin-top:18px;padding-top:18px;border-top:2px solid var(--coffee);">
-      <span>جمع کل</span><span>${toFa(order.total)} تومان</span>
-    </div>
-    ${order.customer_address ? `<div style="margin-top:22px;font-size:13px;color:var(--coffee-70);"><b style="color:var(--coffee);">آدرس تحویل:</b> ${escapeHtml(order.customer_address)}</div>` : ''}
+    <section class="od-hero tone-${tone}">
+      <div class="od-hero-top"><span class="oc-status tone-${tone}">${escapeHtml(customerStatusText(order))}</span>${payBadgeHtml(order, true)}<span class="oc-date">${orderDateFa(order.created_at)}</span></div>
+      <p class="od-note">${statusNote}</p>
+      ${orderTrackHtml(order, true)}
+      ${st === 0 ? `<button type="button" class="drawer-cta od-pay" onclick="payOrderAgain('${escapeHtml(order.tracking_code)}', this)">پرداخت ${toFa(order.total)} تومان</button>` : ''}
+    </section>
+    <section class="od-card od-code">
+      <div><small>کد پیگیری سفارش</small><b class="op-code">${order.tracking_code ? escapeHtml(order.tracking_code) : '—'}</b></div>
+      ${order.tracking_code ? `<button type="button" class="od-copy" onclick="copyText(${escapeHtml(JSON.stringify(String(order.tracking_code)))}, this)">کپی</button>` : ''}
+    </section>
+    ${order.post_tracking ? `<section class="od-card od-ship">
+      <div class="od-ship-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${ORDER_STEPS[2][1]}</svg></div>
+      <div><small>ارسال با ${escapeHtml(order.post_carrier || 'پست')} · کد رهگیری مرسوله</small><b class="op-code">${escapeHtml(order.post_tracking)}</b>
+      ${(order.post_carrier || 'پست') === 'پست' ? `<a href="https://tracking.post.ir/" target="_blank" rel="noopener">پیگیری در سایت پست ←</a>` : ''}</div>
+      <button type="button" class="od-copy" onclick="copyText(${escapeHtml(JSON.stringify(String(order.post_tracking)))}, this)">کپی</button>
+    </section>` : ''}
+    <section class="od-card">
+      <h4>محصولات</h4>
+      ${itemsHtml}
+      <div class="od-sum">
+        <div><span>جمع محصولات</span><span>${toFa(subtotal)} تومان</span></div>
+        ${order.coupon_code ? `<div class="off"><span>کد تخفیف ${escapeHtml(order.coupon_code)}</span><span>−${toFa(order.discount_amount || 0)} تومان</span></div>` : ''}
+        <div><span>هزینه‌ی ارسال</span><span>پس‌کرایه، درب منزل</span></div>
+        <div class="tot"><span>مبلغ پرداختی</span><span>${toFa(order.total)} تومان</span></div>
+      </div>
+    </section>
+    ${order.customer_address ? `<section class="od-card od-addr">
+      <div class="od-ship-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></div>
+      <div><small>آدرس تحویل</small><p>${escapeHtml(order.customer_address)}</p>${order.customer_name || order.customer_phone ? `<small>${escapeHtml(order.customer_name || '')}${order.customer_phone ? ` · <span class="op-code">${escapeHtml(order.customer_phone)}</span>` : ''}</small>` : ''}</div>
+    </section>` : ''}
   `;
 }
 async function copyText(text, btn){
-  try{ await navigator.clipboard.writeText(text); if(btn) btn.textContent = 'کپی شد'; }
+  try{ await navigator.clipboard.writeText(text); if(btn){ btn.textContent = 'کپی شد ✓'; btn.classList.add('ok'); } }
   catch(e){ showToast('کد: ' + text); }
 }
 function closeOrderDetail(){ document.getElementById('orderDetailPage').classList.remove('open'); }
