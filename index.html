@@ -1234,6 +1234,60 @@
     .acc-head{padding-top:26px;}
   }
   @media(prefers-reduced-motion:reduce){#accountPanel,#accountPanel *{animation:none!important;transition:none!important;}}
+
+  /* ---------- admin, app-style ---------- */
+  .kpi:first-child{position:relative;overflow:hidden;padding-bottom:46px;}
+  .kpi-spark{position:absolute;left:0;right:0;bottom:0;width:100%;height:42px;}
+  .kpi-spark .a{fill:rgba(232,211,174,.16);}
+  .kpi-spark .l{fill:none;stroke:#E8D3AE;stroke-width:1.6;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke;stroke-dasharray:400;stroke-dashoffset:400;animation:sparkDraw 1.2s ease-out .2s forwards;}
+  .kpi-spark circle{fill:#E8D3AE;}
+  @keyframes sparkDraw{to{stroke-dashoffset:0;}}
+  .kpi-delta{display:inline-block;margin-top:6px;font-style:normal;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;}
+  .kpi-delta.up{background:rgba(141,190,128,.18);color:#BFE0B2;}
+  .kpi-delta.down{background:rgba(230,150,140,.18);color:#F0B9B1;}
+  .adm .kpi b{animation:kpiIn .6s cubic-bezier(.2,.8,.2,1) both;}
+  @keyframes kpiIn{from{opacity:0;transform:translateY(8px);}}
+  .sales-bar{border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#C9A46A,#8E6E58);transform-origin:bottom;animation:barGrow .8s cubic-bezier(.2,.8,.2,1) both;}
+  .sales-bar-col:last-child .sales-bar{background:linear-gradient(180deg,#5A4636,#3A2F26);}
+  .sales-bar-col:nth-child(2) .sales-bar{animation-delay:.05s;}.sales-bar-col:nth-child(3) .sales-bar{animation-delay:.1s;}.sales-bar-col:nth-child(4) .sales-bar{animation-delay:.15s;}.sales-bar-col:nth-child(5) .sales-bar{animation-delay:.2s;}.sales-bar-col:nth-child(6) .sales-bar{animation-delay:.25s;}.sales-bar-col:nth-child(7) .sales-bar{animation-delay:.3s;}
+  @keyframes barGrow{from{transform:scaleY(0);}}
+  /* a transform on the open page would turn the fixed bottom bar into a scrolling one */
+  .product-page.adm.open{transform:none;}
+  .adm-nav,.adm-fab,.adm-more,.adm-more-overlay{display:none;}
+  @media(max-width:760px){
+    .adm .admin-tabs{display:none;}
+    .adm .product-head{padding-bottom:12px;}
+    .adm .product-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px) + var(--under));}
+    .adm-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:calc(-1 * var(--under));z-index:5;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px) + var(--under));background:rgba(251,248,243,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--adm-line);box-shadow:0 -10px 30px rgba(46,32,22,.06);}
+    .adm-nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:2px 0;font:inherit;color:var(--coffee-70);border:0!important;background:none;}
+    .adm .adm-nav-btn.admin-tab{padding:2px 0;border:0;font-size:inherit;}
+    .adm-nav-ico{position:relative;width:52px;height:30px;border-radius:99px;display:flex;align-items:center;justify-content:center;transition:background .3s,color .3s;}
+    .adm-nav-ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s cubic-bezier(.3,1.5,.5,1);}
+    .adm-nav-btn small{font-size:10.5px;font-weight:700;}
+    .adm-nav-btn.active,.adm-nav-btn.on{color:var(--ink);}
+    .adm-nav-btn.active .adm-nav-ico,.adm-nav-btn.on .adm-nav-ico{background:#EADFCF;}
+    .adm-nav-btn.active .adm-nav-ico svg{transform:translateY(-1px) scale(1.08);}
+    .adm-nav-badge{position:absolute;top:-3px;left:8px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#9B3F3F;color:#fff;font-style:normal;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #FBF8F3;animation:badgePop .5s cubic-bezier(.3,1.8,.5,1);}
+    .adm-nav-badge[hidden]{display:none;}
+    .adm-fab{display:flex;position:fixed;left:18px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:6;width:56px;height:56px;border-radius:18px;align-items:center;justify-content:center;background:linear-gradient(135deg,#5A4636,#2F251D);color:#F7F2EA;box-shadow:0 12px 28px rgba(46,32,22,.35);transform:scale(0);transition:transform .35s cubic-bezier(.3,1.5,.5,1);}
+    .adm.on-products .adm-fab{transform:scale(1);}
+    .adm-fab:active{transform:scale(.92);}
+    .adm-fab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;}
+    .adm.on-products .adm-primary{display:none!important;}
+    .adm-more-overlay{display:block;position:fixed;inset:0;bottom:calc(-1 * var(--under));z-index:7;background:rgba(46,32,22,.35);opacity:0;pointer-events:none;transition:opacity .3s;}
+    .adm-more-overlay.open{opacity:1;pointer-events:auto;}
+    .adm-more{display:block;position:fixed;left:0;right:0;bottom:calc(-1 * var(--under));z-index:8;padding:18px 18px calc(24px + env(safe-area-inset-bottom,0px) + var(--under));background:var(--cream-soft);border-radius:26px 26px 0 0;box-shadow:0 -20px 60px rgba(46,32,22,.25);transform:translateY(100%);transition:transform .45s cubic-bezier(.2,.9,.25,1);}
+    .adm-more.open{transform:none;}
+    .adm-more .auth-grip{display:block;margin:-8px auto 12px;}
+    .adm-more-title{display:block;font-size:14px;font-weight:800;color:var(--ink);margin-bottom:12px;}
+    .adm-more-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+    .adm-more-grid button{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 6px;border-radius:16px;background:#fff;border:1px solid var(--adm-line);font:inherit;font-size:12px;font-weight:700;color:var(--ink);}
+    .adm-more-grid button span{width:42px;height:42px;border-radius:13px;background:#F5ECDD;display:flex;align-items:center;justify-content:center;}
+    .adm-more-grid svg{width:20px;height:20px;fill:none;stroke:var(--coffee);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+    .adm-more.open .adm-more-grid button{animation:authUp .45s cubic-bezier(.2,.8,.2,1) both;}
+    .adm-more.open .adm-more-grid button:nth-child(2){animation-delay:.04s;}.adm-more.open .adm-more-grid button:nth-child(3){animation-delay:.08s;}.adm-more.open .adm-more-grid button:nth-child(4){animation-delay:.12s;}.adm-more.open .adm-more-grid button:nth-child(5){animation-delay:.16s;}
+  }
+  @media(prefers-reduced-motion:reduce){.kpi-spark .l{animation:none;stroke-dashoffset:0;}.sales-bar,.adm .kpi b{animation:none;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1762,6 +1816,26 @@
 </div>
 
 <div class="product-page adm" id="adminPage">
+  <nav class="adm-nav" id="admNav" aria-label="بخش‌های پنل">
+    <button type="button" class="admin-tab adm-nav-btn" data-tab="orders"><span class="adm-nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg><i class="adm-nav-badge" id="admNavBadge" hidden></i></span><small>سفارش‌ها</small></button>
+    <button type="button" class="admin-tab adm-nav-btn" data-tab="products"><span class="adm-nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg></span><small>محصولات</small></button>
+    <button type="button" class="admin-tab adm-nav-btn" data-tab="stats"><span class="adm-nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><small>آمار</small></button>
+    <button type="button" class="admin-tab adm-nav-btn" data-tab="customers"><span class="adm-nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></span><small>مشتری‌ها</small></button>
+    <button type="button" class="adm-nav-btn" id="admMoreBtn"><span class="adm-nav-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></span><small>بیشتر</small></button>
+  </nav>
+  <div class="adm-more-overlay" id="admMoreOverlay"></div>
+  <div class="adm-more" id="admMore">
+    <span class="auth-grip" aria-hidden="true"></span>
+    <b class="adm-more-title">بخش‌های دیگه</b>
+    <div class="adm-more-grid">
+      <button type="button" data-go="reviews"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>نظرات</button>
+      <button type="button" data-go="coupons"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/></svg></span>کدهای تخفیف</button>
+      <button type="button" data-go="announce"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg></span>اطلاعیه سایت</button>
+      <button type="button" data-go="logs"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></span>لاگ فعالیت</button>
+      <button type="button" data-go="admins"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg></span>مدیرها</button>
+    </div>
+  </div>
+  <button type="button" class="adm-fab" id="admFab" aria-label="افزودن محصول جدید"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
   <div class="product-head">
     <button class="product-back" id="adminBackBtn" aria-label="بازگشت">→</button>
     <div class="adm-title">
@@ -4253,13 +4327,18 @@ function stopHeartbeat(){
 }
 
 function openAdminPage(){
-  document.getElementById('admToday').textContent = new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
+  const first = (currentProfile && currentProfile.full_name || '').trim().split(/\s+/)[0];
+  document.getElementById('admToday').textContent = (first ? 'سلام ' + first + ' · ' : '') + new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
   adminPage.classList.add('open');
   adminPage.scrollTop = 0;
   switchAdminTab('orders');
 }
 
 function switchAdminTab(tab){
+  const moreBtn = document.getElementById('admMoreBtn');
+  if(moreBtn) moreBtn.classList.toggle('on', ['reviews', 'coupons', 'announce', 'logs', 'admins'].includes(tab));
+  document.getElementById('adminPage').classList.toggle('on-products', tab === 'products');
+  if(document.getElementById('adminPage').classList.contains('open')) document.getElementById('adminPage').scrollTo({ top: 0 });
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   document.getElementById('adminTabOrders').style.display = tab === 'orders' ? 'block' : 'none';
   document.getElementById('adminTabProducts').style.display = tab === 'products' ? 'block' : 'none';
@@ -4340,13 +4419,48 @@ function renderAdminTodo(rows){
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const sold = adminOrdersCache.filter(o => new Date(o.created_at) >= today && o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
   const tile = (key, n, text, hot) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><b>${toFa(n)}</b><span>${text}</span></button>`;
+  const spark = admSalesSpark();
   document.getElementById('adminTodo').innerHTML =
-    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`)
+    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`).replace('</button>', `${spark.delta}${spark.svg}</button>`)
     + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true)
     + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true)
     + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری');
 }
 
+function admMore(open){
+  document.getElementById('admMore').classList.toggle('open', open);
+  document.getElementById('admMoreOverlay').classList.toggle('open', open);
+  document.getElementById('admMoreBtn').classList.toggle('on', open);
+}
+document.getElementById('admMoreBtn').addEventListener('click', () => admMore(!document.getElementById('admMore').classList.contains('open')));
+document.getElementById('admMoreOverlay').addEventListener('click', () => admMore(false));
+document.querySelectorAll('#admMore [data-go]').forEach(b => b.addEventListener('click', () => {
+  admMore(false); switchAdminTab(b.dataset.go);
+  // keep «بیشتر» lit while one of its sections is open
+  document.getElementById('admMoreBtn').classList.add('on');
+}));
+document.getElementById('admFab').addEventListener('click', () => {
+  document.getElementById('adminAddProductBtn').click();
+  document.getElementById('adminPage').scrollTo({ top: 0, behavior: 'smooth' });
+});
+// last 7 days of real sales for the sparkline on the sales tile
+function admSalesSpark(){
+  const day = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const today = day(Date.now());
+  const sums = Array(7).fill(0);
+  adminOrdersCache.forEach(o => {
+    if(o.status === 'لغو شده' || o.status === PAY_PENDING || o.pay_sandbox) return;
+    const k = Math.round((today - day(o.created_at)) / 864e5);
+    if(k >= 0 && k < 7) sums[6 - k] += o.total || 0;
+  });
+  const max = Math.max(1, ...sums), W = 120, H = 34;
+  const pts = sums.map((v, i) => [i * W / 6, H - 3 - (v / max) * (H - 8)]);
+  const line = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const y = sums[5], t = sums[6];
+  const delta = y ? Math.round((t - y) / y * 100) : null;
+  return { svg: `<svg class="kpi-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><path d="${line} L${W} ${H} L0 ${H} Z" class="a"/><path d="${line}" class="l"/><circle cx="${pts[6][0]}" cy="${pts[6][1]}" r="2.6"/></svg>`,
+    delta: delta === null ? '' : `<em class="kpi-delta ${delta >= 0 ? 'up' : 'down'}">${delta >= 0 ? '▲' : '▼'} ${toFa(Math.abs(delta))}٪ نسبت به دیروز</em>` };
+}
 function setAdminOrderFilter(key){
   adminOrderFilter = key;
   renderAdminOrders();
@@ -5291,6 +5405,8 @@ function clearNewOrderBadge(){
   newOrderCount = 0;
   const badgeEl = document.getElementById('newOrderBadge');
   if(badgeEl) badgeEl.remove();
+  const navBadge = document.getElementById('admNavBadge');
+  if(navBadge) navBadge.hidden = true;
 }
 function playNotifyBeep(){
   try{
@@ -5315,6 +5431,8 @@ function startOrdersRealtime(){
     announced.add(row.id);
     newOrderCount++;
     const ordersTabBtn = document.querySelector('.admin-tab[data-tab="orders"]');
+    const navBadge = document.getElementById('admNavBadge');
+    if(navBadge){ navBadge.hidden = false; navBadge.textContent = toFa(newOrderCount); }
     if(ordersTabBtn){
       let badgeEl = document.getElementById('newOrderBadge');
       if(!badgeEl){
