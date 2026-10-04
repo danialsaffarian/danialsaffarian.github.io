@@ -1183,6 +1183,57 @@
   .od-sum .off{color:#8B3A3A;}
   .od-sum .tot{margin-top:4px;padding-top:10px;border-top:1px dashed var(--line);font-size:15px;font-weight:800;color:var(--coffee);}
   @media(prefers-reduced-motion:reduce){.oc,.od-hero,.od-card,.ot-line i,.ot-step.now .ot-dot,.op-empty svg{animation:none;}}
+
+  /* ---------- account sheet ---------- */
+  #accountPanel{width:min(400px,92vw);border-radius:24px;overflow:hidden auto;max-height:92vh;background:var(--cream-soft);box-shadow:0 30px 80px rgba(46,32,22,.35);transform:translate(50%,-46%) scale(.96);transition:opacity .3s ease,transform .45s cubic-bezier(.2,.9,.25,1.05);}
+  #accountPanel.open{transform:translate(50%,-50%) scale(1);}
+  .acc-head{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:30px 24px 22px;background:radial-gradient(120% 100% at 50% 0%,#FFFDF9 0%,#F3E9DB 70%,#EFE3D1 100%);border-bottom:1px solid var(--line);}
+  .acc-close{position:absolute;top:16px;left:16px;width:36px;height:36px;border-radius:50%;background:rgba(142,110,88,.08);display:flex;align-items:center;justify-content:center;color:var(--coffee);transition:background .2s,transform .3s;}
+  .acc-close:hover{background:rgba(142,110,88,.16);transform:rotate(90deg);}
+  .acc-close svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;}
+  .acc-avatar{width:78px;height:78px;border-radius:50%;padding:3px;background:conic-gradient(from 210deg,#E8D3AE,#B8956F,#8E6E58,#E8D3AE);margin-bottom:10px;box-shadow:0 10px 26px rgba(142,110,88,.25);}
+  .acc-avatar span{width:100%;height:100%;border-radius:50%;background:linear-gradient(145deg,#FFFDF9,#F1E6D5);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:800;color:var(--coffee);border:2px solid #fff;}
+  .acc-name{font-size:19px;font-weight:800;color:var(--coffee);}
+  .acc-phone{font-size:13px;color:var(--coffee-70);direction:ltr;unicode-bidi:isolate;letter-spacing:.5px;font-variant-numeric:tabular-nums;}
+  .acc-role{margin-top:8px;font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,#C9A46A,#8E6E58);padding:3px 12px;border-radius:99px;}
+  .acc-role[hidden]{display:none;}
+  .acc-body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;}
+  .acc-admin{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,#4A3A2E,#2F251D);color:#F7F2EA;text-align:start;font:inherit;box-shadow:0 10px 24px rgba(46,32,22,.25);position:relative;overflow:hidden;}
+  .acc-admin::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-50%;background:linear-gradient(100deg,transparent,rgba(255,240,214,.18),transparent);transform:skewX(-18deg);animation:ctaGloss 5s ease-in-out 1.5s infinite;}
+  .acc-admin-ico{width:42px;height:42px;flex:none;border-radius:12px;background:rgba(232,211,174,.15);display:flex;align-items:center;justify-content:center;color:#E8D3AE;}
+  .acc-admin-ico svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.6;}
+  .acc-admin-text{flex:1;display:flex;flex-direction:column;}
+  .acc-admin-text b{font-size:14.5px;}
+  .acc-admin-text small{font-size:11.5px;color:#CDBBA6;}
+  .acc-chev{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;opacity:.7;transition:transform .2s;}
+  .acc-admin:hover .acc-chev,.acc-row:hover .acc-chev{transform:translateX(-3px);}
+  .acc-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .acc-tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:14px;border-radius:16px;background:#fff;border:1px solid var(--line);font:inherit;color:var(--coffee);text-align:start;transition:transform .2s,box-shadow .2s,border-color .2s;}
+  .acc-tile:hover{border-color:var(--gold-soft);box-shadow:0 10px 24px rgba(142,110,88,.12);transform:translateY(-2px);}
+  .acc-tile:active{transform:scale(.97);}
+  .acc-tile-ico{width:38px;height:38px;border-radius:11px;background:#F5ECDD;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+  .acc-tile-ico svg{width:19px;height:19px;fill:none;stroke:var(--coffee);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .acc-count{font-size:22px;font-weight:800;line-height:1.2;font-variant-numeric:tabular-nums;}
+  .acc-tile > span:last-child{font-size:12.5px;font-weight:600;color:var(--coffee-70);}
+  .acc-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid var(--line);text-decoration:none;color:var(--coffee);}
+  .acc-row-ico{width:38px;height:38px;flex:none;border-radius:11px;background:#F5ECDD;display:flex;align-items:center;justify-content:center;}
+  .acc-row-ico svg{width:19px;height:19px;fill:none;stroke:var(--gold);stroke-width:1.6;}
+  .acc-row-text{flex:1;display:flex;flex-direction:column;}
+  .acc-row-text b{font-size:13.5px;}
+  .acc-row-text small{font-size:11.5px;color:var(--coffee-70);}
+  .acc-logout{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:4px;padding:12px;border-radius:14px;font:inherit;font-size:13.5px;font-weight:700;color:#9B3F3F;border:1px dashed #E6C9C5;transition:background .2s;}
+  .acc-logout:hover{background:#F9ECEA;}
+  .acc-logout svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  #accountPanel.open .acc-avatar{animation:authBadge .6s cubic-bezier(.3,1.5,.5,1) .1s both;}
+  #accountPanel.open .acc-name,#accountPanel.open .acc-phone,#accountPanel.open .acc-role{animation:authUp .5s cubic-bezier(.2,.8,.2,1) .2s both;}
+  #accountPanel.open .acc-anim{animation:authUp .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.26s + var(--k) * .06s);}
+  @media(max-width:560px){
+    #accountPanel{top:auto;right:0;left:0;bottom:calc(-1 * var(--under));width:100%;max-height:calc(88vh + var(--under));border-radius:26px 26px 0 0;transform:translateY(100%);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--under));}
+    #accountPanel.open{transform:none;}
+    #accountPanel .auth-grip{display:block;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;}
+    .acc-head{padding-top:26px;}
+  }
+  @media(prefers-reduced-motion:reduce){#accountPanel,#accountPanel *{animation:none!important;transition:none!important;}}
 </style>
 <script type="application/ld+json">
 {
@@ -1671,42 +1722,42 @@
   </div>
 </div>
 
-<div class="account-panel" id="accountPanel">
-  <div class="auth-head">
-    <h3 class="brand-font">My Account</h3>
-    <button class="drawer-close" id="accountClose">✕</button>
+<div class="account-panel" id="accountPanel" role="dialog" aria-label="حساب من">
+  <span class="auth-grip" aria-hidden="true"></span>
+  <div class="acc-head">
+    <button class="acc-close" id="accountClose" aria-label="بستن"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="acc-avatar"><span id="accInitial"></span></div>
+    <b class="acc-name" id="accName"></b>
+    <span class="acc-phone" id="accountPhoneText"></span>
+    <span class="acc-role" id="accRole" hidden>مدیر فروشگاه</span>
   </div>
-  <div class="auth-body">
-    <div class="account-user">
-      <div class="account-user-avatar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      </div>
-      <div>
-        <div class="account-user-label">شماره حساب</div>
-        <div class="account-user-phone" id="accountPhoneText"></div>
-      </div>
-    </div>
-    <div class="menu-list">
-      <button class="menu-item" style="display:none;" id="adminPanelBtn">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-        پنل مدیریت
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+  <div class="acc-body">
+    <button class="acc-admin acc-anim" style="display:none;--k:0" id="adminPanelBtn">
+      <span class="acc-admin-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg></span>
+      <span class="acc-admin-text"><b>پنل مدیریت</b><small>سفارش‌ها، محصولات و آمار فروشگاه</small></span>
+      <svg class="acc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="acc-tiles">
+      <button class="acc-tile acc-anim" style="--k:1" id="viewOrdersBtn">
+        <span class="acc-tile-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg></span>
+        <b class="acc-count" id="accOrdersCount">–</b>
+        <span>سفارش‌های من</span>
       </button>
-      <button class="menu-item" id="viewOrdersBtn">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05"/><path d="M12 22.08V12"/></svg>
-        سفارش‌های من
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </button>
-      <button class="menu-item" id="viewWishlistBtn">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg>
-        علاقه‌مندی‌های من
-        <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
-      </button>
-      <button class="menu-item danger" id="logoutBtn">
-        <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        خروج از حساب
+      <button class="acc-tile acc-anim" style="--k:2" id="viewWishlistBtn">
+        <span class="acc-tile-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></span>
+        <b class="acc-count" id="accWishCount">–</b>
+        <span>علاقه‌مندی‌ها</span>
       </button>
     </div>
+    <a class="acc-row acc-anim" style="--k:3" href="https://instagram.com/hana_gallery_____" target="_blank" rel="noopener">
+      <span class="acc-row-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></span>
+      <span class="acc-row-text"><b>پشتیبانی و سوال</b><small>از طریق دایرکت اینستاگرام</small></span>
+      <svg class="acc-chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </a>
+    <button class="acc-logout acc-anim" style="--k:4" id="logoutBtn">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      خروج از حساب
+    </button>
   </div>
 </div>
 
@@ -3698,7 +3749,18 @@ function enforceProfileSetup(){
   authOtpPurpose = 'login';
   showProfileSetup(false);
 }
-function openAccountPanel(){ accountPanel.classList.add('open'); authOverlay.classList.add('open'); }
+function fmtPhoneFa(p){
+  const d = String(p || '').replace(/\D/g, '').replace(/^98/, '0');
+  return d.length === 11 ? `${d.slice(0, 4)} ${d.slice(4, 7)} ${d.slice(7)}` : d;
+}
+async function openAccountPanel(){
+  accountPanel.classList.add('open'); authOverlay.classList.add('open');
+  animateNumber(document.getElementById('accWishCount'), wishlistIds.size, '');
+  if(!currentUser) return;
+  const { data } = await db.from('orders').select('id, cancel_reason').eq('user_id', currentUser.id);
+  const n = (data || []).filter(o => o.cancel_reason !== 'replaced').length;
+  animateNumber(document.getElementById('accOrdersCount'), n, '');
+}
 function closeAccountPanel(){ accountPanel.classList.remove('open'); authOverlay.classList.remove('open'); }
 
 authOverlay.addEventListener('click', () => { closeAuthModal(); closeAccountPanel(); });
@@ -4097,11 +4159,15 @@ function refreshAuthUI(){
     const phone = currentUser.phone || '';
     const displayName = (currentProfile && currentProfile.full_name) ? currentProfile.full_name : phone;
     loginLinkBtn.textContent = displayName;
-    document.getElementById('accountPhoneText').textContent = phone;
+    document.getElementById('accountPhoneText').textContent = fmtPhoneFa(phone);
+    const name = (currentProfile && currentProfile.full_name) || 'کاربر حنا گالری';
+    document.getElementById('accName').textContent = name;
+    document.getElementById('accInitial').textContent = name.trim().charAt(0);
   } else {
     loginLinkBtn.textContent = 'ورود و ثبت‌نام';
   }
   document.getElementById('adminPanelBtn').style.display = isAdmin ? 'flex' : 'none';
+  document.getElementById('accRole').hidden = !isAdmin;
   updatePayLabels();
 }
 
