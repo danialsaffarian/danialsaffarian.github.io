@@ -970,10 +970,14 @@
   }
 
   /* full-screen panels reach under Safari's floating bottom toolbar (iOS 26), so the page behind never shows through */
-  .overlay,.drawer,.checkout-page,.product-page{bottom:auto;height:100vh;height:100lvh;}
-  .drawer-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
-  .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + (100lvh - 100dvh));}
-  @media(max-width:899px){.pd-buybar{bottom:calc(100lvh - 100dvh);}}
+  /* Safari's toolbars grow and shrink while scrolling, and viewport units lag behind them; instead every
+     full-screen layer runs a fixed 140px past the bottom edge (off screen) and pads its content back up by
+     the same amount, so nothing behind it can ever show through and nothing inside it gets hidden */
+  :root{--under:140px;}
+  .overlay,.drawer,.checkout-page,.product-page,.menu-overlay,.mobile-nav{top:0;bottom:calc(-1 * var(--under));height:auto;}
+  .drawer-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px) + var(--under));}
+  .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px) + var(--under));}
+  @media(max-width:899px){.pd-buybar{bottom:var(--under);}}
 
   /* ---------- login sheet (v2) ---------- */
   #authOverlay.open{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
@@ -1033,7 +1037,7 @@
   @keyframes authBadge{from{opacity:0;transform:scale(.6) rotate(-12deg);}to{opacity:1;transform:none;}}
   @keyframes authUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
   @media(max-width:560px){
-    #authModal{top:auto;right:0;left:0;bottom:0;width:100%;max-height:92dvh;border-radius:26px 26px 0 0;transform:translateY(100%);padding-bottom:calc(env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
+    #authModal{top:auto;right:0;left:0;bottom:0;width:100%;bottom:calc(-1 * var(--under));max-height:calc(88vh + var(--under));border-radius:26px 26px 0 0;transform:translateY(100%);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--under));}
     #authModal.open{transform:none;}
     .auth-grip{display:block;width:44px;height:5px;border-radius:99px;background:#D8CBB8;margin:10px auto 0;position:relative;z-index:2;}
     #authModal .auth-head{padding-top:18px;}
@@ -1046,9 +1050,9 @@
   .burger.x .b1{transform:translateY(6px) rotate(45deg);}
   .burger.x .b2{opacity:0;transform:scaleX(.2);}
   .burger.x .b3{transform:translateY(-6px) rotate(-45deg);}
-  .menu-overlay{position:fixed;top:0;left:0;right:0;height:100vh;height:100lvh;background:rgba(46,32,22,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s;z-index:96;}
+  .menu-overlay{position:fixed;left:0;right:0;background:rgba(46,32,22,.42);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s;z-index:96;}
   .menu-overlay.open{opacity:1;pointer-events:auto;}
-  .mobile-nav{position:fixed;top:0;right:0;height:100vh;height:100lvh;width:min(360px,88vw);max-height:none;overflow:hidden;z-index:97;display:flex;flex-direction:column;background:var(--cream-soft);box-shadow:-20px 0 60px rgba(46,32,22,.25);border-radius:0 0 0 28px;transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.9,.25,1);padding-bottom:calc(env(safe-area-inset-bottom,0px) + (100lvh - 100dvh));}
+  .mobile-nav{position:fixed;right:0;width:min(360px,88vw);max-height:none;overflow:hidden;z-index:97;display:flex;flex-direction:column;background:var(--cream-soft);box-shadow:-20px 0 60px rgba(46,32,22,.25);transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.9,.25,1);padding-bottom:calc(env(safe-area-inset-bottom,0px) + var(--under));}
   .mobile-nav.open{max-height:none;border-top:0;transform:none;}
   .mn-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 18px 14px;border-bottom:1px solid var(--line);background:radial-gradient(120% 120% at 100% 0%,#FFFDF9,var(--cream-soft));}
   .mn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;direction:ltr;}
