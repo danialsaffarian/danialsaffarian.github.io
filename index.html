@@ -1288,6 +1288,39 @@
     .adm-more.open .adm-more-grid button:nth-child(2){animation-delay:.04s;}.adm-more.open .adm-more-grid button:nth-child(3){animation-delay:.08s;}.adm-more.open .adm-more-grid button:nth-child(4){animation-delay:.12s;}.adm-more.open .adm-more-grid button:nth-child(5){animation-delay:.16s;}
   }
   @media(prefers-reduced-motion:reduce){.kpi-spark .l{animation:none;stroke-dashoffset:0;}.sales-bar,.adm .kpi b{animation:none;}}
+
+  /* ---------- VPN warnings ---------- */
+  .vpn-bar{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 44px;background:#FBEDE9;color:#7A2E26;border-bottom:1px solid #F0CFC8;font-size:13px;line-height:1.8;text-align:center;animation:annDrop .6s cubic-bezier(.2,.8,.2,1) both;}
+  .vpn-bar[hidden]{display:none;}
+  .vpn-bar svg{flex:none;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .vpn-bar b{font-weight:800;}
+  .vpn-bar button{position:absolute;top:50%;left:10px;transform:translateY(-50%);width:30px;height:30px;border-radius:50%;font-size:18px;color:#7A2E26;}
+  .vpn-note{display:flex;align-items:flex-start;gap:8px;margin:0 0 12px;padding:10px 12px;border-radius:10px;background:#FBEDE9;color:#7A2E26;font-size:12.5px;line-height:1.8;}
+  .vpn-note[hidden]{display:none;}
+  .vpn-note svg{flex:none;width:18px;height:18px;margin-top:2px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  .vpn-overlay{position:fixed;inset:0;bottom:calc(-1 * var(--under));background:rgba(46,32,22,.45);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);z-index:120;opacity:0;pointer-events:none;transition:opacity .3s;}
+  .vpn-overlay.open{opacity:1;pointer-events:auto;}
+  .vpn-modal{position:fixed;top:50%;right:50%;z-index:121;width:min(400px,92vw);background:var(--cream-soft);border-radius:24px;padding:28px 24px 20px;text-align:center;box-shadow:0 30px 80px rgba(46,32,22,.35);opacity:0;pointer-events:none;transform:translate(50%,-46%) scale(.96);transition:opacity .3s,transform .45s cubic-bezier(.2,.9,.25,1.05);}
+  .vpn-modal.open{opacity:1;pointer-events:auto;transform:translate(50%,-50%) scale(1);}
+  .vpn-modal .auth-grip{display:none;}
+  .vpn-ico{width:72px;height:72px;margin:0 auto 12px;border-radius:50%;background:#FBEDE9;color:#9B3F3F;display:flex;align-items:center;justify-content:center;}
+  .vpn-modal.open .vpn-ico{animation:authBadge .6s cubic-bezier(.3,1.5,.5,1) .1s both;}
+  .vpn-ico svg{width:34px;height:34px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .vpn-modal h3{font-size:19px;font-weight:800;color:var(--coffee);margin:0 0 8px;}
+  .vpn-modal p{font-size:13px;line-height:1.95;color:var(--coffee-70);margin:0 0 12px;}
+  .vpn-steps{list-style:none;counter-reset:s;margin:0 0 12px;padding:12px 14px;border-radius:14px;background:#fff;border:1px solid var(--line);text-align:start;display:flex;flex-direction:column;gap:8px;}
+  .vpn-steps li{counter-increment:s;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--coffee);}
+  .vpn-steps li::before{content:counter(s, persian);width:24px;height:24px;flex:none;border-radius:50%;background:var(--coffee);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .vpn-status{min-height:0;color:#9B3F3F!important;font-weight:700;margin:0 0 10px!important;}
+  .vpn-status:empty{display:none;}
+  .vpn-status.shake{animation:authShake .45s;}
+  .vpn-modal .drawer-cta{border-radius:12px;}
+  .vpn-cancel{margin-top:8px;font:inherit;font-size:13px;font-weight:600;color:var(--coffee-70);padding:8px;}
+  @media(max-width:560px){
+    .vpn-modal{top:auto;right:0;left:0;bottom:calc(-1 * var(--under));width:100%;border-radius:26px 26px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px) + var(--under));transform:translateY(100%);}
+    .vpn-modal.open{transform:none;}
+    .vpn-modal .auth-grip{display:block;margin:-14px auto 14px;}
+  }
 </style>
 <script type="application/ld+json">
 {
@@ -1353,6 +1386,10 @@
   </symbol>
 </defs></svg>
 
+<div class="vpn-bar" id="vpnBar" hidden role="status">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 9l6 6M15 9l-6 6"/></svg><span><b>فیلترشکنت روشنه!</b> برای تجربه‌ی بهتر از سایت و پرداخت آنلاین، فیلترشکن رو خاموش کن.</span>
+  <button type="button" id="vpnBarClose" aria-label="بستن">×</button>
+</div>
 <div class="announce-bar" id="announceBar" hidden>
   <span id="announceText"></span><a id="announceLink" href="#" target="_blank" rel="noopener" hidden>مشاهده</a>
 </div>
@@ -1655,6 +1692,17 @@
   </div>
 </footer>
 
+<div class="vpn-overlay" id="vpnOverlay"></div>
+<div class="vpn-modal" id="vpnModal" role="dialog" aria-modal="true" aria-labelledby="vpnTitle">
+  <span class="auth-grip" aria-hidden="true"></span>
+  <div class="vpn-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 9l6 6M15 9l-6 6"/></svg></div>
+  <h3 id="vpnTitle">اول فیلترشکن رو خاموش کن</h3>
+  <p>درگاه پرداخت بانکی فقط با اینترنت ایران باز می‌شه. با فیلترشکنِ روشن، پرداخت انجام نمی‌شه یا ممکنه پول از حسابت کم بشه و برگشتش طول بکشه.</p>
+  <ol class="vpn-steps"><li>فیلترشکن رو کامل خاموش کن (Disconnect)</li><li>دکمه‌ی زیر رو بزن تا بریم سراغ پرداخت</li></ol>
+  <p class="vpn-status" id="vpnStatus"></p>
+  <button type="button" class="drawer-cta" id="vpnRetry">خاموش کردم، ادامه بده</button>
+  <button type="button" class="vpn-cancel" id="vpnCancel">فعلاً نه</button>
+</div>
 <div class="overlay" id="authOverlay"></div>
 <div class="auth-modal" id="authModal">
   <span class="auth-grip" aria-hidden="true"></span>
@@ -2087,6 +2135,7 @@
         <p class="coupon-msg" id="couponMsg"></p>
       </div>
       <p class="form-error" id="formError"></p>
+      <p class="vpn-note" id="vpnNote"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 9l6 6M15 9l-6 6"/></svg><span>قبل از پرداخت، <b>فیلترشکن رو خاموش کن</b>؛ درگاه بانکی با فیلترشکن باز نمی‌شه.</span></p>
 
       <button class="hero-btn" style="display:block;width:100%;text-align:center;color:var(--coffee);border-color:var(--coffee);" id="submitOrderBtn">ثبت سفارش</button>
       <p class="checkout-note" id="checkoutPayNote">پرداخت امن با درگاه زیبال و همه‌ی کارت‌های عضو شتاب. بعد از پرداخت به سایت برمی‌گردی و سفارشت قطعی می‌شه.</p>
@@ -3432,13 +3481,66 @@ function submitBtnLabel(){ return onlinePaymentOn() ? 'ثبت سفارش و پر
 function updatePayLabels(){
   const btn = document.getElementById('submitOrderBtn');
   if(!btn.disabled) btn.textContent = submitBtnLabel();
+  document.getElementById('vpnNote').hidden = !onlinePaymentOn();
   document.getElementById('checkoutPayNote').textContent = onlinePaymentOn()
     ? 'پرداخت امن با درگاه زیبال و همه‌ی کارت‌های عضو شتاب. بعد از پرداخت به سایت برمی‌گردی و سفارشت قطعی می‌شه.'
       + (paymentMode === 'test' ? ' (حالت آزمایشی مدیر: پول واقعی کم نمی‌شه)' : '')
     : 'پرداخت به‌صورت کارت‌به‌کارت است؛ بعد از ثبت سفارش برای هماهنگی با شما تماس می‌گیریم.';
 }
+// ---- VPN: Iranian bank gateways only open on an Iranian connection ----
+// the «geo» function answers true (Iran), false (abroad = VPN on) or null (couldn't tell; never block on that)
+let netCheck = { at: 0, iran: null };
+async function checkIranNet(fresh){
+  if(!fresh && netCheck.at && Date.now() - netCheck.at < 5 * 60e3) return netCheck.iran;
+  try{
+    const { data } = await db.functions.invoke('geo', { method: 'GET' });
+    netCheck = { at: Date.now(), iran: data && typeof data.iran === 'boolean' ? data.iran : null };
+  }catch(e){ netCheck = { at: Date.now(), iran: null }; }
+  return netCheck.iran;
+}
+let vpnResolve = null;
+function setVpnModal(open){
+  document.getElementById('vpnModal').classList.toggle('open', open);
+  document.getElementById('vpnOverlay').classList.toggle('open', open);
+}
+// resolves true once the connection is Iranian (or can't be judged), false if the customer gives up
+async function ensureNoVpn(){
+  if((await checkIranNet(true)) !== false) return true;
+  document.getElementById('vpnStatus').textContent = '';
+  setVpnModal(true);
+  return new Promise(resolve => { vpnResolve = resolve; });
+}
+document.getElementById('vpnRetry').addEventListener('click', async () => {
+  const btn = document.getElementById('vpnRetry'), st = document.getElementById('vpnStatus');
+  btn.disabled = true; btn.textContent = 'در حال بررسی اتصال...'; st.textContent = '';
+  const iran = await checkIranNet(true);
+  btn.disabled = false; btn.textContent = 'خاموش کردم، ادامه بده';
+  if(iran === false){
+    st.textContent = 'هنوز فیلترشکن روشنه. کامل خاموشش کن، چند ثانیه صبر کن و دوباره بزن.';
+    st.classList.remove('shake'); void st.offsetWidth; st.classList.add('shake');
+    return;
+  }
+  setVpnModal(false);
+  document.getElementById('vpnBar').hidden = true;
+  if(vpnResolve){ vpnResolve(true); vpnResolve = null; }
+});
+function cancelVpnModal(){ setVpnModal(false); if(vpnResolve){ vpnResolve(false); vpnResolve = null; } }
+document.getElementById('vpnCancel').addEventListener('click', cancelVpnModal);
+document.getElementById('vpnOverlay').addEventListener('click', cancelVpnModal);
+document.getElementById('vpnBarClose').addEventListener('click', () => {
+  document.getElementById('vpnBar').hidden = true;
+  try{ sessionStorage.setItem('hg-vpn-bar', '1'); }catch(e){}
+});
+// a gentle heads-up for anyone browsing with a VPN on
+setTimeout(async () => {
+  let dismissed = false;
+  try{ dismissed = sessionStorage.getItem('hg-vpn-bar') === '1'; }catch(e){}
+  if(!dismissed && (await checkIranNet(false)) === false) document.getElementById('vpnBar').hidden = false;
+}, 1200);
+
 // sends the customer to Zibal; on failure returns a message to show (on success the page navigates away)
 async function startPayment(trackingCode){
+  if(!(await ensureNoVpn())) return 'برای پرداخت، اول فیلترشکن رو خاموش کن و دوباره «پرداخت» رو بزن.';
   const { data, error } = await db.functions.invoke('payment', {
     body: { action: 'start', trackingCode, returnUrl: location.origin + location.pathname },
   });
@@ -3451,6 +3553,7 @@ async function startPayment(trackingCode){
     try{ reason = (await error.context.json()).error; }catch(e){}
   }
   if(reason === 'login'){ requireLoginForCheckout(); return 'برای پرداخت اول وارد حسابت شو.'; }
+  if(reason === 'vpn'){ netCheck.at = 0; document.getElementById('vpnBar').hidden = false; return 'فیلترشکنت روشنه؛ خاموشش کن و دوباره «پرداخت» رو بزن.'; }
   if(reason === 'already_paid') return 'این سفارش قبلاً پرداخت شده.';
   if(reason === 'not_payable') return 'مهلت پرداخت این سفارش تموم شده؛ لطفاً دوباره سفارش بده.';
   if(reason === 'too_many') return 'چند بار پشت سر هم تلاش کردی؛ چند دقیقه دیگه دوباره امتحان کن.';
@@ -3612,6 +3715,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 
   // prices, discount and total are decided by the server (place_order); the browser only sends what was picked
   const shownTotal = getCartSubtotal() - getDiscountAmount();
+  // the bank gateway won't open behind a VPN: sort that out before the order is even placed
+  if(onlinePaymentOn() && shownTotal > 0 && !(await ensureNoVpn())){
+    errorEl.textContent = 'برای پرداخت آنلاین، اول فیلترشکن رو خاموش کن و دوباره «ثبت سفارش» رو بزن.';
+    errorEl.classList.add('show');
+    return;
+  }
   const items = cart.map(i => ({ id:i.id, qty:i.qty, variant:i.variant || null }));
   const couponCode = appliedCoupon ? appliedCoupon.code : null;
 
