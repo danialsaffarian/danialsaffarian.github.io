@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="enamad" content="58026146" />
 <title>حنا گالری | زیورآلات دست‌ساز؛ گردنبند، دستبند، گوشواره و پابند</title>
-<link rel="icon" type="image/png" sizes="192x192" href="favicon-192.png">
-<link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="description" content="فروشگاه آنلاین جواهرات و اکسسوری حنا گالری — گردنبند، دستبند، گوشواره، انگشتر و پابند با کیفیت بالا.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hanagalleryy.ir/">
@@ -2785,13 +2785,14 @@ function openProductDetail(id){
   loadProductReviews(id);
   productPage.classList.add('open');
   productPage.scrollTop = 0;
-  // the address bar now holds a link straight to this product (hanagalleryy.ir/#p80)
-  if(location.hash !== '#p' + id) history.replaceState(null, '', location.pathname + location.search + '#p' + id);
+  // the address bar now holds a link straight to this product (hanagalleryy.ir/#p80); a product's own page (/p/80/) keeps its address
+  if(location.pathname.replace(/\/$/, '') === '/p/' + id){ if(location.hash) history.replaceState(null, '', location.pathname + location.search); }
+  else if(location.hash !== '#p' + id) history.replaceState(null, '', storeBase() + location.search + '#p' + id);
   trackEvent('view', id);
 }
 function closeProductDetail(){
   productPage.classList.remove('open');
-  if(/^#p\d+$/.test(location.hash)) history.replaceState(null, '', location.pathname + location.search);
+  if(/^#p\d+$/.test(location.hash) || /^\/p\//.test(location.pathname)) history.replaceState(null, '', storeBase() + location.search);
 }
 function productLink(id){ return location.origin + '/#p' + id; }
 async function shareProduct(id, btn){
@@ -2805,6 +2806,14 @@ async function shareProduct(id, btn){
   catch(e){ showToast(url); }
 }
 // a shared or advertised link (…/#p80) opens that product as soon as the products are loaded
+// the product and collection addresses search engines index (/p/26/, /c/necklace/) open the store itself
+const PATH_ROUTE = location.pathname.match(/^\/(p|c)\/([a-z0-9]+)\/?$/);
+function storeBase(){ return /^\/(p|c)\//.test(location.pathname) ? '/' : location.pathname; }
+function openRouteFromPath(){
+  if(!PATH_ROUTE) return;
+  if(PATH_ROUTE[1] === 'p'){ const id = Number(PATH_ROUTE[2]); if(products.find(p => p.id === id)) openProductDetail(id); else history.replaceState(null, '', '/'); }
+  else if(document.querySelector(`.filter-btn[data-cat="${PATH_ROUTE[2]}"]`)) enterCategoryFocus(PATH_ROUTE[2]);
+}
 function openProductFromHash(){
   const m = location.hash.match(/^#p(\d+)$/);
   if(!m) return;
@@ -2937,7 +2946,7 @@ paginationEl.addEventListener('click', e => {
   renderProducts(currentCat);
   grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
-fetchProducts().then(openProductFromHash);
+fetchProducts().then(() => { openRouteFromPath(); openProductFromHash(); });
 
 const scrollRevealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -3077,6 +3086,7 @@ function showHomeSections(){
   renderSaleProducts();
 }
 function exitCategoryFocus(){
+  if(/^\/c\//.test(location.pathname)) history.replaceState(null, '', '/' + location.search + location.hash);
   currentCat = null;
   currentSearch = '';
   currentSort = 'newest';
