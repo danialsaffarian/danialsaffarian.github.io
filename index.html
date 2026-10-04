@@ -974,10 +974,15 @@
      full-screen layer runs a fixed 140px past the bottom edge (off screen) and pads its content back up by
      the same amount, so nothing behind it can ever show through and nothing inside it gets hidden */
   :root{--under:140px;}
-  .overlay,.drawer,.checkout-page,.product-page,.menu-overlay,.mobile-nav{top:0;bottom:calc(-1 * var(--under));height:auto;}
+  .overlay,.drawer,.menu-overlay,.mobile-nav{top:0;bottom:calc(-1 * var(--under));height:auto;}
+  /* the scrolling full-screen pages stay inside the viewport (iOS hands the swipe to the page behind
+     otherwise); a plain backdrop fills the strip under Safari's toolbar instead */
+  .checkout-page,.product-page{top:0;bottom:0;height:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+  #layerBack{display:none;position:fixed;left:0;right:0;top:0;bottom:calc(-1 * var(--under));background:var(--cream-soft);z-index:104;}
+  html.layer-open #layerBack{display:block;}
+  html.locked,html.locked body{overflow:hidden;overscroll-behavior:none;}
   .drawer-foot{padding-bottom:calc(18px + env(safe-area-inset-bottom,0px) + var(--under));}
-  .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px) + var(--under));}
-  @media(max-width:899px){.pd-buybar{bottom:var(--under);}}
+  .product-body,.checkout-body,.pdp .product-body,.adm .product-body{padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));}
 
   /* ---------- login sheet (v2) ---------- */
   #authOverlay.open{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);}
@@ -1257,7 +1262,7 @@
   @media(max-width:760px){
     .adm .admin-tabs{display:none;}
     .adm .product-head{padding-bottom:12px;}
-    .adm .product-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px) + var(--under));}
+    .adm .product-body{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px));}
     .adm-nav{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:calc(-1 * var(--under));z-index:5;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px) + var(--under));background:rgba(251,248,243,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--adm-line);box-shadow:0 -10px 30px rgba(46,32,22,.06);}
     .adm-nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;padding:2px 0;font:inherit;color:var(--coffee-70);border:0!important;background:none;}
     .adm .adm-nav-btn.admin-tab{padding:2px 0;border:0;font-size:inherit;}
@@ -2086,6 +2091,7 @@
     <a href="https://instagram.com/hana_gallery_____" target="_blank" rel="noopener" class="mn-insta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg><span>ما رو در اینستاگرام دنبال کن<small>@hana_gallery_____</small></span></a>
   </div>
 </nav>
+<div id="layerBack" aria-hidden="true"></div>
 <div class="overlay" id="overlay"></div>
 <div class="drawer" id="drawer">
   <div class="drawer-head">
@@ -3091,6 +3097,20 @@ document.getElementById('sortSelect').addEventListener('change', () => {
   currentPage = 1;
   if(currentCat) renderProducts(currentCat);
 });
+
+// while a page, drawer, menu or sheet is open the page behind must not scroll
+(function(){
+  const pages = [...document.querySelectorAll('.product-page, .checkout-page')];
+  const others = [...document.querySelectorAll('.drawer, .mobile-nav, .auth-modal, .account-panel, .vpn-modal')];
+  const sync = () => {
+    const pageOpen = pages.some(el => el.classList.contains('open'));
+    document.documentElement.classList.toggle('layer-open', pageOpen);
+    document.documentElement.classList.toggle('locked', pageOpen || others.some(el => el.classList.contains('open')));
+  };
+  const mo = new MutationObserver(sync);
+  pages.concat(others).forEach(el => mo.observe(el, { attributes: true, attributeFilter: ['class'] }));
+  sync();
+})();
 
 // منو (موبایل)
 const menuToggleBtn = document.getElementById('menuToggleBtn');
