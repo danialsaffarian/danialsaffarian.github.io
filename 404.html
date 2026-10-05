@@ -1338,7 +1338,15 @@
   "url": "https://hanagalleryy.ir/",
   "logo": "https://hanagalleryy.ir/logo.png",
   "sameAs": ["https://instagram.com/hana_gallery_____"],
-  "description": "فروشگاه آنلاین جواهرات و اکسسوری دست‌ساز حنا گالری — گردنبند، دستبند، گوشواره، انگشتر و پابند با کیفیت بالا."
+  "description": "فروشگاه آنلاین جواهرات و اکسسوری دست‌ساز حنا گالری — گردنبند، دستبند، گوشواره، انگشتر و پابند با کیفیت بالا.",
+  "hasMerchantReturnPolicy": {
+    "@type": "MerchantReturnPolicy",
+    "applicableCountry": "IR",
+    "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+    "merchantReturnDays": 2,
+    "returnMethod": "https://schema.org/ReturnByMail",
+    "merchantReturnLink": "https://hanagalleryy.ir/#shipping"
+  }
 }
 </script>
 <script type="application/ld+json">
@@ -1606,7 +1614,7 @@
   </div>
 </section>
 
-<section class="section" style="background:var(--cream-soft);">
+<section class="section" id="shipping" style="background:var(--cream-soft);">
   <div class="wrap">
     <div class="section-head reveal-on-scroll">
       <div class="section-eyebrow">SHIPPING & CARE</div>
@@ -2315,23 +2323,8 @@ function injectProductsJsonLd(){
   const existing = document.getElementById('productsJsonLd');
   if(existing) existing.remove();
   if(!products.length) return;
-  const itemListElement = products.map((p, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    item: {
-      '@type': 'Product',
-      name: p.name,
-      description: p.description || undefined,
-      image: p.imageUrl || undefined,
-      url: 'https://hanagalleryy.ir/#shop',
-      offers: {
-        '@type': 'Offer',
-        priceCurrency: 'IRR',
-        price: p.effectivePrice,
-        availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      },
-    },
-  }));
+  // the full product data lives on each product's own page (/p/<id>/); this list only points to them
+  const itemListElement = products.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: 'https://hanagalleryy.ir/p/' + p.id + '/' }));
   const script = document.createElement('script');
   script.type = 'application/ld+json';
   script.id = 'productsJsonLd';
