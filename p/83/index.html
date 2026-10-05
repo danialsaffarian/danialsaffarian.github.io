@@ -9,6 +9,12 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
 <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#FBF8F3">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="حنا گالری">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="description" content="گردنبند پاپیون دست‌ساز از حنا گالری، قیمت ۴۵۰,۰۰۰ تومان. با رنگ منجوق دلخواهتون قابل سفارشه، اگه دوس دارین رنگش عوض بشه از طریق دایرکت اینستا سفارشتون رو ثبت کنین. خرید آنلاین با پرداخت امن و ارسال به سراسر ایران.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://hanagalleryy.ir/p/83/">
@@ -1351,6 +1357,47 @@
   .prep-ok:not(:disabled) .prep-fill{display:none;}
   @keyframes prepFill{to{width:100%;}}
   @keyframes prepIn{from{opacity:0;transform:translateY(8px);}}
+  /* full-screen photo zoom on the product page: pinch, double-tap, drag, swipe between photos */
+  .detail-visual .pd-zoom-hint{position:absolute;right:12px;bottom:12px;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(251,248,243,.92);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(58,47,38,.15);pointer-events:none;}
+  .detail-visual .pd-zoom-hint svg{width:18px;height:18px;fill:none;stroke:var(--coffee);stroke-width:1.8;stroke-linecap:round;}
+  .pdp .detail-photo{cursor:zoom-in;}
+  .zoom-view{position:fixed;inset:0;bottom:calc(-1 * var(--under));padding-bottom:var(--under);z-index:200;background:#120D0A;opacity:0;pointer-events:none;transition:opacity .25s;}
+  .zoom-view.open{opacity:1;pointer-events:auto;}
+  .zv-stage{position:absolute;inset:0;bottom:var(--under);overflow:hidden;touch-action:none;display:flex;align-items:center;justify-content:center;}
+  .zv-stage img{max-width:100%;max-height:100%;object-fit:contain;transform-origin:50% 50%;will-change:transform;user-select:none;-webkit-user-drag:none;cursor:zoom-in;}
+  .zv-stage.zoomed img{cursor:grab;}
+  .zv-stage.anim img{transition:transform .28s cubic-bezier(.2,.8,.2,1);}
+  .zoom-view.open .zv-stage img{animation:zvIn .3s cubic-bezier(.2,.8,.2,1);}
+  @keyframes zvIn{from{opacity:0;transform:scale(.94);}}
+  .zv-top{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px;background:linear-gradient(rgba(18,13,10,.7),rgba(18,13,10,0));}
+  .zv-btn{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;color:#fff;}
+  .zv-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .zv-count{color:#fff;font-size:13px;font-weight:600;opacity:.85;}
+  .zv-nav{position:absolute;top:50%;z-index:2;margin-top:-22px;}
+  .zv-nav.next{left:14px;}.zv-nav.prev{right:14px;}
+  .zv-hint{position:absolute;left:0;right:0;bottom:calc(18px + env(safe-area-inset-bottom,0px) + var(--under));z-index:2;text-align:center;color:rgba(255,255,255,.75);font-size:12.5px;pointer-events:none;transition:opacity .4s;}
+  .zv-stage.zoomed ~ .zv-hint{opacity:0;}
+  @media(max-width:560px){.zv-nav{display:none;}}
+  /* install as an app */
+  .install-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:90;display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;background:rgba(251,248,243,.97);border:1px solid var(--line);box-shadow:0 18px 40px -14px rgba(58,40,25,.45);transform:translateY(140%);transition:transform .5s cubic-bezier(.2,.9,.25,1.05);}
+  .install-bar.show{transform:none;}
+  .install-bar img{width:46px;height:46px;border-radius:12px;flex:none;box-shadow:0 2px 6px rgba(58,47,38,.15);}
+  .install-bar .ib-text{flex:1;min-width:0;}
+  .install-bar b{display:block;font-size:13.5px;font-weight:800;color:var(--coffee);}
+  .install-bar small{display:block;font-size:11.5px;color:var(--coffee-70);line-height:1.6;}
+  .install-bar .ib-go{flex:none;padding:9px 16px;border-radius:12px;background:var(--coffee);color:#fff;font:inherit;font-size:13px;font-weight:800;}
+  .install-bar .ib-x{flex:none;width:28px;height:28px;display:flex;align-items:center;justify-content:center;color:var(--coffee-70);}
+  .install-bar .ib-x svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+  html.locked .install-bar{transform:translateY(140%);}
+  @media(min-width:900px){.install-bar{left:auto;right:24px;width:380px;}}
+  .mn-install{display:flex;align-items:center;gap:12px;margin:14px 0 4px;padding:12px;border-radius:16px;background:linear-gradient(150deg,#F3E6D3,#EAD8BF);color:var(--coffee);text-decoration:none;}
+  .mn-install img{width:40px;height:40px;border-radius:11px;flex:none;}
+  .mn-install b{display:block;font-size:13.5px;font-weight:800;}
+  .mn-install small{display:block;font-size:11.5px;opacity:.8;}
+  .inst-modal .inst-app{width:76px;height:76px;margin:0 auto 12px;border-radius:20px;box-shadow:0 12px 26px -12px rgba(58,40,25,.6);}
+  .inst-modal .vpn-steps li{line-height:1.7;}
+  .inst-modal .vpn-steps li{font-weight:600;}
+  .inst-modal .vpn-steps svg{display:inline-block;width:18px;height:18px;vertical-align:-4px;fill:none;stroke:var(--coffee);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;margin:0 2px;}
   @media(max-width:560px){
     .vpn-modal{top:auto;right:0;left:0;bottom:calc(-1 * var(--under));width:100%;border-radius:26px 26px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px) + var(--under));transform:translateY(100%);}
     .vpn-modal.open{transform:none;}
@@ -1690,6 +1737,28 @@
   </div>
 </footer>
 
+<div class="zoom-view" id="zoomView" role="dialog" aria-modal="true" aria-label="بزرگ‌نمایی عکس">
+  <div class="zv-stage" id="zvStage"><img id="zvImg" alt="" draggable="false"></div>
+  <div class="zv-top"><button type="button" class="zv-btn" id="zvClose" aria-label="بستن"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button><span class="zv-count" id="zvCount"></span></div>
+  <button type="button" class="zv-btn zv-nav prev" id="zvPrev" aria-label="عکس قبلی"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button type="button" class="zv-btn zv-nav next" id="zvNext" aria-label="عکس بعدی"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <p class="zv-hint" id="zvHint">برای بزرگ‌نمایی دو بار بزن یا با دو انگشت باز کن</p>
+</div>
+<div class="install-bar" id="installBar" role="dialog" aria-label="نصب اپ حنا گالری">
+  <img src="/icon-192.png" alt="">
+  <span class="ib-text"><b>اپ حنا گالری رو نصب کن</b><small>همیشه یه ضربه فاصله داری، از صفحه‌ی گوشیت</small></span>
+  <button type="button" class="ib-go" id="installGo">نصب</button>
+  <button type="button" class="ib-x" id="installX" aria-label="بستن"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</div>
+<div class="vpn-overlay" id="instOverlay"></div>
+<div class="vpn-modal inst-modal" id="instModal" role="dialog" aria-modal="true" aria-labelledby="instTitle">
+  <span class="auth-grip" aria-hidden="true"></span>
+  <img class="inst-app" src="/icon-192.png" alt="">
+  <h3 id="instTitle">نصب اپ حنا گالری</h3>
+  <p id="instIntro">سه قدم ساده تا آیکون حنا گالری روی صفحه‌ی گوشیت:</p>
+  <ol class="vpn-steps" id="instSteps"></ol>
+  <button type="button" class="drawer-cta" id="instOk">متوجه شدم</button>
+</div>
 <div class="vpn-overlay" id="prepOverlay"></div>
 <div class="vpn-modal prep-modal" id="prepModal" role="dialog" aria-modal="true" aria-labelledby="prepTitle">
   <span class="auth-grip" aria-hidden="true"></span>
@@ -2094,6 +2163,9 @@
         <span class="mn-ico"><svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
         سوالات متداول
         <svg class="menu-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg>
+      </a>
+      <a href="#" id="mnInstall" class="mn-install mn-anim" style="--k:9" hidden>
+        <img src="/icon-192.png" alt=""><span><b>نصب اپ حنا گالری</b><small>آیکون فروشگاه روی صفحه‌ی گوشیت</small></span>
       </a>
   </div>
   <div class="mn-foot mn-anim" style="--k:9">
@@ -2597,7 +2669,7 @@ function renderProductDetail(){
       <div class="pd-gallery">
         <div class="detail-visual" id="detailVisual">
           ${badge}
-          ${hasImages ? `<img src="${escapeHtml(images[detailImageIndex])}" alt="${escapeHtml(p.name)}" class="detail-photo" id="detailImg">` : icons[p.icon]}
+          ${hasImages ? `<img src="${escapeHtml(images[detailImageIndex])}" alt="${escapeHtml(p.name)}" class="detail-photo" id="detailImg" onclick="openZoom(detailImageIndex)"><span class="pd-zoom-hint" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2M11 8.5v5M8.5 11h5"/></svg></span>` : icons[p.icon]}
           ${hasMultiImages ? `
             <button class="img-nav right" onclick="changeDetailImage(1)" aria-label="عکس بعدی"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"/></svg></button>
             <span class="pd-counter" id="pdCounter">${toFa(detailImageIndex + 1)} / ${toFa(images.length)}</span>
@@ -3105,7 +3177,7 @@ document.getElementById('sortSelect').addEventListener('change', () => {
 // while a page, drawer, menu or sheet is open the page behind must not scroll
 (function(){
   const pages = [...document.querySelectorAll('.product-page, .checkout-page')];
-  const others = [...document.querySelectorAll('.drawer, .mobile-nav, .auth-modal, .account-panel, .vpn-modal')];
+  const others = [...document.querySelectorAll('.drawer, .mobile-nav, .auth-modal, .account-panel, .vpn-modal, .zoom-view')];
   const sync = () => {
     const pageOpen = pages.some(el => el.classList.contains('open'));
     document.documentElement.classList.toggle('layer-open', pageOpen);
@@ -3528,6 +3600,170 @@ function setVpnModal(open){
   document.getElementById('vpnOverlay').classList.toggle('open', open);
 }
 // resolves true once the connection is Iranian (or can't be judged), false if the customer gives up
+/* ================= بزرگ‌نمایی عکس محصول ================= */
+const zoomView = document.getElementById('zoomView'), zvStage = document.getElementById('zvStage'), zvImg = document.getElementById('zvImg');
+let zvIdx = 0, zs = 1, ztx = 0, zty = 0;
+const zPts = new Map();
+let zGesture = null, zLastTap = 0, zLastTapPos = null;
+function zvImages(){ return (currentDetailProduct && currentDetailProduct.images) || []; }
+function zvApply(anim){
+  zvStage.classList.toggle('anim', !!anim);
+  zvStage.classList.toggle('zoomed', zs > 1.01);
+  zvImg.style.transform = `translate(${ztx}px, ${zty}px) scale(${zs})`;
+}
+function zvClamp(){
+  const r = zvStage.getBoundingClientRect(), w = zvImg.offsetWidth * zs, h = zvImg.offsetHeight * zs;
+  const mx = Math.max(0, (w - r.width) / 2), my = Math.max(0, (h - r.height) / 2);
+  ztx = Math.min(mx, Math.max(-mx, ztx)); zty = Math.min(my, Math.max(-my, zty));
+}
+function zvReset(anim){ zs = 1; ztx = 0; zty = 0; zvApply(anim); }
+function zvShow(i){
+  const imgs = zvImages(); if(!imgs.length) return;
+  zvIdx = (i + imgs.length) % imgs.length;
+  zvImg.src = imgs[zvIdx];
+  zvImg.alt = currentDetailProduct ? currentDetailProduct.name : '';
+  document.getElementById('zvCount').textContent = imgs.length > 1 ? toFa(zvIdx + 1) + ' / ' + toFa(imgs.length) : '';
+  document.getElementById('zvPrev').hidden = document.getElementById('zvNext').hidden = imgs.length < 2;
+  zvReset(false);
+}
+function openZoom(i){
+  if(!zvImages().length) return;
+  zvShow(i || 0);
+  zoomView.classList.add('open');
+}
+function closeZoom(){
+  zoomView.classList.remove('open');
+  if(zvIdx !== detailImageIndex) setDetailImage(zvIdx);
+}
+// zoom so the image point under (cx, cy) stays put
+function zvZoomAt(ns, cx, cy, anim){
+  const r = zvStage.getBoundingClientRect(), px = cx - (r.left + r.width / 2), py = cy - (r.top + r.height / 2);
+  ns = Math.min(4, Math.max(1, ns));
+  ztx = px - (px - ztx) * ns / zs; zty = py - (py - zty) * ns / zs; zs = ns;
+  if(zs <= 1.01){ zs = 1; ztx = 0; zty = 0; }
+  zvClamp(); zvApply(anim);
+}
+zvStage.addEventListener('pointerdown', e => {
+  zvStage.setPointerCapture(e.pointerId);
+  zPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(zPts.size === 2){
+    const [a, b] = [...zPts.values()];
+    zGesture = { type: 'pinch', d0: Math.hypot(a.x - b.x, a.y - b.y), s0: zs, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, tx0: ztx, ty0: zty };
+  } else if(zPts.size === 1){
+    zGesture = { type: 'drag', x0: e.clientX, y0: e.clientY, tx0: ztx, ty0: zty, moved: false, t0: Date.now() };
+  }
+});
+zvStage.addEventListener('pointermove', e => {
+  if(!zPts.has(e.pointerId) || !zGesture) return;
+  zPts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if(zGesture.type === 'pinch' && zPts.size >= 2){
+    const [a, b] = [...zPts.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    const r = zvStage.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const ns = Math.min(4, Math.max(1, zGesture.s0 * d / zGesture.d0));
+    // the image point that was under the fingers' midpoint follows the midpoint
+    ztx = (mx - cx) - ((zGesture.mx - cx) - zGesture.tx0) * ns / zGesture.s0;
+    zty = (my - cy) - ((zGesture.my - cy) - zGesture.ty0) * ns / zGesture.s0;
+    zs = ns; zvClamp(); zvApply(false);
+  } else if(zGesture.type === 'drag'){
+    const dx = e.clientX - zGesture.x0, dy = e.clientY - zGesture.y0;
+    if(Math.hypot(dx, dy) > 6) zGesture.moved = true;
+    if(zs > 1){ ztx = zGesture.tx0 + dx; zty = zGesture.ty0 + dy; zvClamp(); zvApply(false); }
+    else { zvImg.style.transform = `translate(${dx}px, ${Math.max(0, dy) * 0.6}px)`; zvImg.style.opacity = String(1 - Math.min(.5, Math.max(0, dy) / 400)); }
+  }
+});
+function zvEnd(e){
+  if(!zPts.has(e.pointerId)) return;
+  zPts.delete(e.pointerId);
+  const g = zGesture;
+  if(g && g.type === 'pinch'){ if(zPts.size === 1){ const p = [...zPts.values()][0]; zGesture = { type: 'drag', x0: p.x, y0: p.y, tx0: ztx, ty0: zty, moved: true, t0: Date.now() }; } else { zGesture = null; if(zs < 1.05) zvReset(true); } return; }
+  zGesture = null;
+  if(!g) return;
+  zvImg.style.opacity = '';
+  const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
+  if(!g.moved){
+    const now = Date.now();
+    const twice = now - zLastTap < 300 && zLastTapPos && Math.hypot(e.clientX - zLastTapPos.x, e.clientY - zLastTapPos.y) < 30;
+    if(twice || e.pointerType === 'mouse'){ zvZoomAt(zs > 1.01 ? 1 : 2.5, e.clientX, e.clientY, true); zLastTap = 0; }
+    else { zLastTap = now; zLastTapPos = { x: e.clientX, y: e.clientY }; }
+    return;
+  }
+  if(zs > 1) return;
+  if(dy > 110 && Math.abs(dy) > Math.abs(dx)){ closeZoom(); return; }
+  if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) && zvImages().length > 1){ zvShow(zvIdx + (dx < 0 ? 1 : -1)); return; }
+  zvReset(true);
+}
+zvStage.addEventListener('pointerup', zvEnd);
+zvStage.addEventListener('pointercancel', zvEnd);
+zvStage.addEventListener('wheel', e => { e.preventDefault(); zvZoomAt(zs * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX, e.clientY, false); }, { passive: false });
+document.getElementById('zvClose').addEventListener('click', closeZoom);
+document.getElementById('zvPrev').addEventListener('click', () => zvShow(zvIdx - 1));
+document.getElementById('zvNext').addEventListener('click', () => zvShow(zvIdx + 1));
+document.addEventListener('keydown', e => {
+  if(!zoomView.classList.contains('open')) return;
+  if(e.key === 'Escape') closeZoom();
+  else if(e.key === 'ArrowLeft') zvShow(zvIdx + 1);
+  else if(e.key === 'ArrowRight') zvShow(zvIdx - 1);
+});
+
+/* ================= نصب سایت مثل اپ ================= */
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const ua = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const inAppBrowser = /Instagram|FBAN|FBAV|Telegram|WhatsApp/i.test(ua);
+const isMobile = isIOS || /Android/i.test(ua);
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; });
+window.addEventListener('appinstalled', () => { hideInstallBar(); document.getElementById('mnInstall').hidden = true; showToast('اپ حنا گالری نصب شد'); });
+const SHARE_ICO = '<svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg>';
+const PLUS_ICO = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>';
+function setInstModal(open){
+  document.getElementById('instModal').classList.toggle('open', open);
+  document.getElementById('instOverlay').classList.toggle('open', open);
+}
+async function startInstall(){
+  hideInstallBar(true);
+  if(installEvent){
+    installEvent.prompt();
+    try{ await installEvent.userChoice; }catch(e){}
+    installEvent = null;
+    return;
+  }
+  let intro = 'سه قدم ساده تا آیکون حنا گالری روی صفحه‌ی گوشیت:', steps;
+  if(inAppBrowser){
+    intro = 'داخل مرورگر اینستاگرام نمی‌شه اپ رو نصب کرد. اول سایت رو توی مرورگر اصلی گوشی باز کن:';
+    steps = ['منوی <b>⋯</b> بالای صفحه رو بزن', isIOS ? 'گزینه‌ی <b>Open in Safari</b> یا «باز کردن در مرورگر» رو بزن' : 'گزینه‌ی <b>Open in Chrome</b> یا «باز کردن در مرورگر» رو بزن', 'دوباره از منوی سایت، <b>نصب اپ حنا گالری</b> رو بزن'];
+  } else if(isIOS){
+    steps = [`دکمه‌ی اشتراک‌گذاری ${SHARE_ICO} رو بزن (پایین یا بالای Safari)`, `گزینه‌ی <b>Add to Home Screen</b> ${PLUS_ICO} یا «افزودن به صفحه اصلی» رو انتخاب کن`, 'بالای صفحه <b>Add</b> یا «افزودن» رو بزن'];
+  } else {
+    steps = ['منوی <b>⋮</b> مرورگر (بالای صفحه) رو بزن', 'گزینه‌ی <b>Install app</b>، «نصب برنامه» یا <b>Add to Home screen</b> رو بزن', '<b>Install</b> یا «افزودن» رو تایید کن'];
+  }
+  document.getElementById('instIntro').textContent = intro;
+  document.getElementById('instSteps').innerHTML = steps.map(x => `<li><span>${x}</span></li>`).join('');
+  setInstModal(true);
+}
+document.getElementById('instOk').addEventListener('click', () => setInstModal(false));
+document.getElementById('instOverlay').addEventListener('click', () => setInstModal(false));
+document.getElementById('installGo').addEventListener('click', startInstall);
+document.getElementById('mnInstall').addEventListener('click', e => { e.preventDefault(); setMenu(false); startInstall(); });
+function hideInstallBar(remember){
+  document.getElementById('installBar').classList.remove('show');
+  if(remember) lsSet('hg-install-later', String(Date.now()));
+}
+document.getElementById('installX').addEventListener('click', () => hideInstallBar(true));
+if(!isStandalone()){
+  if(isMobile || installEvent) document.getElementById('mnInstall').hidden = false;
+  window.addEventListener('beforeinstallprompt', () => { document.getElementById('mnInstall').hidden = false; });
+  // a gentle suggestion on phones, once the visitor has looked around; not again for two weeks after closing it
+  const later = Number(lsGet('hg-install-later') || 0);
+  if(isMobile && Date.now() - later > 14 * 864e5){
+    setTimeout(() => {
+      if(document.documentElement.classList.contains('locked') || isStandalone()) return;
+      document.getElementById('installBar').classList.add('show');
+    }, 25000);
+  }
+}
+
 // handmade lead time: every customer sees it and taps «متوجه شدم» before the order is placed and the gateway opens
 let prepResolve = null, prepTimer = null;
 function setPrepModal(open){
