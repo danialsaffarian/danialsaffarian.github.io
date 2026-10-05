@@ -1341,10 +1341,11 @@
   .prep-modal.open .prep-steps li{animation:prepIn .5s cubic-bezier(.2,.9,.25,1) both;}
   .prep-modal.open .prep-steps li:nth-child(2){animation-delay:.12s;}
   .prep-modal.open .prep-steps li:nth-child(3){animation-delay:.24s;}
-  .prep-city{display:flex;align-items:center;gap:12px;text-align:start;margin:0 0 16px;padding:12px 14px;border-radius:14px;background:#fff;border:1.5px dashed var(--gold);}
-  .prep-city svg{width:30px;height:30px;flex:none;fill:none;stroke:var(--coffee);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
-  .prep-city p{margin:0!important;font-size:13px!important;line-height:1.8!important;color:var(--coffee)!important;}
-  .prep-city b{font-weight:800;}
+  .prep-city{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 16px;padding:14px 16px;border-radius:18px;background:linear-gradient(150deg,#B8956F,#8E6E58);color:#FFF8EF;box-shadow:0 16px 30px -18px rgba(110,84,67,.9);}
+  .prep-city svg{width:40px;height:40px;flex:none;fill:none;stroke:#FFF8EF;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .prep-city div{text-align:start;}
+  .prep-city small{display:block;font-size:12.5px;font-weight:600;opacity:.9;}
+  .prep-city b{display:block;font-size:24px;font-weight:900;line-height:1.35;}
   .prep-ok{position:relative;overflow:hidden;}
   .prep-ok .prep-fill{position:absolute;inset:0;right:auto;width:0;background:rgba(255,255,255,.18);pointer-events:none;}
   .prep-modal.open .prep-ok .prep-fill{animation:prepFill 2.2s linear forwards;}
@@ -1756,7 +1757,7 @@
     <li><i><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg></i>ارسال</li>
   </ol>
   <div class="prep-city"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="2.6"/><circle cx="18" cy="17" r="2.6"/><path d="M8.6 17h6.8M15 8h3l2.2 4.5M18 17l-2.5-6.5H11L8.6 14M13 6h2.5"/></svg>
-    <p>سفارش‌های <b>داخل شهر قزوین</b> با <b>پیک</b> ارسال می‌شن.</p></div>
+    <div><small>سفارش‌های داخل شهر قزوین</small><b>ارسال با پیک</b></div></div>
   <button type="button" class="drawer-cta prep-ok" id="prepOk"><span class="prep-fill" aria-hidden="true"></span><span id="prepOkLabel">متوجه شدم، برو به پرداخت</span></button>
   <button type="button" class="vpn-cancel" id="prepCancel">برگشت</button>
 </div>
