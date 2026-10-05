@@ -1320,6 +1320,37 @@
   .vpn-status.shake{animation:authShake .45s;}
   .vpn-modal .drawer-cta{border-radius:12px;}
   .vpn-cancel{margin-top:8px;font:inherit;font-size:13px;font-weight:600;color:var(--coffee-70);padding:8px;}
+  /* handmade lead time: shown and acknowledged before every order is placed */
+  .prep-modal .prep-ico{width:74px;height:74px;margin:0 auto 12px;border-radius:50%;background:linear-gradient(150deg,#F3E6D3,#E8D3B6);color:#7A5B45;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -12px rgba(122,91,69,.6);}
+  .prep-modal.open .prep-ico{animation:authBadge .6s cubic-bezier(.3,1.5,.5,1) .1s both;}
+  .prep-ico svg{width:36px;height:36px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .prep-modal h3{font-size:20px;}
+  .prep-big{margin:4px 0 14px;padding:16px 14px 14px;border-radius:18px;background:linear-gradient(150deg,#8E6E58,#6E5443);color:#FFF8EF;box-shadow:0 16px 30px -18px rgba(110,84,67,.9);}
+  .prep-big small{display:block;font-size:12.5px;font-weight:600;opacity:.85;}
+  .prep-big b{display:block;font-size:30px;font-weight:900;line-height:1.35;margin-top:2px;letter-spacing:-.01em;}
+  .prep-big span{display:block;font-size:13px;font-weight:600;opacity:.9;margin-top:2px;}
+  .prep-steps{display:flex;align-items:flex-start;justify-content:space-between;margin:0 4px 14px;position:relative;}
+  .prep-steps::before{content:"";position:absolute;top:15px;right:12%;left:12%;height:2px;background:linear-gradient(90deg,var(--line),var(--gold),var(--line));}
+  .prep-steps li{list-style:none;position:relative;flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11.5px;font-weight:700;color:var(--coffee);}
+  .prep-steps li i{width:32px;height:32px;border-radius:50%;background:#fff;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-style:normal;}
+  .prep-steps li i svg{width:16px;height:16px;fill:none;stroke:var(--coffee);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .prep-steps li.on i{background:var(--coffee);border-color:var(--coffee);}
+  .prep-steps li.on i svg{stroke:#fff;}
+  .prep-modal.open .prep-steps li{animation:prepIn .5s cubic-bezier(.2,.9,.25,1) both;}
+  .prep-modal.open .prep-steps li:nth-child(2){animation-delay:.12s;}
+  .prep-modal.open .prep-steps li:nth-child(3){animation-delay:.24s;}
+  .prep-city{display:flex;align-items:center;justify-content:center;gap:14px;margin:0 0 16px;padding:14px 16px;border-radius:18px;background:linear-gradient(150deg,#B8956F,#8E6E58);color:#FFF8EF;box-shadow:0 16px 30px -18px rgba(110,84,67,.9);}
+  .prep-city svg{width:40px;height:40px;flex:none;fill:none;stroke:#FFF8EF;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+  .prep-city div{text-align:start;}
+  .prep-city small{display:block;font-size:12.5px;font-weight:600;opacity:.9;}
+  .prep-city b{display:block;font-size:24px;font-weight:900;line-height:1.35;}
+  .prep-ok{position:relative;overflow:hidden;}
+  .prep-ok .prep-fill{position:absolute;inset:0;right:auto;width:0;background:rgba(255,255,255,.18);pointer-events:none;}
+  .prep-modal.open .prep-ok .prep-fill{animation:prepFill 2.2s linear forwards;}
+  .prep-ok:disabled{opacity:.75;cursor:default;}
+  .prep-ok:not(:disabled) .prep-fill{display:none;}
+  @keyframes prepFill{to{width:100%;}}
+  @keyframes prepIn{from{opacity:0;transform:translateY(8px);}}
   @media(max-width:560px){
     .vpn-modal{top:auto;right:0;left:0;bottom:calc(-1 * var(--under));width:100%;border-radius:26px 26px 0 0;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px) + var(--under));transform:translateY(100%);}
     .vpn-modal.open{transform:none;}
@@ -1659,6 +1690,22 @@
   </div>
 </footer>
 
+<div class="vpn-overlay" id="prepOverlay"></div>
+<div class="vpn-modal prep-modal" id="prepModal" role="dialog" aria-modal="true" aria-labelledby="prepTitle">
+  <span class="auth-grip" aria-hidden="true"></span>
+  <div class="prep-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg></div>
+  <h3 id="prepTitle">قبل از پرداخت، اینو بدون</h3>
+  <div class="prep-big"><small>آماده‌سازی کارهای دست‌ساز</small><b>۲ تا ۴ روز کاری</b><span>زمان می‌بره و سپس ارسال می‌شه</span></div>
+  <ol class="prep-steps">
+    <li class="on"><i><svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></i>ثبت سفارش</li>
+    <li><i><svg viewBox="0 0 24 24"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg></i>آماده‌سازی</li>
+    <li><i><svg viewBox="0 0 24 24"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/></svg></i>ارسال</li>
+  </ol>
+  <div class="prep-city"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="17" r="2.6"/><circle cx="18" cy="17" r="2.6"/><path d="M8.6 17h6.8M15 8h3l2.2 4.5M18 17l-2.5-6.5H11L8.6 14M13 6h2.5"/></svg>
+    <div><small>سفارش‌های داخل شهر قزوین</small><b>ارسال با پیک</b></div></div>
+  <button type="button" class="drawer-cta prep-ok" id="prepOk"><span class="prep-fill" aria-hidden="true"></span><span id="prepOkLabel">متوجه شدم، برو به پرداخت</span></button>
+  <button type="button" class="vpn-cancel" id="prepCancel">برگشت</button>
+</div>
 <div class="vpn-overlay" id="vpnOverlay"></div>
 <div class="vpn-modal" id="vpnModal" role="dialog" aria-modal="true" aria-labelledby="vpnTitle">
   <span class="auth-grip" aria-hidden="true"></span>
@@ -3481,6 +3528,25 @@ function setVpnModal(open){
   document.getElementById('vpnOverlay').classList.toggle('open', open);
 }
 // resolves true once the connection is Iranian (or can't be judged), false if the customer gives up
+// handmade lead time: every customer sees it and taps «متوجه شدم» before the order is placed and the gateway opens
+let prepResolve = null, prepTimer = null;
+function setPrepModal(open){
+  document.getElementById('prepModal').classList.toggle('open', open);
+  document.getElementById('prepOverlay').classList.toggle('open', open);
+}
+function confirmPrepTime(){
+  const ok = document.getElementById('prepOk');
+  document.getElementById('prepOkLabel').textContent = onlinePaymentOn() ? 'متوجه شدم، برو به پرداخت' : 'متوجه شدم، ثبت سفارش';
+  ok.disabled = true;
+  clearTimeout(prepTimer); prepTimer = setTimeout(() => { ok.disabled = false; }, 2200);
+  setPrepModal(true);
+  return new Promise(resolve => { prepResolve = resolve; });
+}
+function closePrep(result){ setPrepModal(false); if(prepResolve){ prepResolve(result); prepResolve = null; } }
+document.getElementById('prepOk').addEventListener('click', () => closePrep(true));
+document.getElementById('prepCancel').addEventListener('click', () => closePrep(false));
+document.getElementById('prepOverlay').addEventListener('click', () => closePrep(false));
+
 async function ensureNoVpn(){
   if((await checkIranNet(true)) !== false) return true;
   document.getElementById('vpnStatus').textContent = '';
@@ -3692,6 +3758,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
 
   // prices, discount and total are decided by the server (place_order); the browser only sends what was picked
   const shownTotal = getCartSubtotal() - getDiscountAmount();
+  if(!(await confirmPrepTime())) return;
   // the bank gateway won't open behind a VPN: sort that out before the order is even placed
   if(onlinePaymentOn() && shownTotal > 0 && !(await ensureNoVpn())){
     errorEl.textContent = 'برای پرداخت آنلاین، اول فیلترشکن رو خاموش کن و دوباره «ثبت سفارش» رو بزن.';
