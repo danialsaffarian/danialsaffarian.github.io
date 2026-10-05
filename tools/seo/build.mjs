@@ -33,6 +33,19 @@ async function loadProducts() {
   return res.json();
 }
 
+// approved customer reviews only: they become the product's rating in search results; without a review there is none
+async function loadReviews() {
+  const file = process.argv[3];
+  if (process.argv[2]) return file ? JSON.parse(fs.readFileSync(file, 'utf8')) : [];
+  try {
+    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const url = html.match(/const SUPABASE_URL = '([^']+)'/)[1];
+    const key = html.match(/const SUPABASE_KEY = '([^']+)'/)[1];
+    const res = await fetch(`${url}/rest/v1/reviews?select=product_id,author_name,rating,comment,created_at&approved=eq.true&order=created_at.desc`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
+    return res.ok ? await res.json() : [];
+  } catch (e) { console.warn('reviews skipped:', e.message); return []; }
+}
+
 function normalize(p) {
   const now = Date.now();
   const saleOpen = (!p.sale_starts_at || new Date(p.sale_starts_at).getTime() <= now) && (!p.sale_ends_at || new Date(p.sale_ends_at).getTime() > now);
@@ -89,6 +102,12 @@ function productPage(base, p, all) {
       itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'حنا گالری' },
     },
   };
+  const revs = (p.reviews || []).filter((r) => r.rating >= 1 && r.rating <= 5);
+  if (revs.length) {
+    product.aggregateRating = { '@type': 'AggregateRating', ratingValue: Number((revs.reduce((s, r) => s + r.rating, 0) / revs.length).toFixed(1)), reviewCount: revs.length, bestRating: 5, worstRating: 1 };
+    product.review = revs.slice(0, 5).map((r) => ({ '@type': 'Review', author: { '@type': 'Person', name: plain(r.author_name) || 'مشتری حنا گالری' }, datePublished: String(r.created_at).slice(0, 10),
+      reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 }, ...(plain(r.comment) ? { reviewBody: plain(r.comment) } : {}) }));
+  }
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, ...(cat ? [{ name: cat.plural, url: `${SITE}/c/${p.cat}/` }] : []), { name: p.name, url }]);
   const others = all.filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 8);
   const noscript = `<h1>${esc(p.name)}</h1><p>${p.stock > 0 ? `${money(p.now)} تومان` : 'ناموجود'}</p>${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}" width="400">` : ''}${p.lines.map((l) => `<p>${esc(l)}</p>`).join('')}${others.length ? `<p>${others.map((o) => `<a href="/p/${o.id}/">${esc(o.name)}</a>`).join(' · ')}</p>` : ''}`;
@@ -118,6 +137,8 @@ function write(rel, content) {
 
 const base = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const products = (await loadProducts()).map(normalize).filter((p) => p.name);
+const reviews = await loadReviews();
+for (const p of products) p.reviews = reviews.filter((r) => r.product_id === p.id);
 if (products.length < 1) throw new Error('no products, refusing to wipe the pages');
 for (const d of ['p', 'c']) fs.rmSync(path.join(ROOT, d), { recursive: true, force: true });
 for (const p of products) write(`p/${p.id}/index.html`, productPage(base, p, products));
