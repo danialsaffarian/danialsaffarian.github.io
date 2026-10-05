@@ -64,6 +64,10 @@ function normalize(p) {
   };
 }
 
+// as stated on the store (ارسال، مرجوعی و نگهداری): returns within 48 hours of delivery when the item doesn't match the order
+const RETURNS = { '@type': 'MerchantReturnPolicy', applicableCountry: 'IR', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+  merchantReturnDays: 2, returnMethod: 'https://schema.org/ReturnByMail', merchantReturnLink: SITE + '/#shipping' };
+
 const crumbLd = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })) });
 
 // the store's page with this address's own head; the home page's other structured data (FAQ etc.) stays on the home page only
@@ -100,6 +104,7 @@ function productPage(base, p, all) {
       ...(lo !== hi ? { lowPrice: lo * 10, highPrice: hi * 10, offerCount: p.variants.length } : { price: p.now * 10 }),
       availability: p.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
       itemCondition: 'https://schema.org/NewCondition', seller: { '@type': 'Organization', name: 'حنا گالری' },
+      hasMerchantReturnPolicy: RETURNS,
     },
   };
   const revs = (p.reviews || []).filter((r) => r.rating >= 1 && r.rating <= 5);
