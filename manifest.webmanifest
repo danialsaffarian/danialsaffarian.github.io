@@ -1,0 +1,17 @@
+{
+  "name": "حنا گالری | زیورآلات دست‌ساز",
+  "short_name": "حنا گالری",
+  "description": "فروشگاه زیورآلات دست‌ساز حنا گالری؛ گردنبند، دستبند، گوشواره، انگشتر و پابند",
+  "lang": "fa",
+  "dir": "rtl",
+  "start_url": "/?source=app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FBF8F3",
+  "theme_color": "#FBF8F3",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
