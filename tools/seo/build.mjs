@@ -150,9 +150,17 @@ for (const p of products) write(`p/${p.id}/index.html`, productPage(base, p, pro
 const cats = Object.keys(CATS).filter((k) => products.some((p) => p.cat === k));
 for (const k of cats) write(`c/${k}/index.html`, categoryPage(base, k, products.filter((p) => p.cat === k)));
 // a product added since the last build has no page yet: GitHub Pages then serves 404.html, which is the store too
-write('404.html', base.replace(/(<meta name="viewport"[^>]*>)/, '$1\n<meta name="robots" content="noindex">'));
+write('404.html', /<meta name="robots"[^>]*>/.test(base) ? base.replace(/<meta name="robots"[^>]*>/, '<meta name="robots" content="noindex">') : base.replace(/(<meta name="viewport"[^>]*>)/, '$1\n<meta name="robots" content="noindex">'));
 
 const latest = products.map((p) => p.updated).sort().pop(); // the sitemap only changes when the shop does
-const urls = [{ loc: SITE + '/', mod: latest, pr: '1.0' }, ...cats.map((k) => ({ loc: `${SITE}/c/${k}/`, mod: latest, pr: '0.8' })), ...products.map((p) => ({ loc: `${SITE}/p/${p.id}/`, mod: p.updated, pr: '0.6' }))];
-write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.mod}</lastmod><priority>${u.pr}</priority></url>`).join('\n')}\n</urlset>\n`);
+// each page lists its product photos (image sitemap), so the photos get indexed and can show beside the result
+const inStock = [...products].sort((a, b) => (b.stock > 0) - (a.stock > 0) || b.id - a.id);
+const pics = (list, n) => list.flatMap((p) => p.images.slice(0, 1)).slice(0, n);
+const urls = [
+  { loc: SITE + '/', mod: latest, pr: '1.0', imgs: pics(inStock, 20) },
+  ...cats.map((k) => ({ loc: `${SITE}/c/${k}/`, mod: latest, pr: '0.8', imgs: pics(inStock.filter((p) => p.cat === k), 20) })),
+  ...products.map((p) => ({ loc: `${SITE}/p/${p.id}/`, mod: p.updated, pr: '0.6', imgs: p.images.slice(0, 10) })),
+];
+const xmlEsc = (u) => esc(u);
+write('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${u.mod}</lastmod><priority>${u.pr}</priority>${u.imgs.map((i) => `<image:image><image:loc>${xmlEsc(i)}</image:loc></image:image>`).join('')}</url>`).join('\n')}\n</urlset>\n`);
 console.log(`built ${products.length} product pages, ${cats.length} collection pages`);
