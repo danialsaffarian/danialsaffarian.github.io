@@ -475,6 +475,16 @@
   .stat-item b{display:block;font-size:24px;color:var(--coffee);margin-bottom:6px;}
   .stat-item span{font-size:12.5px;color:var(--coffee-70);}
   .stat-subtitle{font-size:15px;font-weight:700;color:var(--coffee);margin:28px 0 12px;}
+  .recent-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+  .recent-card{background:var(--adm-card,#fff);border-radius:14px;box-shadow:var(--adm-shadow,none);padding:14px 16px;}
+  .recent-card h5{font-size:12.5px;font-weight:800;color:var(--coffee);margin:0 0 10px;display:flex;align-items:center;gap:6px;}
+  .recent-card h5::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--gold);}
+  .recent-card .rc-lbl{display:block;font-size:11.5px;color:var(--coffee-70);margin-bottom:2px;}
+  .recent-card .rc-main{font-size:20px;font-weight:800;color:var(--ink,#3A2F26);font-variant-numeric:tabular-nums;line-height:1.3;}
+  .recent-card .rc-main small{font-size:11.5px;font-weight:600;color:var(--coffee-70);}
+  .recent-card ul{list-style:none;margin:8px 0 0;padding:8px 0 0;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:4px;}
+  .recent-card li{display:flex;justify-content:space-between;font-size:12px;color:var(--coffee-70);}
+  .recent-card li b{color:var(--coffee);font-weight:800;font-variant-numeric:tabular-nums;}
   .low-stock-row{display:flex;justify-content:space-between;font-size:13px;color:var(--coffee-70);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:8px;}
   .low-stock-row b{color:var(--coffee);}
   .best-seller-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--coffee-70);border:1px solid var(--line);border-radius:6px;padding:10px 14px;margin-bottom:8px;}
@@ -2112,8 +2122,10 @@
 
     <div id="adminTabStats" class="admin-tab-panel" style="display:none;">
       <div id="adminStatsBox"></div>
+      <div class="stat-subtitle">آمار اخیر</div>
+      <div id="adminRecentStats" class="recent-grid"></div>
       <div class="stat-subtitle ana-head">بازدید و فروش هر محصول
-        <select id="anaDays"><option value="7">۷ روز اخیر</option><option value="30" selected>۳۰ روز اخیر</option><option value="0">از اول</option></select>
+        <select id="anaDays"><option value="1">۲۴ ساعت اخیر</option><option value="3">۳ روز اخیر</option><option value="7">۷ روز اخیر</option><option value="30" selected>۳۰ روز اخیر</option><option value="0">از اول</option></select>
       </div>
       <div id="adminAnaTotals" class="ana-totals"></div>
       <div id="adminProductStatsBox"></div>
@@ -5520,6 +5532,26 @@ async function loadAdminAnalytics(){
   </table></div>` : '<p class="ana-empty">هنوز کسی محصولی رو باز نکرده.</p>';
 }
 
+// sales over the last 24 hours and 3 days (rolling windows from now), with visitors from the analytics
+async function loadRecentStats(orders, now){
+  const box = document.getElementById('adminRecentStats');
+  const windows = [{ label: '۲۴ ساعت اخیر', days: 1 }, { label: '۳ روز اخیر', days: 3 }];
+  const card = (w, a) => {
+    const since = now.getTime() - w.days * 864e5;
+    const list = orders.filter(o => new Date(o.created_at).getTime() >= since);
+    const revenue = list.reduce((s, o) => s + (o.total || 0), 0);
+    const t = (a && a.totals) || {};
+    return `<div class="recent-card"><h5>${w.label}</h5>
+      <span class="rc-lbl">فروش</span><div class="rc-main">${toFa(revenue)} <small>تومان</small></div>
+      <ul><li><span>سفارش</span><b>${toFa(list.length)}</b></li>
+        <li><span>بازدیدکننده</span><b>${a ? toFa(t.visits || 0) : '…'}</b></li>
+        <li><span>افزودن به سبد</span><b>${a ? toFa(t.carts || 0) : '…'}</b></li></ul></div>`;
+  };
+  box.innerHTML = windows.map(w => card(w, null)).join('');
+  const res = await Promise.all(windows.map(w => db.rpc('admin_analytics', { p_days: w.days }).then(r => r.data).catch(() => null)));
+  box.innerHTML = windows.map((w, i) => card(w, res[i] || { totals: {} })).join('');
+}
+
 async function loadAdminStats(){
   loadAdminAnalytics();
   const box = document.getElementById('adminStatsBox');
@@ -5544,6 +5576,8 @@ async function loadAdminStats(){
       <div class="stat-item"><b>${toFa(visits)}</b><span>تعداد بازدید سایت</span></div>
     </div>
   `;
+
+  loadRecentStats(orders, now);
 
   // نمودار فروش ۷ روز اخیر
   const days = [];
