@@ -71,7 +71,7 @@ const RETURNS = { '@type': 'MerchantReturnPolicy', applicableCountry: 'IR', retu
 const crumbLd = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })) });
 
 // the store's page with this address's own head; the home page's other structured data (FAQ etc.) stays on the home page only
-function storePage(base, { title, description, url, image, jsonld, noscript }) {
+function storePage(base, { title, description, url, image, jsonld, noscript, meta = '' }) {
   let h = base.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, '');
   const set = (re, val) => { if (!re.test(h)) throw new Error('index.html changed: ' + re); h = h.replace(re, val); };
   set(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`);
@@ -87,6 +87,7 @@ function storePage(base, { title, description, url, image, jsonld, noscript }) {
     set(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${esc(image)}$2`);
     h = h.replace(/<meta property="og:image:(width|height)"[^>]*>\s*/g, '');
   }
+  if (meta) h = h.replace('</head>', meta + '\n</head>');
   h = h.replace('</head>', `${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}\n</head>`);
   return h.replace(/<body([^>]*)>/, `<body$1>\n<noscript><div style="padding:16px">${noscript}</div></noscript>`);
 }
@@ -116,7 +117,15 @@ function productPage(base, p, all) {
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, ...(cat ? [{ name: cat.plural, url: `${SITE}/c/${p.cat}/` }] : []), { name: p.name, url }]);
   const others = all.filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 8);
   const noscript = `<h1>${esc(p.name)}</h1><p>${p.stock > 0 ? `${money(p.now)} تومان` : 'ناموجود'}</p>${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}" width="400">` : ''}${p.lines.map((l) => `<p>${esc(l)}</p>`).join('')}${others.length ? `<p>${others.map((o) => `<a href="/p/${o.id}/">${esc(o.name)}</a>`).join(' · ')}</p>` : ''}`;
-  return storePage(base, { title: `${p.name} | خرید ${p.catLabel} دست‌ساز - حنا گالری`, description: desc, url, image: p.images[0], jsonld: [product, crumbs], noscript });
+  // price-comparison crawlers (ترب و ...) read these; prices in toman
+  const meta = [
+    `<meta name="product_id" content="${p.id}">`,
+    `<meta name="product_name" content="${esc(p.name)}">`,
+    `<meta name="product_price" content="${p.now}">`,
+    p.sale !== null ? `<meta name="product_old_price" content="${p.price}">` : '',
+    `<meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">`,
+  ].filter(Boolean).join('\n');
+  return storePage(base, { title: `${p.name} | خرید ${p.catLabel} دست‌ساز - حنا گالری`, description: desc, url, image: p.images[0], jsonld: [product, crumbs], noscript, meta });
 }
 
 function categoryPage(base, key, items) {
