@@ -955,7 +955,7 @@
   }
 
   /* ---------- product page ---------- */
-  .pdp .product-head{padding:12px 16px;gap:10px;background:rgba(251,248,243,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+  .pdp .product-head{z-index:20;padding:12px 16px;gap:10px;background:rgba(251,248,243,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
   .pdp .product-back,.pd-icon{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--line);background:var(--cream-soft);display:flex;align-items:center;justify-content:center;padding:0;color:var(--coffee);cursor:pointer;transition:background .2s,border-color .2s,transform .1s;}
   .pdp .product-back:hover,.pd-icon:hover{background:var(--tan);border-color:var(--tan);}
   .pdp .product-back:active,.pd-icon:active{transform:scale(.94);}
@@ -964,6 +964,10 @@
   .pd-head-actions{display:flex;gap:8px;}
   .pd-heart.active svg{fill:#8B3A3A;stroke:#8B3A3A;}
   .pd-heart{position:relative;}
+  .pd-cart{position:relative;}
+  .pd-cart-n{position:absolute;top:-5px;left:-5px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--coffee);color:var(--cream-soft);font-size:10.5px;font-weight:700;line-height:18px;text-align:center;}
+  .pd-cart-n[hidden]{display:none;}
+  .cart-hit.pd-cart .pd-cart-n{animation:badgePop .5s cubic-bezier(.3,1.8,.5,1);}
   .pd-heart.burst svg{animation:heartPop .55s cubic-bezier(.3,1.6,.5,1);}
   .pd-heart.burst::after{content:"";position:absolute;inset:-2px;border-radius:50%;border:2px solid #C9A46A;animation:heartRing .6s ease-out forwards;pointer-events:none;}
   .pdp .product-body{max-width:560px;padding:16px 16px 40px;}
@@ -2727,7 +2731,9 @@ function renderProductDetail(){
   document.getElementById('pdHeadTitle').textContent = p.name;
   document.getElementById('pdHeadActions').innerHTML = `
     <button type="button" class="pd-icon" onclick="shareProduct(${p.id}, this)" aria-label="اشتراک‌گذاری"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.4"/><circle cx="6" cy="12" r="2.4"/><circle cx="18" cy="19" r="2.4"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button>
-    <button type="button" class="pd-icon pd-heart${wishActive ? ' active' : ''}" id="pdHeart" onclick="pdToggleWish(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>`;
+    <button type="button" class="pd-icon pd-heart${wishActive ? ' active' : ''}" id="pdHeart" onclick="pdToggleWish(${p.id})" aria-label="علاقه‌مندی"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.5-9C1 7.5 2.8 4 6.2 4c2 0 3.4 1.1 4.3 2.4C11.4 5.1 12.8 4 14.8 4 18.2 4 20 7.5 18.5 11c-2.5 4.6-9.5 9-9.5 9z"/></svg></button>
+    <button type="button" class="pd-icon pd-cart" id="pdCartBtn" onclick="openDrawer()" aria-label="سبد خرید"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="pd-cart-n" id="pdCartCount"></span></button>`;
+  syncPdCartCount();
 
   document.getElementById('productBody').innerHTML = `
     <div class="pd">
@@ -3368,7 +3374,7 @@ function addToCart(id, el){
 let cartJustAdded = null, cartBumpIdx = -1;
 // the product photo shrinks into the cart icon, then the badge pops
 function flyToCart(img, done){
-  const target = document.getElementById('cartOpenBtn');
+  const target = (productPage.classList.contains('open') && document.getElementById('pdCartBtn')) || document.getElementById('cartOpenBtn');
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(!img || !target || reduce || !img.complete){ done(); return; }
   const a = img.getBoundingClientRect(), b = target.getBoundingClientRect();
@@ -3432,9 +3438,17 @@ function animateNumber(el, to, suffix){
   };
   requestAnimationFrame(step);
 }
+function syncPdCartCount(){
+  const el = document.getElementById('pdCartCount');
+  if(!el) return;
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  el.textContent = toFa(count);
+  el.hidden = !count;
+}
 function updateCart(){
   const count = cart.reduce((s,i)=>s+i.qty,0);
   document.getElementById('cartCount').textContent = toFa(count);
+  syncPdCartCount();
   const itemsEl = document.getElementById('drawerItems');
   if(cart.length===0){
     itemsEl.innerHTML = `<div class="drawer-empty">
