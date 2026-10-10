@@ -882,6 +882,17 @@
   .drawer-item.leaving{transition:opacity .25s ease,transform .3s ease,height .3s ease .12s,padding .3s ease .12s,border-color .3s;opacity:0;transform:translateX(-40px);height:0!important;padding-block:0;border-color:transparent;}
   .drawer .qty-ctrl span.bump{animation:qtyBump .35s cubic-bezier(.3,1.6,.5,1);}
   @keyframes qtyBump{0%{transform:scale(1);}40%{transform:scale(1.45);color:var(--gold);}100%{transform:scale(1);}}
+  /* over the product page: the drawer and its overlay sit above it, the confirmation bar too */
+  html.layer-open .overlay{z-index:106;}
+  html.layer-open .drawer{z-index:107;}
+  .added-bar{position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:108;max-width:520px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 12px;border-radius:16px;background:var(--coffee);color:#fff;box-shadow:0 14px 40px rgba(46,32,22,.35);transform:translateY(160%);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.2,.9,.25,1.1),opacity .3s;}
+  .added-bar.show{transform:none;opacity:1;pointer-events:auto;}
+  .ab-img{width:44px;height:44px;flex:none;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.15);}
+  .ab-img img{width:100%;height:100%;object-fit:cover;display:block;}
+  .ab-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .ab-txt b{font-size:14px;font-weight:700;}
+  .ab-txt small{font-size:12px;opacity:.8;}
+  .added-bar button{flex:none;font:inherit;font-size:13px;font-weight:700;padding:10px 14px;border:0;border-radius:11px;background:var(--cream-soft);color:var(--coffee);cursor:pointer;}
   .fly-ghost{position:fixed;z-index:9999;object-fit:cover;pointer-events:none;box-shadow:0 10px 30px rgba(46,32,22,.3);transform-origin:center;}
   .cart-hit{animation:cartHit .5s cubic-bezier(.3,1.5,.5,1);}
   .cart-hit .cart-count{animation:badgePop .5s cubic-bezier(.3,1.8,.5,1);}
@@ -2232,6 +2243,11 @@
   </div>
 </div>
 
+<div class="added-bar" id="addedBar" role="status" aria-live="polite">
+  <span class="ab-img" id="addedBarImg"></span>
+  <span class="ab-txt"><b>به سبد خرید اضافه شد ✓</b><small id="addedBarCount"></small></span>
+  <button type="button" id="addedBarGo">مشاهده‌ی سبد</button>
+</div>
 <div class="checkout-page" id="checkoutPage">
   <div class="checkout-head">
     <button class="checkout-back" id="checkoutBackBtn">→</button>
@@ -2898,6 +2914,7 @@ function openProductDetail(id){
 }
 function closeProductDetail(){
   productPage.classList.remove('open');
+  hideAddedBar();
   if(/^#p\d+$/.test(location.hash) || /^\/p\//.test(location.pathname)) history.replaceState(null, '', storeBase() + location.search);
 }
 function productLink(id){ return location.origin + '/#p' + id; }
@@ -2983,7 +3000,8 @@ function addToCartDetail(){
   else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
   trackEvent('cart', p.id);
   cartJustAdded = p.id + '|' + variant;
-  flyToCart(document.querySelector('#productPage .detail-photo'), () => { updateCart(); closeProductDetail(); openDrawer(); });
+  // the customer stays on the product page; a bar confirms it and opens the cart if they want
+  flyToCart(document.querySelector('#productPage .detail-photo'), () => { updateCart(); showAddedBar(p); });
 }
 
 // کلیک روی هر کارت محصول (به‌جز دکمه‌ها/سلکت/اسلایدر عکس) → باز شدن صفحه‌ی جزئیات محصول
@@ -3468,8 +3486,22 @@ function openDrawer(){
     clearTimeout(drawer._animT); drawer._animT = setTimeout(() => drawer.classList.remove('anim-in'), 1200);
   }
   drawer.classList.add('open'); overlay.classList.add('open');
+  hideAddedBar();
 }
 function closeDrawer(){ drawer.classList.remove('open'); overlay.classList.remove('open'); }
+// «added to cart» bar on the product page
+let addedBarT = null;
+function hideAddedBar(){ clearTimeout(addedBarT); document.getElementById('addedBar').classList.remove('show'); }
+function showAddedBar(p){
+  const bar = document.getElementById('addedBar');
+  const n = cart.reduce((a, i) => a + i.qty, 0);
+  const src = p.thumbs && p.thumbs[0];
+  document.getElementById('addedBarImg').innerHTML = src ? `<img src="${src}" alt="" onerror="thumbFallback(this)">` : '';
+  document.getElementById('addedBarCount').textContent = `${toFa(n)} محصول در سبد`;
+  bar.classList.remove('show'); void bar.offsetWidth; bar.classList.add('show');
+  clearTimeout(addedBarT); addedBarT = setTimeout(hideAddedBar, 5000);
+}
+document.getElementById('addedBarGo').addEventListener('click', () => { hideAddedBar(); openDrawer(); });
 document.getElementById('cartOpenBtn').addEventListener('click', openDrawer);
 document.getElementById('drawerClose').addEventListener('click', closeDrawer);
 overlay.addEventListener('click', closeDrawer);
@@ -3631,7 +3663,7 @@ async function submitManualOrder(){
 }
 document.getElementById('proceedCheckoutBtn').addEventListener('click', openCheckoutPage);
 document.getElementById('checkoutBackBtn').addEventListener('click', () => { closeCheckoutPage(); openDrawer(); });
-document.getElementById('backToShopBtn').addEventListener('click', closeCheckoutPage);
+document.getElementById('backToShopBtn').addEventListener('click', () => { closeCheckoutPage(); if(productPage.classList.contains('open')) closeProductDetail(); });
 
 // ثبت سفارش مستقیم داخل سایت (بدون نیاز به اینستاگرام)
 function normalizeIranMobile(v){
