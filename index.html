@@ -4909,7 +4909,7 @@ async function loadAdminsStatus(){
   const sessByPhone = {};
   (Array.isArray(sessData) ? sessData : []).forEach(x => { (sessByPhone[x.phone] = sessByPhone[x.phone] || []).push(x); });
 
-  listEl.innerHTML = `<p class="as-note">زمان‌ها به وقت ایران؛ هر بازه یعنی سایت باز و جلوی چشم مدیر بوده. آنلاین بودن از روز ۱۹ مهر ۱۴۰۵ ثبت می‌شه.</p>` + phones.map(phone => {
+  listEl.innerHTML = `<p class="as-note">زمان‌ها به وقت ایران؛ هر بازه یعنی سایت روی گوشی یا کامپیوتر مدیر باز بوده (حتی پشت برنامه‌های دیگه، تا وقتی دستگاه اجرای سایت رو متوقف نکرده). آنلاین بودن از روز ۱۹ مهر ۱۴۰۵ ثبت می‌شه.</p>` + phones.map(phone => {
     const p = profileByPhone[phone];
     const shown = normalizeIranMobile(phone) || phone;
     const name = (p && p.full_name) ? p.full_name : shown;
@@ -4960,12 +4960,12 @@ function faDuration(mins){
 let heartbeatInterval = null;
 async function sendHeartbeat(){
   if(!currentUser) return;
-  // only time with the site actually in view counts as online
-  if(document.visibilityState !== 'visible') return;
+  // any time the site is open counts as online, in view or in the background, as long as the device keeps it running
   db.rpc('admin_heartbeat').then(() => {}, () => {});
   await db.from('profiles').upsert({ id: currentUser.id, phone: currentUser.phone, last_seen: new Date().toISOString() });
 }
 document.addEventListener('visibilitychange', () => { if(heartbeatInterval && document.visibilityState === 'visible') sendHeartbeat(); });
+window.addEventListener('online', () => { if(heartbeatInterval) sendHeartbeat(); });
 function startHeartbeat(){
   if(heartbeatInterval) return;
   sendHeartbeat();
