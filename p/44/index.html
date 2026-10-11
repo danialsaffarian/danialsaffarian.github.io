@@ -405,6 +405,22 @@
   .admin-status-row{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:6px;padding:14px 18px;margin-bottom:10px;}
   .admin-status-row b{font-size:14px;color:var(--coffee);display:block;margin-bottom:4px;}
   .admin-status-row span{font-size:12.5px;color:var(--coffee-70);}
+  /* admins' online history */
+  .as-note{font-size:12.5px;color:var(--coffee-70);line-height:1.9;margin:0 0 12px;}
+  .as-row{display:block;}
+  .as-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;}
+  .as-top em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--coffee-70);padding:4px 10px;border-radius:99px;background:#F2EDE4;}
+  .as-top em.as-on{background:#E6EFE1;color:#3F5E3A;}
+  .as-phone{font-variant-numeric:tabular-nums;}
+  .as-days{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;display:flex;flex-direction:column;gap:10px;}
+  .as-day{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:baseline;}
+  .as-day b{font-size:13px!important;margin:0!important;}
+  .as-day > span{font-size:12px;color:var(--coffee-70);}
+  .as-chips{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px;}
+  .as-chips i{font-style:normal;display:inline-flex;flex-direction:column;gap:1px;padding:6px 10px;border-radius:10px;background:#FAF6F0;font-size:12.5px;font-weight:700;color:var(--coffee);font-variant-numeric:tabular-nums;}
+  .as-chips i.live{background:#E6EFE1;color:#3F5E3A;}
+  .as-chips small{font-size:11px;font-weight:500;color:var(--coffee-70);}
+  .as-empty{font-size:12.5px;color:var(--coffee-70);margin:10px 0 0;}
   .online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-start:6px;}
   .online-dot.on{background:#3a8b4e;}
   .online-dot.off{background:var(--coffee-70);}
@@ -4829,30 +4845,73 @@ async function loadAdminsStatus(){
     return;
   }
   const phones = adminRows.map(a => a.phone);
-  const { data: profilesData } = await db.from('profiles').select('phone, full_name, last_seen').in('phone', phones);
+  const since = new Date(Date.now() - 7 * 864e5).toISOString();
+  const [{ data: profilesData }, { data: sessData }] = await Promise.all([
+    db.from('profiles').select('phone, full_name, last_seen').in('phone', phones),
+    db.from('admin_sessions').select('phone, started_at, ended_at').in('phone', phones).gte('ended_at', since).order('started_at', { ascending: false }),
+  ]);
   const profileByPhone = {};
-  (profilesData || []).forEach(p => { profileByPhone[p.phone] = p; });
+  (Array.isArray(profilesData) ? profilesData : []).forEach(p => { profileByPhone[p.phone] = p; });
+  const sessByPhone = {};
+  (Array.isArray(sessData) ? sessData : []).forEach(x => { (sessByPhone[x.phone] = sessByPhone[x.phone] || []).push(x); });
 
-  listEl.innerHTML = phones.map(phone => {
+  listEl.innerHTML = `<p class="as-note">زمان‌ها به وقت ایران؛ هر بازه یعنی سایت روی گوشی یا کامپیوتر مدیر باز بوده (حتی پشت برنامه‌های دیگه، تا وقتی دستگاه اجرای سایت رو متوقف نکرده). آنلاین بودن از روز ۱۹ مهر ۱۴۰۵ ثبت می‌شه.</p>` + phones.map(phone => {
     const p = profileByPhone[phone];
-    const name = (p && p.full_name) ? p.full_name : phone;
-    const lastSeen = p ? p.last_seen : null;
+    const shown = normalizeIranMobile(phone) || phone;
+    const name = (p && p.full_name) ? p.full_name : shown;
+    const sess = sessByPhone[phone] || [];
+    const lastSeen = [p && p.last_seen, sess[0] && sess[0].ended_at].filter(Boolean).sort().pop() || null;
     const isOnline = !!(lastSeen && (Date.now() - new Date(lastSeen).getTime()) < ONLINE_THRESHOLD_MS);
-    return `<div class="admin-status-row">
-      <div>
-        <b>${escapeHtml(name)}<span class="online-dot ${isOnline ? 'on' : 'off'}"></span></b>
-        <span>${escapeHtml(phone)}</span>
+    const now = isOnline && sess[0] && Date.now() - new Date(sess[0].ended_at).getTime() < ONLINE_THRESHOLD_MS ? sess[0] : null;
+    const status = isOnline
+      ? `<em class="as-on">آنلاین${now ? ' از ساعت ' + faClock(now.started_at) : ''}</em>`
+      : `<em>${lastSeen ? 'آخرین بازدید: ' + faDayLabel(lastSeen) + '، ساعت ' + faClock(lastSeen) : 'هنوز وارد نشده'}</em>`;
+    // the last 7 days, one line per day, newest first
+    const days = [];
+    sess.forEach(x => {
+      const key = new Date(x.started_at).toDateString();
+      let d = days.find(y => y.key === key);
+      if(!d){ d = { key, at: x.started_at, items: [] }; days.push(d); }
+      d.items.push(x);
+    });
+    const dayHtml = days.map(d => `<div class="as-day"><b>${faDayLabel(d.at)}</b><span>${toFa(Math.round(d.items.reduce((m, x) => m + (new Date(x.ended_at) - new Date(x.started_at)), 0) / 60000))} دقیقه</span>
+      <div class="as-chips">${d.items.slice().reverse().map(x => {
+        const live = x === now;
+        const mins = Math.round((new Date(x.ended_at) - new Date(x.started_at)) / 60000);
+        return `<i class="${live ? 'live' : ''}">${faClock(x.started_at)} تا ${live ? 'الان' : faClock(x.ended_at)}<small>${mins < 1 ? 'کمتر از ۱ دقیقه' : faDuration(mins)}</small></i>`;
+      }).join('')}</div></div>`).join('');
+    return `<div class="admin-status-row as-row">
+      <div class="as-top">
+        <div><b>${escapeHtml(name)}<span class="online-dot ${isOnline ? 'on' : 'off'}"></span></b>${name !== shown ? `<span dir="ltr" class="as-phone">${escapeHtml(shown)}</span>` : ''}</div>
+        ${status}
       </div>
-      <span>${isOnline ? 'آنلاین الان' : relativeTimeFa(lastSeen)}</span>
+      ${dayHtml ? `<div class="as-days">${dayHtml}</div>` : '<p class="as-empty">در ۷ روز اخیر آنلاین نبوده.</p>'}
     </div>`;
   }).join('');
+}
+// exact clock / day labels for the admins' online history
+function faClock(iso){ return new Date(iso).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tehran' }); }
+function faDayLabel(iso){
+  const tz = { timeZone: 'Asia/Tehran' };
+  const day = d => new Date(d).toLocaleDateString('en-CA', tz);
+  if(day(iso) === day(Date.now())) return 'امروز';
+  if(day(iso) === day(Date.now() - 864e5)) return 'دیروز';
+  return new Date(iso).toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long', ...tz });
+}
+function faDuration(mins){
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h ? `${toFa(h)} ساعت${m ? ' و ' + toFa(m) + ' دقیقه' : ''}` : `${toFa(m)} دقیقه`;
 }
 
 let heartbeatInterval = null;
 async function sendHeartbeat(){
   if(!currentUser) return;
+  // any time the site is open counts as online, in view or in the background, as long as the device keeps it running
+  db.rpc('admin_heartbeat').then(() => {}, () => {});
   await db.from('profiles').upsert({ id: currentUser.id, phone: currentUser.phone, last_seen: new Date().toISOString() });
 }
+document.addEventListener('visibilitychange', () => { if(heartbeatInterval && document.visibilityState === 'visible') sendHeartbeat(); });
+window.addEventListener('online', () => { if(heartbeatInterval) sendHeartbeat(); });
 function startHeartbeat(){
   if(heartbeatInterval) return;
   sendHeartbeat();
