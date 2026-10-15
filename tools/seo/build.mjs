@@ -71,7 +71,9 @@ const RETURNS = { '@type': 'MerchantReturnPolicy', applicableCountry: 'IR', retu
 const crumbLd = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })) });
 
 // the store's page with this address's own head; the home page's other structured data (FAQ etc.) stays on the home page only
-function storePage(base, { title, description, url, image, jsonld, noscript, meta = '' }) {
+// Google reads the page as rendered, where <noscript> is skipped: the product's or collection's own text also goes in a visible
+// section, and the store's «Hana Gallery» hero stops being this page's h1, so each address is no longer a copy of the home page.
+function storePage(base, { title, description, url, image, jsonld, noscript, section = '', meta = '' }) {
   let h = base.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>\s*/g, '');
   const set = (re, val) => { if (!re.test(h)) throw new Error('index.html changed: ' + re); h = h.replace(re, val); };
   set(/<title>[^<]*<\/title>/, `<title>${esc(title)}</title>`);
@@ -87,6 +89,8 @@ function storePage(base, { title, description, url, image, jsonld, noscript, met
     set(/(<meta name="twitter:image" content=")[^"]*(")/, `$1${esc(image)}$2`);
     h = h.replace(/<meta property="og:image:(width|height)"[^>]*>\s*/g, '');
   }
+  set(/<h1 class="hero-title">([\s\S]*?)<\/h1>/, '<div class="hero-title">$1</div>');
+  if (section) set(/<section class="section about" id="about">/, `<section class="section seo-info">\n<div class="wrap">${section}</div>\n</section>\n\n$&`);
   if (meta) h = h.replace('</head>', meta + '\n</head>');
   h = h.replace('</head>', `${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j)}</script>`).join('\n')}\n</head>`);
   return h.replace(/<body([^>]*)>/, `<body$1>\n<noscript><div style="padding:16px">${noscript}</div></noscript>`);
@@ -117,6 +121,11 @@ function productPage(base, p, all) {
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, ...(cat ? [{ name: cat.plural, url: `${SITE}/c/${p.cat}/` }] : []), { name: p.name, url }]);
   const others = all.filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 8);
   const noscript = `<h1>${esc(p.name)}</h1><p>${p.stock > 0 ? `${money(p.now)} تومان` : 'ناموجود'}</p>${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}" width="400">` : ''}${p.lines.map((l) => `<p>${esc(l)}</p>`).join('')}${others.length ? `<p>${others.map((o) => `<a href="/p/${o.id}/">${esc(o.name)}</a>`).join(' · ')}</p>` : ''}`;
+  const section = `<nav class="seo-crumbs" aria-label="مسیر"><a href="/">حنا گالری</a><span>›</span>${cat ? `<a href="/c/${p.cat}/">${esc(cat.plural)}</a><span>›</span>` : ''}<b>${esc(p.name)}</b></nav>`
+    + `<h1>${esc(p.name)}</h1><p class="seo-price">${p.stock > 0 ? `${money(p.now)} تومان${p.sale !== null ? ` <s>${money(p.price)}</s>` : ''}` : 'فعلاً ناموجود'}</p>`
+    + (p.lines.length ? `<ul class="seo-lines">${p.lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : `<p>${esc(p.name)} دست‌ساز حنا گالری.</p>`)
+    + `<p><a class="seo-open" href="#p${p.id}">دیدن عکس‌ها و خرید</a></p>`
+    + (others.length ? `<h2>${cat ? `${esc(cat.plural)}ی دیگه` : 'محصولات دیگه'}</h2><ul class="seo-links">${others.map((o) => `<li><a href="/p/${o.id}/">${esc(o.name)}</a></li>`).join('')}</ul>` : '');
   // price-comparison crawlers (ترب و ...) read these; prices in toman
   const meta = [
     `<meta name="product_id" content="${p.id}">`,
@@ -125,7 +134,7 @@ function productPage(base, p, all) {
     p.sale !== null ? `<meta name="product_old_price" content="${p.price}">` : '',
     `<meta name="availability" content="${p.stock > 0 ? 'instock' : 'outofstock'}">`,
   ].filter(Boolean).join('\n');
-  return storePage(base, { title: `${p.name} | خرید ${p.catLabel} دست‌ساز - حنا گالری`, description: desc, url, image: p.images[0], jsonld: [product, crumbs], noscript, meta });
+  return storePage(base, { title: `${p.name} | خرید ${p.catLabel} دست‌ساز - حنا گالری`, description: desc, url, image: p.images[0], jsonld: [product, crumbs], noscript, section, meta });
 }
 
 function categoryPage(base, key, items) {
@@ -136,10 +145,12 @@ function categoryPage(base, key, items) {
     mainEntity: { '@type': 'ItemList', numberOfItems: sorted.length, itemListElement: sorted.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE}/p/${p.id}/`, name: p.name })) } };
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, { name: c.plural, url }]);
   const noscript = `<h1>خرید ${esc(c.label)} دست‌ساز</h1><p>${esc(c.intro)}</p><ul>${sorted.map((p) => `<li><a href="/p/${p.id}/">${esc(p.name)}</a></li>`).join('')}</ul>`;
+  const section = `<nav class="seo-crumbs" aria-label="مسیر"><a href="/">حنا گالری</a><span>›</span><b>${esc(c.plural)}</b></nav><h1>خرید ${esc(c.label)} دست‌ساز</h1><p>${esc(c.intro)}</p>`
+    + `<ul class="seo-links">${sorted.map((p) => `<li><a href="/p/${p.id}/">${esc(p.name)}</a>${p.stock > 0 ? ` <small>${money(p.now)} تومان</small>` : ' <small>ناموجود</small>'}</li>`).join('')}</ul>`;
   return storePage(base, {
     title: `خرید ${c.label} دست‌ساز | ${c.plural}ی حنا گالری`,
     description: `${c.intro} ${fa(sorted.length)} مدل${prices.length ? ` از ${money(Math.min(...prices))} تا ${money(Math.max(...prices))} تومان` : ''}، با ارسال به سراسر ایران.`,
-    url, image: sorted[0] && sorted[0].images[0], jsonld: [list, crumbs], noscript,
+    url, image: sorted[0] && sorted[0].images[0], jsonld: [list, crumbs], noscript, section,
   });
 }
 
