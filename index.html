@@ -1486,6 +1486,98 @@
     .adm-more.open .adm-more-grid button:nth-child(2){animation-delay:.04s;}.adm-more.open .adm-more-grid button:nth-child(3){animation-delay:.08s;}.adm-more.open .adm-more-grid button:nth-child(4){animation-delay:.12s;}.adm-more.open .adm-more-grid button:nth-child(5){animation-delay:.16s;}
   }
   @media(prefers-reduced-motion:reduce){.kpi-spark .l{animation:none;stroke-dashoffset:0;}.sales-bar,.adm .kpi b{animation:none;}}
+  /* ---- admin on phones and tablets, «Nava» style: top bar + slide-in menu, greeting, 2×2 KPI cards, one orders panel ---- */
+  .adm-burger,.adm-bell,.adm-avatar,.adm-dh,.adm-drawer-overlay{display:none;}
+  .adm-date{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--coffee-70);margin-bottom:6px;}
+  .adm-date svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;}
+  .adm-top h1 em{font-style:normal;background:linear-gradient(90deg,#A0614A,#C4895F);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .adm-acts{display:none;gap:10px;margin-top:14px;}
+  .adm.on-orders .adm-acts{display:flex;}
+  .adm-act{white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 18px;border-radius:14px;border:1px solid var(--adm-line);background:#fff;color:var(--ink);font:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s;}
+  .adm-act:active{transform:scale(.97);}
+  .adm-act.dark{background:var(--ink);border-color:var(--ink);color:#F7F2EA;}
+  .adm-act svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .admin-order-chips button i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-inline-start:7px;border-radius:99px;background:rgba(91,66,45,.08);font-size:11px;font-weight:700;}
+  .admin-order-chips button.on i{background:rgba(255,255,255,.2);}
+  @media(min-width:1000px){ .adm .kpi-all{display:none;} .adm #adminTabs .adm-dh + .adm-grp{padding-top:2px;} }
+  @media(max-width:999px){
+    .adm{--adm-bg:#F7F2EB;}
+    .adm .product-body{position:relative;padding:20px 16px calc(40px + env(safe-area-inset-bottom,0px));}
+    .adm .product-body::before{content:"";position:absolute;inset:0 0 auto;height:380px;z-index:-1;pointer-events:none;
+      background:radial-gradient(90% 70% at 100% 0%,rgba(231,199,175,.45),transparent 70%),
+        linear-gradient(rgba(91,66,45,.05) 1px,transparent 1px) 0 0/26px 26px,linear-gradient(90deg,rgba(91,66,45,.05) 1px,transparent 1px) 0 0/26px 26px;
+      -webkit-mask-image:linear-gradient(#000 30%,transparent);mask-image:linear-gradient(#000 30%,transparent);}
+    /* top bar */
+    .adm .product-head{flex-wrap:nowrap;gap:10px;padding:12px 14px;background:rgba(251,248,243,.97);backdrop-filter:none;-webkit-backdrop-filter:none;}
+    .adm .product-head .product-back{display:none;}
+    .adm-title small{display:none;}
+    .adm-title .adm-mark{width:32px;height:32px;}
+    .adm-burger,.adm-bell{display:flex;align-items:center;justify-content:center;position:relative;width:44px;height:44px;flex:none;border-radius:14px;border:1px solid var(--adm-line);background:#fff;color:var(--ink);cursor:pointer;}
+    .adm-burger{border:0;background:none;width:38px;}
+    .adm-burger svg,.adm-bell svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+    .adm-bell i{position:absolute;top:-4px;left:-4px;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:#B4533F;color:#fff;font-style:normal;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid #FBF8F3;}
+    .adm-bell i[hidden]{display:none;}
+    .adm-avatar{display:flex;align-items:center;justify-content:center;width:42px;height:42px;flex:none;border-radius:50%;background:linear-gradient(140deg,#4A3B30,#2F251D);color:#F7F2EA;font-size:16px;font-weight:800;box-shadow:0 0 0 3px #EBD3C4;}
+    /* slide-in menu */
+    .adm #adminTabs{display:flex!important;flex-direction:column;flex-wrap:nowrap;position:fixed;top:0;bottom:0;right:0;width:min(300px,84vw);z-index:31;margin:0;padding:14px 14px calc(16px + env(safe-area-inset-bottom,0px));gap:2px;overflow-y:auto;background:#FBF8F3;border:0;box-shadow:-24px 0 60px rgba(46,32,22,.2);transform:translateX(105%);transition:transform .42s cubic-bezier(.2,.9,.25,1);}
+    .adm.drawer-open #adminTabs{transform:none;}
+    .adm-drawer-overlay{display:block;position:fixed;inset:0;z-index:30;background:rgba(46,32,22,.38);opacity:0;pointer-events:none;transition:opacity .3s;}
+    .adm.drawer-open .adm-drawer-overlay{opacity:1;pointer-events:auto;}
+    .adm-dh{display:flex;align-items:center;gap:10px;padding:4px 6px 14px;margin-bottom:4px;border-bottom:1px solid var(--adm-line);}
+    .adm-dh .adm-mark{width:34px;height:34px;}
+    .adm-dh b{flex:1;font-size:16px;font-weight:800;color:var(--ink);}
+    .adm-dh button{width:36px;height:36px;border-radius:12px;border:1px solid var(--adm-line);background:#fff;color:var(--ink);font-size:14px;cursor:pointer;}
+    .adm-grp{display:block;font-size:11.5px;font-weight:700;color:#A6907E;padding:14px 12px 6px;}
+    .adm #adminTabs .admin-tab{display:flex;width:100%;flex:none;gap:11px;padding:12px;border:0;border-radius:12px;font-size:14.5px;color:var(--coffee);text-align:start;}
+    .adm #adminTabs .admin-tab.active{background:var(--ink);color:#F7F2EA;}
+    .adm #adminTabs .admin-tab.active .at-badge{background:#F7F2EA;color:var(--ink);}
+    .adm #adminTabs .at-ico{width:19px;height:19px;}
+    .adm-side-shop{display:flex;align-items:center;gap:12px;margin-top:auto;padding:14px;border:0;border-radius:14px;background:linear-gradient(140deg,#4A3B30,var(--ink));color:#F7F2EA;font:inherit;text-align:start;cursor:pointer;}
+    .adm-side-shop svg{width:22px;height:22px;flex:none;fill:none;stroke:#E2C08A;stroke-width:1.7;}
+    .adm-side-shop b{display:block;font-size:13.5px;}
+    .adm-side-shop small{display:block;font-size:11.5px;color:#CDBBA6;}
+    .adm-nav,.adm-more,.adm-more-overlay{display:none!important;}
+    .adm-fab{bottom:calc(22px + env(safe-area-inset-bottom,0px))!important;}
+    #adminPage.open ~ .toast{bottom:calc(24px + env(safe-area-inset-bottom,0px));}
+    /* greeting */
+    .adm-top{margin-bottom:20px;}
+    .adm-top h1{font-size:25px;font-weight:900;letter-spacing:-.01em;}
+    .adm-top p{font-size:13px;margin-top:4px;}
+    .adm-acts .adm-act{flex:1;}
+    /* KPI cards */
+    .adm .admin-todo{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+    .adm .kpi,.adm .kpi.hot{background:#fff;border-radius:18px;box-shadow:inset 0 0 0 1px var(--adm-line),0 8px 22px -16px rgba(91,66,45,.35);}
+    .adm .kpi:first-child{grid-column:1/-1;position:relative;overflow:hidden;color:var(--ink);padding:16px 16px 56px;}
+    .adm .kpi:first-child span{color:var(--coffee-70);}
+    .adm .kpi:first-child b{font-size:27px;}
+    .adm .kpi-ico.k-sales{width:46px;height:46px;border-radius:14px;background:linear-gradient(140deg,#4A3B30,#2F251D);color:#F7F2EA;margin-bottom:10px;}
+    .adm .kpi:first-child .kpi-spark{height:46px;}
+    .adm .kpi:first-child .kpi-spark .a{fill:rgba(160,97,74,.09);}
+    .adm .kpi:first-child .kpi-spark .l{stroke:#A0614A;}
+    .adm .kpi:first-child .kpi-spark circle{fill:#A0614A;}
+    .adm .kpi-delta{position:absolute;top:16px;left:16px;margin:0;}
+    .adm .kpi-delta.up{background:#E6EFE1;color:#3F5E3A;}
+    .adm .kpi-delta.down{background:#F6E3DF;color:#9B3F3F;}
+    .adm .kpi:not(:first-child){display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"i l" "i n";column-gap:12px;align-items:center;padding:14px 12px;}
+    .adm .kpi:not(:first-child) .kpi-ico{grid-area:i;width:46px;height:46px;border-radius:14px;margin:0;}
+    .adm .kpi:not(:first-child) span{grid-area:l;font-size:12px;line-height:1.5;}
+    .adm .kpi:not(:first-child) b{grid-area:n;font-size:22px;line-height:1.3;}
+    .adm .kpi.hot .kpi-ico.k-confirm{background:#FBF0DC;}
+    .kpi-ico.k-all{background:#F2EDE4;color:var(--ink);}
+    .adm .pay-mode-box{border-radius:18px;box-shadow:inset 0 0 0 1px var(--adm-line);}
+    /* orders: one white panel, rows divided by lines */
+    .ao-panel{background:#fff;border-radius:20px;box-shadow:inset 0 0 0 1px var(--adm-line),0 10px 28px -18px rgba(91,66,45,.35);overflow:hidden;padding-top:14px;}
+    .adm .ao-panel .admin-order-chips{margin:0 0 12px;padding:0 14px 2px;}
+    .adm .ao-panel .admin-order-chips button{padding:8px 14px;font-weight:700;}
+    .adm .ao-panel .admin-order-search{display:block;width:calc(100% - 28px);margin:0 14px 10px;border:1px solid var(--adm-line);box-shadow:none;border-radius:14px;}
+    .ao-panel .admin-orders-filter{padding:0 14px;margin-bottom:12px;}
+    .ao-panel #adminOrdersList > p{margin:4px 14px 16px;}
+    .adm .ao-panel .ao{margin:0;border-radius:0;box-shadow:none;border-top:1px solid var(--adm-line);}
+    .ao-panel .ao::before{display:none;}
+    .ao-panel .ao-sum{padding:14px;}
+    .ao-panel .ao-sum:hover{background:#FCFAF6;}
+  }
+
 
   /* ---------- VPN warnings ---------- */
   .vpn-bar{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 44px;background:#FBEDE9;color:#7A2E26;border-bottom:1px solid #F0CFC8;font-size:13px;line-height:1.8;text-align:center;animation:annDrop .6s cubic-bezier(.2,.8,.2,1) both;}
@@ -2224,12 +2316,17 @@
   </div>
   <button type="button" class="adm-fab" id="admFab" aria-label="افزودن محصول جدید"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
   <div class="product-head">
+    <button type="button" class="adm-burger" id="admMenuBtn" aria-label="منوی پنل"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg></button>
     <button class="product-back" id="adminBackBtn" aria-label="بازگشت">→</button>
     <div class="adm-title">
       <svg class="adm-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
       <div><b>پنل مدیریت</b><small id="admToday"></small></div>
     </div>
+    <button type="button" class="adm-bell" id="admBell" aria-label="سفارش‌های منتظر"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg><i id="admBellBadge" hidden></i></button>
+    <span class="adm-avatar" id="admAvatar" aria-hidden="true"></span>
+    <div class="adm-drawer-overlay" id="admDrawerOverlay"></div>
     <div class="admin-tabs" id="adminTabs">
+      <div class="adm-dh"><svg class="adm-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg><b>حنا گالری</b><button type="button" id="admDrawerClose" aria-label="بستن منو">✕</button></div>
       <span class="adm-grp">فروشگاه</span>
       <button class="admin-tab active" data-tab="orders"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg><span>سفارش‌ها</span><i class="at-badge" id="sideOrdersBadge" hidden></i></button>
       <button class="admin-tab" data-tab="products"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg><span>محصولات</span></button>
@@ -2246,7 +2343,14 @@
     </div>
   </div>
   <div class="product-body" style="max-width:900px;">
-    <div class="adm-top"><h1 id="admSecTitle">سفارش‌ها</h1><p id="admSecSub">پیگیری، تایید و ارسال سفارش‌ها</p></div>
+    <div class="adm-top">
+      <span class="adm-date"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span id="admDate"></span></span>
+      <h1 id="admSecTitle">سفارش‌ها</h1><p id="admSecSub">پیگیری، تایید و ارسال سفارش‌ها</p>
+      <div class="adm-acts">
+        <button type="button" class="adm-act dark" id="admActAdd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>افزودن محصول</button>
+        <button type="button" class="adm-act" id="admActManual"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>سفارش دستی</button>
+      </div>
+    </div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
       <div id="adminTodo" class="admin-todo"></div>
@@ -2256,10 +2360,12 @@
         <label><input type="radio" name="payMode" value="test"> <span>آزمایشی <small>— فقط خودِ مدیرها با درگاه آزمایشی زیبال (بدون پول واقعی) پرداخت می‌کنن؛ مشتری‌ها مثل قبل</small></span></label>
         <label><input type="radio" name="payMode" value="live"> <span>فعال <small>— همه‌ی مشتری‌ها باید آنلاین پرداخت کنن؛ سفارشِ پرداخت‌نشده بعد از مهلت خودکار لغو می‌شه</small></span></label>
       </details>
-      <input type="search" id="adminOrderSearch" class="admin-order-search" placeholder="جستجو: اسم، موبایل، کد پیگیری یا اسم محصول" autocomplete="off">
-      <div id="adminOrderChips" class="admin-order-chips"></div>
-      <label class="admin-orders-filter"><input type="checkbox" id="adminShowUnpaid"> نمایش سفارش‌های پرداخت‌نشده و رهاشده</label>
-      <div id="adminOrdersList"></div>
+      <div class="ao-panel">
+        <div id="adminOrderChips" class="admin-order-chips"></div>
+        <input type="search" id="adminOrderSearch" class="admin-order-search" placeholder="جستجو: اسم، موبایل، کد پیگیری یا اسم محصول" autocomplete="off">
+        <label class="admin-orders-filter"><input type="checkbox" id="adminShowUnpaid"> نمایش سفارش‌های پرداخت‌نشده و رهاشده</label>
+        <div id="adminOrdersList"></div>
+      </div>
       <button class="adm-danger-link" id="deleteAllOrdersBtn">حذف همه‌ی سفارش‌ها</button>
     </div>
 
@@ -5189,6 +5295,9 @@ function stopHeartbeat(){
 function openAdminPage(){
   const first = (currentProfile && currentProfile.full_name || '').trim().split(/\s+/)[0];
   document.getElementById('admToday').textContent = (first ? 'سلام ' + first + ' · ' : '') + new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
+  document.getElementById('admDate').textContent = new Date().toLocaleDateString('fa-IR', { weekday: 'long' }) + '، ' + new Date().toLocaleDateString('fa-IR', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('admAvatar').textContent = (first || 'م').charAt(0);
+  adminPage.classList.remove('drawer-open');
   adminPage.classList.add('open');
   adminPage.scrollTop = 0;
   switchAdminTab('orders');
@@ -5203,6 +5312,15 @@ const ADM_SECTIONS = {
 function switchAdminTab(tab){
   const sec = ADM_SECTIONS[tab];
   if(sec){ document.getElementById('admSecTitle').textContent = sec[0]; document.getElementById('admSecSub').textContent = sec[1]; }
+  if(tab === 'orders'){
+    const first = (currentProfile && currentProfile.full_name || '').trim().split(/\s+/)[0];
+    const h = +new Date().toLocaleString('en-US', { timeZone: 'Asia/Tehran', hour: 'numeric', hour12: false }) % 24;
+    const hi = h >= 5 && h < 12 ? 'صبح بخیر' : h >= 12 && h < 16 ? 'ظهر بخیر' : h >= 16 && h < 20 ? 'عصر بخیر' : 'شب بخیر';
+    document.getElementById('admSecTitle').innerHTML = hi + '، <em>' + escapeHtml(first || 'مدیر عزیز') + '</em>';
+    document.getElementById('admSecSub').textContent = 'نگاهی سریع به سفارش‌ها و فروش فروشگاه';
+  }
+  document.getElementById('adminPage').classList.toggle('on-orders', tab === 'orders');
+  document.getElementById('adminPage').classList.remove('drawer-open');
   const moreBtn = document.getElementById('admMoreBtn');
   if(moreBtn) moreBtn.classList.toggle('on', ['reviews', 'coupons', 'announce', 'logs', 'admins'].includes(tab));
   document.getElementById('adminPage').classList.toggle('on-products', tab === 'products');
@@ -5287,16 +5405,20 @@ function renderAdminTodo(rows){
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const sold = adminOrdersCache.filter(o => new Date(o.created_at) >= today && o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
   const KICO = { sales: '<path d="M3 7h18v12H3z"/><path d="M16 13h2M3 10h18"/>', confirm: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    ship: '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/>', wait: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>' };
+    ship: '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/>', wait: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    all: '<path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>' };
   const tile = (key, n, text, hot, ico) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><i class="kpi-ico k-${ico}"><svg viewBox="0 0 24 24" aria-hidden="true">${KICO[ico]}</svg></i><b>${toFa(n)}</b><span>${text}</span></button>`;
   const spark = admSalesSpark();
   document.getElementById('adminTodo').innerHTML =
     tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`, false, 'sales').replace('</button>', `${spark.delta}${spark.svg}</button>`)
+    + tile("setAdminOrderFilter('all')", rows.length, 'همه‌ی سفارش‌ها', false, 'all').replace('class="kpi', 'class="kpi kpi-all')
     + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true, 'confirm')
     + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true, 'ship')
     + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری', false, 'wait');
   const sb = document.getElementById('sideOrdersBadge');
   if(sb){ sb.textContent = toFa(confirm + ship); sb.hidden = !(confirm + ship); }
+  const bb = document.getElementById('admBellBadge');
+  if(bb){ bb.textContent = toFa(confirm + ship); bb.hidden = !(confirm + ship); }
 }
 
 function admMore(open){
@@ -5311,6 +5433,21 @@ document.querySelectorAll('#admMore [data-go]').forEach(b => b.addEventListener(
   // keep «بیشتر» lit while one of its sections is open
   document.getElementById('admMoreBtn').classList.add('on');
 }));
+// phone: the sidebar slides in from the right behind the menu button
+const admDrawer = open => document.getElementById('adminPage').classList.toggle('drawer-open', open);
+document.getElementById('admMenuBtn').addEventListener('click', () => admDrawer(true));
+document.getElementById('admDrawerClose').addEventListener('click', () => admDrawer(false));
+document.getElementById('admDrawerOverlay').addEventListener('click', () => admDrawer(false));
+document.querySelector('#adminTabs .adm-side-shop').addEventListener('click', () => admDrawer(false));
+document.getElementById('admBell').addEventListener('click', () => { switchAdminTab('orders'); setAdminOrderFilter('todo-confirm'); });
+document.getElementById('admActAdd').addEventListener('click', () => {
+  switchAdminTab('products');
+  if(document.getElementById('adminProductForm').style.display === 'none') document.getElementById('adminAddProductBtn').click();
+});
+document.getElementById('admActManual').addEventListener('click', () => {
+  document.getElementById('adminBackBtn').click();
+  showToast('محصولات رو به سبد اضافه کن و موقع تسویه تیک «ثبت دستی» رو بزن');
+});
 document.getElementById('admFab').addEventListener('click', () => {
   document.getElementById('adminAddProductBtn').click();
   document.getElementById('adminPage').scrollTo({ top: 0, behavior: 'smooth' });
@@ -5367,7 +5504,7 @@ function renderAdminOrders(){
     ...ORDER_STATUSES.filter(st => counts[st]).map(st => [st, st, counts[st]])];
   if(!chips.some(c => c[0] === adminOrderFilter)) adminOrderFilter = 'all';
   document.getElementById('adminOrderChips').innerHTML = chips.map(([key, label, n]) =>
-    `<button type="button" class="${key === adminOrderFilter ? 'on' : ''}" onclick="setAdminOrderFilter(${escapeHtml(JSON.stringify(key))})">${label} (${toFa(n)})</button>`).join('');
+    `<button type="button" class="${key === adminOrderFilter ? 'on' : ''}" onclick="setAdminOrderFilter(${escapeHtml(JSON.stringify(key))})">${label}<i>${toFa(n)}</i></button>`).join('');
 
   const q = document.getElementById('adminOrderSearch').value.trim();
   const data = visible.filter(o =>
