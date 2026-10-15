@@ -1422,6 +1422,126 @@
     .adm-more.open .adm-more-grid button:nth-child(2){animation-delay:.04s;}.adm-more.open .adm-more-grid button:nth-child(3){animation-delay:.08s;}.adm-more.open .adm-more-grid button:nth-child(4){animation-delay:.12s;}.adm-more.open .adm-more-grid button:nth-child(5){animation-delay:.16s;}
   }
   @media(prefers-reduced-motion:reduce){.kpi-spark .l{animation:none;stroke-dashoffset:0;}.sales-bar,.adm .kpi b{animation:none;}}
+  /* ================= Admin, modern pass: ambient surface, glass bars, floating dock, richer KPIs ================= */
+  .adm{--ink:#33281F;--adm-bg:#F5EFE6;--adm-line:rgba(120,92,66,.13);--adm-glow:rgba(201,164,106,.22);
+    --adm-shadow:0 1px 0 rgba(255,255,255,.7) inset,0 1px 2px rgba(91,66,45,.05),0 10px 28px -14px rgba(91,66,45,.22);
+    --adm-ease:cubic-bezier(.2,.9,.25,1);
+    background:
+      radial-gradient(60% 40% at 100% 0%,rgba(231,199,175,.42),transparent 70%),
+      radial-gradient(50% 35% at 0% 18%,rgba(201,164,106,.16),transparent 70%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .26 0 0 0 0 .18 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E"),
+      var(--adm-bg);}
+  .adm ::selection{background:#E9D6BF;}
+  .adm button,.adm .kpi,.adm .admin-tab{-webkit-tap-highlight-color:transparent;}
+  .adm button:focus-visible,.adm input:focus-visible,.adm select:focus-visible,.adm summary:focus-visible{outline:2px solid #C9A46A;outline-offset:2px;}
+  /* glass header */
+  .adm .product-head{background:rgba(250,246,240,.72);backdrop-filter:blur(18px) saturate(1.5);-webkit-backdrop-filter:blur(18px) saturate(1.5);border-bottom:1px solid var(--adm-line);box-shadow:0 8px 30px -22px rgba(91,66,45,.5);}
+  .adm .product-head .product-back{width:42px;height:42px;flex:none;border-radius:14px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.7);box-shadow:inset 0 0 0 1px var(--adm-line);transition:transform .2s var(--adm-ease),background .2s;}
+  .adm .product-head .product-back:hover{background:#fff;}
+  .adm .product-head .product-back:active{transform:scale(.92);}
+  .adm-mark{width:44px;height:44px;padding:6px;border-radius:15px;background:linear-gradient(145deg,#fff,#F3E9DC);box-shadow:inset 0 0 0 1px var(--adm-line),0 6px 16px -10px rgba(91,66,45,.5);}
+  .adm-title b{font-size:17px;letter-spacing:-.01em;}
+  .adm-title small{display:flex;align-items:center;gap:6px;}
+  .adm-title small::before{content:"";width:7px;height:7px;border-radius:50%;background:#5E9A63;box-shadow:0 0 0 3px rgba(94,154,99,.18);animation:admLive 2.4s ease-in-out infinite;}
+  @keyframes admLive{50%{box-shadow:0 0 0 6px rgba(94,154,99,0);}}
+  /* desktop/tablet tabs: one segmented track with a raised active segment */
+  @media(min-width:761px){
+    .adm .product-head{padding:14px 20px 12px;}
+    .adm .admin-tabs{margin:2px 0 0;padding:4px;gap:2px;border-radius:15px;background:rgba(91,66,45,.06);box-shadow:inset 0 1px 2px rgba(91,66,45,.08);flex-basis:100%;max-width:max-content;margin-inline:auto;}
+    .adm .admin-tab{border:0;border-radius:11px;padding:9px 16px;font-weight:600;color:#8A7362;transition:background .25s var(--adm-ease),color .2s,box-shadow .25s;}
+    .adm .admin-tab:hover{color:var(--ink);background:rgba(255,255,255,.5);}
+    .adm .admin-tab.active{background:#fff;color:var(--ink);font-weight:800;box-shadow:0 1px 2px rgba(91,66,45,.1),0 6px 14px -8px rgba(91,66,45,.35);}
+  }
+  /* KPI tiles */
+  .kpi-ico{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:13px;margin-bottom:10px;flex:none;}
+  .kpi-ico svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .kpi-ico.k-sales{background:rgba(255,255,255,.1);color:#E8D3AE;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}
+  .kpi-ico.k-confirm{background:#fff;color:#9A6514;box-shadow:0 4px 10px -6px rgba(176,122,30,.6);}
+  .kpi-ico.k-ship{background:#fff;color:#3F5A78;box-shadow:0 4px 10px -6px rgba(63,90,120,.5);}
+  .kpi-ico.k-wait{background:#F3ECE2;color:#8A6A56;}
+  .adm .kpi{position:relative;overflow:hidden;border-radius:20px;padding:16px;box-shadow:var(--adm-shadow);transition:transform .3s var(--adm-ease),box-shadow .3s;}
+  .adm .kpi:not(:disabled):hover{transform:translateY(-2px);box-shadow:var(--adm-shadow),0 18px 34px -20px rgba(91,66,45,.45);}
+  .adm .kpi:not(:disabled):active{transform:scale(.97);}
+  .adm .kpi b{letter-spacing:-.02em;}
+  .adm .kpi:first-child{background:radial-gradient(120% 120% at 100% 0%,#5B4737 0%,#3A2E25 45%,#271E18 100%);box-shadow:0 20px 40px -22px rgba(39,30,24,.8),inset 0 1px 0 rgba(255,255,255,.08);}
+  .adm .kpi:first-child{padding-bottom:52px;}
+  .adm .kpi:first-child b{font-size:30px;background:linear-gradient(180deg,#FFF8EE,#E8D3AE);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .adm .kpi.hot{background:linear-gradient(160deg,#FDF6EA,#F8E9CF);box-shadow:inset 0 0 0 1px rgba(214,174,108,.45),0 12px 26px -18px rgba(176,122,30,.55);}
+  .adm .kpi.hot::after{content:"";position:absolute;top:16px;left:16px;width:8px;height:8px;border-radius:50%;background:#C98A2B;box-shadow:0 0 0 0 rgba(201,138,43,.5);animation:admPing 1.8s ease-out infinite;}
+  @keyframes admPing{to{box-shadow:0 0 0 10px rgba(201,138,43,0);}}
+  .kpi-spark .l{stroke:#E2C08A;stroke-width:2;}
+  .kpi-spark .a{fill:rgba(226,192,138,.14);}
+  /* setting box, search, chips */
+  .adm .pay-mode-box,.adm .admin-order-search{border-radius:16px;box-shadow:var(--adm-shadow);}
+  .adm .admin-order-search{transition:box-shadow .25s;}
+  .adm .admin-order-search:focus{outline:0;box-shadow:0 0 0 1px #D9BE92,0 0 0 5px var(--adm-glow);}
+  .adm .admin-order-chips button{font-weight:600;transition:background .25s var(--adm-ease),color .2s,border-color .2s,transform .15s;}
+  .adm .admin-order-chips button:active{transform:scale(.95);}
+  .adm .admin-order-chips button.on{box-shadow:0 8px 18px -10px rgba(51,40,31,.7);}
+  .adm .admin-order-chips button i{font-style:normal;display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;padding:0 6px;margin-inline-start:7px;border-radius:99px;background:rgba(91,66,45,.08);font-size:11px;font-weight:700;}
+  .adm .admin-order-chips button.on i{background:rgba(255,255,255,.18);}
+  /* cards */
+  .adm .admin-card,.adm #adminProductsList .admin-prod-row,.adm .stat-item,.adm .admin-status-row,.adm .coupon-row,.adm #adminProductForm,.adm #adminCouponForm{border-radius:20px;box-shadow:var(--adm-shadow);}
+  .adm .admin-card{padding:18px;transition:box-shadow .3s,transform .3s var(--adm-ease);}
+  .adm .admin-card[class*="tone-"]::before{inset-block:18px;width:4px;border-radius:0 4px 4px 0;}
+  @media(hover:hover){
+    .adm .admin-card:hover,.adm #adminProductsList .admin-prod-row:hover{box-shadow:var(--adm-shadow),0 22px 40px -26px rgba(91,66,45,.5);}
+    .adm #adminProductsList .admin-prod-row:hover .ap-img img{transform:scale(1.06);}
+  }
+  .adm .ap-img{border-radius:14px;}
+  .adm .ap-img img{transition:transform .5s var(--adm-ease);}
+  .adm .admin-order-items,.adm .ship-box{border-radius:14px;background:linear-gradient(180deg,#FBF7F1,#F7F0E6);}
+  .adm .ao-total b{font-size:19px;letter-spacing:-.01em;}
+  .adm-primary{border-radius:16px!important;box-shadow:0 14px 28px -16px rgba(51,40,31,.8);transition:transform .2s var(--adm-ease),box-shadow .2s;}
+  .adm-primary:active{transform:scale(.98);}
+  .adm .admin-prod-actions button,.adm .ship-box button,.adm .admin-card button{transition:transform .15s,background .2s,box-shadow .2s;}
+  .adm .admin-prod-actions button:active,.adm .ship-box button:active,.adm .admin-card button:active{transform:scale(.95);}
+  /* empty states */
+  .adm .admin-tab-panel [id$="List"] > p:only-child{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:34px 18px;border-radius:20px;border:1.5px dashed rgba(120,92,66,.22);background:rgba(255,255,255,.45);color:var(--coffee-70);font-size:13.5px;line-height:1.9;}
+  .adm .admin-tab-panel [id$="List"] > p:only-child::before{content:"";width:46px;height:46px;border-radius:16px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23A6907E' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z'/%3E%3C/svg%3E") no-repeat center;box-shadow:var(--adm-shadow);}
+  /* skeletons */
+  .sk-wrap{display:flex;flex-direction:column;gap:10px;}
+  .sk-row{display:grid;grid-template-columns:44px 1fr 64px;align-items:center;gap:12px;padding:16px;border-radius:20px;background:rgba(255,255,255,.7);box-shadow:var(--adm-shadow);}
+  .sk-row span{display:flex;flex-direction:column;gap:8px;}
+  .sk-tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .sk-tiles .sk{height:96px;border-radius:20px;}
+  .sk{display:block;border-radius:8px;background:linear-gradient(90deg,#EFE6DA 0%,#F8F2EA 40%,#EFE6DA 80%);background-size:250% 100%;animation:skMove 1.3s linear infinite;}
+  .sk-av{width:44px;height:44px;border-radius:14px;}
+  .sk-l1{height:12px;width:62%;}.sk-l2{height:10px;width:38%;}
+  .sk-pill{height:22px;border-radius:99px;}
+  @keyframes skMove{from{background-position:100% 0;}to{background-position:-150% 0;}}
+  /* entrance cascade */
+  .adm.entering .admin-tab-panel [id$="List"] > *,.adm.entering #adminTodo > *{animation:admRise .55s var(--adm-ease) both;}
+  .adm.entering .admin-tab-panel [id$="List"] > :nth-child(2),.adm.entering #adminTodo > :nth-child(2){animation-delay:.05s;}
+  .adm.entering .admin-tab-panel [id$="List"] > :nth-child(3),.adm.entering #adminTodo > :nth-child(3){animation-delay:.1s;}
+  .adm.entering .admin-tab-panel [id$="List"] > :nth-child(4),.adm.entering #adminTodo > :nth-child(4){animation-delay:.15s;}
+  .adm.entering .admin-tab-panel [id$="List"] > :nth-child(5){animation-delay:.2s;}
+  .adm.entering .admin-tab-panel [id$="List"] > :nth-child(n+6){animation-delay:.25s;}
+  @keyframes admRise{from{opacity:0;transform:translateY(14px) scale(.985);}}
+  /* phones: the bottom bar floats as a glass dock */
+  @media(max-width:760px){
+    .adm .product-head{padding:12px 14px;}
+    .adm-mark{width:40px;height:40px;padding:5px;border-radius:13px;}
+    .adm .product-body{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px));}
+    .adm-nav{background:transparent;border-top:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;padding:8px 18px calc(16px + env(safe-area-inset-bottom,0px) + var(--under));}
+    .adm-nav::before{content:"";position:absolute;inset:4px 12px calc(12px + env(safe-area-inset-bottom,0px) + var(--under));border-radius:26px;background:rgba(252,249,244,.78);backdrop-filter:blur(20px) saturate(1.6);-webkit-backdrop-filter:blur(20px) saturate(1.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 0 0 1px var(--adm-line),0 18px 40px -16px rgba(46,32,22,.45);z-index:-1;}
+    .adm-nav-btn{position:relative;}
+    .adm-nav-ico{width:48px;height:32px;transition:background .35s var(--adm-ease),color .25s,box-shadow .35s;}
+    .adm-nav-btn.active .adm-nav-ico,.adm-nav-btn.on .adm-nav-ico{background:var(--ink);color:#F7F2EA;box-shadow:0 8px 16px -8px rgba(51,40,31,.8);}
+    .adm-nav-btn:active .adm-nav-ico{transform:scale(.9);}
+    .adm-nav-btn small{font-weight:600;}
+    .adm-nav-btn.active small{font-weight:800;}
+    .adm-fab{bottom:calc(100px + env(safe-area-inset-bottom,0px));border-radius:20px;}
+    #adminPage.open ~ .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px));}
+    .adm-more{background:rgba(250,246,240,.9);backdrop-filter:blur(22px) saturate(1.5);-webkit-backdrop-filter:blur(22px) saturate(1.5);border-radius:30px 30px 0 0;}
+    .adm-more-grid button{border-radius:20px;box-shadow:var(--adm-shadow);border-color:transparent;transition:transform .15s;}
+    .adm-more-grid button:active{transform:scale(.95);}
+    .adm-more-grid button span{border-radius:15px;background:linear-gradient(145deg,#FBF4EA,#EFE2CF);}
+    .adm .kpi{padding:14px;border-radius:18px;}
+    .adm .kpi:first-child b{font-size:28px;}
+  }
+  @media(prefers-reduced-motion:reduce){.adm.entering *,.adm .kpi.hot::after,.adm-title small::before,.sk{animation:none!important;}}
+
 
   /* ---------- VPN warnings ---------- */
   .vpn-bar{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 44px;background:#FBEDE9;color:#7A2E26;border-bottom:1px solid #F0CFC8;font-size:13px;line-height:1.8;text-align:center;animation:annDrop .6s cubic-bezier(.2,.8,.2,1) both;}
@@ -4981,7 +5101,7 @@ function relativeTimeFa(dateStr){
 
 async function loadAdminsStatus(){
   const listEl = document.getElementById('adminsStatusList');
-  listEl.innerHTML = '<p>در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data: adminRows, error } = await db.from('admins').select('phone');
   if(error || !adminRows || adminRows.length === 0){
     listEl.innerHTML = '<p>هیچ مدیری ثبت نشده.</p>';
@@ -5064,9 +5184,15 @@ function stopHeartbeat(){
   if(heartbeatInterval){ clearInterval(heartbeatInterval); heartbeatInterval = null; }
 }
 
+// shimmering placeholder rows in the shape of the cards that are about to load
+function admSkel(n = 3, tiles = false){
+  const row = '<div class="sk-row"><i class="sk sk-av"></i><span><i class="sk sk-l1"></i><i class="sk sk-l2"></i></span><i class="sk sk-pill"></i></div>';
+  return '<div class="sk-wrap" aria-label="در حال بارگذاری" role="status">' + (tiles ? '<div class="sk-tiles"><i class="sk"></i><i class="sk"></i></div>' : '') + row.repeat(n) + '</div>';
+}
 function openAdminPage(){
   const first = (currentProfile && currentProfile.full_name || '').trim().split(/\s+/)[0];
   document.getElementById('admToday').textContent = (first ? 'سلام ' + first + ' · ' : '') + new Date().toLocaleDateString('fa-IR', { weekday: 'long', day: 'numeric', month: 'long' });
+  admCounted = false;
   adminPage.classList.add('open');
   adminPage.scrollTop = 0;
   switchAdminTab('orders');
@@ -5076,6 +5202,9 @@ function switchAdminTab(tab){
   const moreBtn = document.getElementById('admMoreBtn');
   if(moreBtn) moreBtn.classList.toggle('on', ['reviews', 'coupons', 'announce', 'logs', 'admins'].includes(tab));
   document.getElementById('adminPage').classList.toggle('on-products', tab === 'products');
+  // lists cascade in when a section opens, not on every search keystroke
+  const ap = document.getElementById('adminPage');
+  ap.classList.add('entering'); clearTimeout(ap._enterT); ap._enterT = setTimeout(() => ap.classList.remove('entering'), 1600);
   if(document.getElementById('adminPage').classList.contains('open')) document.getElementById('adminPage').scrollTo({ top: 0 });
   document.querySelectorAll('.admin-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
   document.getElementById('adminTabOrders').style.display = tab === 'orders' ? 'block' : 'none';
@@ -5122,7 +5251,7 @@ const TODO_SHIP = ['تایید شده'];                // confirmed: pack it an
 
 async function loadAdminOrders(){
   const listEl = document.getElementById('adminOrdersList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   syncPayModeRadios();
   const { data: rows, error } = await db.from('orders').select('*').order('created_at', { ascending: false });
   if(error){ listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">خواندن سفارش‌ها ناموفق بود.</p>'; return; }
@@ -5156,13 +5285,30 @@ function renderAdminTodo(rows){
   const waiting = adminOrdersCache.filter(o => o.status === PAY_PENDING).length;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const sold = adminOrdersCache.filter(o => new Date(o.created_at) >= today && o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
-  const tile = (key, n, text, hot) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><b>${toFa(n)}</b><span>${text}</span></button>`;
+  const KICO = { sales: '<path d="M3 7h18v12H3z"/><path d="M16 13h2M3 10h18"/>', confirm: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    ship: '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/>', wait: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>' };
+  const tile = (key, n, text, hot, ico) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><i class="kpi-ico k-${ico}"><svg viewBox="0 0 24 24" aria-hidden="true">${KICO[ico]}</svg></i><b data-n="${n}">${toFa(n)}</b><span>${text}</span></button>`;
   const spark = admSalesSpark();
   document.getElementById('adminTodo').innerHTML =
-    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`).replace('</button>', `${spark.delta}${spark.svg}</button>`)
-    + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true)
-    + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true)
-    + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری');
+    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`, false, 'sales').replace('</button>', `${spark.delta}${spark.svg}</button>`)
+    + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true, 'confirm')
+    + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true, 'ship')
+    + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری', false, 'wait');
+  admCountUp();
+}
+// the KPI figures count up once each time the panel opens
+let admCounted = false;
+function admCountUp(){
+  if(admCounted || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  admCounted = true;
+  const els = [...document.querySelectorAll('#adminTodo .kpi b[data-n]')];
+  const t0 = performance.now(), D = 900;
+  const step = now => {
+    const k = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - k, 3);
+    els.forEach(el => { el.textContent = toFa(Math.round(+el.dataset.n * e)); });
+    if(k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
 }
 
 function admMore(open){
@@ -5233,7 +5379,7 @@ function renderAdminOrders(){
     ...ORDER_STATUSES.filter(st => counts[st]).map(st => [st, st, counts[st]])];
   if(!chips.some(c => c[0] === adminOrderFilter)) adminOrderFilter = 'all';
   document.getElementById('adminOrderChips').innerHTML = chips.map(([key, label, n]) =>
-    `<button type="button" class="${key === adminOrderFilter ? 'on' : ''}" onclick="setAdminOrderFilter(${escapeHtml(JSON.stringify(key))})">${label} (${toFa(n)})</button>`).join('');
+    `<button type="button" class="${key === adminOrderFilter ? 'on' : ''}" onclick="setAdminOrderFilter(${escapeHtml(JSON.stringify(key))})">${label}<i>${toFa(n)}</i></button>`).join('');
 
   const q = document.getElementById('adminOrderSearch').value.trim();
   const data = visible.filter(o =>
@@ -5373,7 +5519,7 @@ let adminProductsCache = [];
 let adminProductCat = 'all';
 async function loadAdminProducts(){
   const listEl = document.getElementById('adminProductsList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data, error } = await db.from('products').select('*').order('id', { ascending: false });
   if(error || !data){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">مشکلی تو بارگذاری محصولات پیش اومد.</p>';
@@ -5755,7 +5901,7 @@ async function deleteAdminProduct(id){
 
 async function loadAdminReviews(){
   const listEl = document.getElementById('adminReviewsList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data, error } = await db.from('reviews').select('*, products(name)').order('created_at', { ascending: false });
   if(error || !data){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">مشکلی تو بارگذاری نظرات پیش اومد.</p>';
@@ -5842,7 +5988,7 @@ async function loadRecentStats(orders, now){
 async function loadAdminStats(){
   loadAdminAnalytics();
   const box = document.getElementById('adminStatsBox');
-  box.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  box.innerHTML = admSkel(2, true);
   const { data: allOrders } = await db.from('orders').select('total, created_at, items, status, pay_sandbox');
   // cancelled, still-unpaid and test-gateway orders are not sales
   const orders = (allOrders || []).filter(o => o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
@@ -5914,7 +6060,7 @@ async function loadAdminStats(){
 /* ================= مشتری‌ها ================= */
 async function loadAdminCustomers(){
   const listEl = document.getElementById('adminCustomersList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data: profilesData, error } = await db.from('profiles').select('id, full_name, phone, blocked').order('updated_at', { ascending: false });
   if(error || !profilesData || profilesData.length === 0){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز مشتری‌ای ثبت‌نام نکرده.</p>';
@@ -6030,7 +6176,7 @@ document.getElementById('couponSaveBtn').addEventListener('click', async () => {
 });
 async function loadAdminCoupons(){
   const listEl = document.getElementById('adminCouponsList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data, error } = await db.from('coupons').select('*').order('created_at', { ascending: false });
   if(error || !data || data.length === 0){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز کد تخفیفی ساخته نشده.</p>';
@@ -6151,7 +6297,7 @@ async function logAdminAction(action, details){
 }
 async function loadAdminLogs(){
   const listEl = document.getElementById('adminLogsList');
-  listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">در حال بارگذاری...</p>';
+  listEl.innerHTML = admSkel();
   const { data, error } = await db.from('admin_logs').select('*').order('created_at', { ascending: false }).limit(100);
   if(error || !data || data.length === 0){
     listEl.innerHTML = '<p style="font-size:13px;color:var(--coffee-70);">هنوز فعالیتی ثبت نشده.</p>';
