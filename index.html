@@ -659,6 +659,68 @@
   .adm .admin-tabs::-webkit-scrollbar{display:none;}
   .adm .admin-tab{flex:none;padding:11px 12px 12px;font-size:13.5px;border-bottom:2.5px solid transparent;transition:color .2s,border-color .2s;}
   .adm .admin-tab.active{color:var(--ink);border-color:var(--ink);}
+  /* ---- admin, «Nava» layout in Hana colours: section title, icon nav, KPI icons, compact order rows ---- */
+  .adm-top{margin:2px 0 16px;}
+  .adm-top h1{font-size:22px;font-weight:800;color:var(--ink);line-height:1.4;margin:0;}
+  .adm-top p{font-size:12.5px;color:var(--coffee-70);margin:2px 0 0;}
+  #adminTabs .at-ico{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  #adminTabs .admin-tab{display:inline-flex;align-items:center;gap:7px;}
+  .adm-grp,.adm-side-shop{display:none;}
+  .at-badge{font-style:normal;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:#B07A1E;color:#fff;font-size:11px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;margin-inline-start:auto;}
+  .at-badge[hidden]{display:none;}
+  .kpi-ico{display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:11px;margin-bottom:8px;flex:none;}
+  .kpi-ico svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .kpi-ico.k-sales{background:rgba(255,255,255,.12);color:#F7F2EA;}
+  .kpi-ico.k-confirm{background:#FBF0DC;color:#8A5A12;}
+  .kpi-ico.k-ship{background:#E8EDF3;color:#3F5A78;}
+  .kpi-ico.k-wait{background:#F2EDE4;color:#8A6A56;}
+  .kpi.hot .kpi-ico.k-confirm{background:#fff;}
+  /* orders: one compact row each; tap to open the full card */
+  .ao{position:relative;background:var(--adm-card,#fff);border-radius:14px;box-shadow:var(--adm-shadow);margin-bottom:8px;overflow:hidden;}
+  .ao::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:4px;background:var(--tone-fg);z-index:1;}
+  .ao-sum{display:grid;grid-template-columns:40px minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;list-style:none;}
+  .ao-sum::-webkit-details-marker{display:none;}
+  .ao-sum:hover{background:#FCFAF6;}
+  .ao[open] .ao-sum{border-bottom:1px dashed var(--adm-line);}
+  .ao-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;background:hsl(var(--h) 45% 92%);color:hsl(var(--h) 38% 34%);}
+  .ao-main{min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .ao-main b{font-size:14.5px;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ao-main small{font-size:12px;color:var(--coffee-70);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ao-end{display:flex;flex-direction:column;align-items:flex-end;gap:3px;}
+  .ao-pill{font-style:normal;font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:99px;background:var(--tone-bg);color:var(--tone-fg);white-space:nowrap;}
+  .ao-pill::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-inline-end:5px;vertical-align:middle;}
+  .ao-end b{font-size:13.5px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .ao-end b small{font-size:11px;font-weight:500;color:var(--coffee-70);}
+  .ao-when{font-style:normal;font-size:11px;color:var(--coffee-70);white-space:nowrap;}
+  .adm .ao .ao-body{box-shadow:none;border-radius:0;margin:0;background:none;padding:12px 16px 14px;}
+  .adm .ao .ao-body::before{display:none;}
+  .ao-body .ao-who{display:none;}
+  .ao-body .admin-card-top{justify-content:flex-start;}
+  @media(max-width:420px){.ao-when{display:none;}.ao-sum{gap:10px;padding:11px 12px;}}
+  /* desktop: navigation becomes a sidebar on the right */
+  @media(min-width:1000px){
+    .adm.open{display:grid;grid-template-columns:270px minmax(0,1fr);align-items:start;}
+    .adm .product-head{grid-column:1;grid-row:1 / span 2;position:sticky;top:0;height:100vh;height:100dvh;display:flex;flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:0;padding:20px 14px;border-bottom:0;border-inline-end:1px solid var(--adm-line);background:rgba(251,248,243,.96);overflow-y:auto;}
+    .adm .product-head .product-back{display:none;}
+    .adm .product-head .adm-title{flex:none;padding:4px 8px 18px;}
+    .adm #adminTabs{display:flex;flex-direction:column;flex:1;gap:2px;margin:0;padding:0;overflow:visible;}
+    .adm-grp{display:block;font-size:11.5px;font-weight:700;color:#A6907E;padding:14px 12px 6px;}
+    .adm-grp:first-child{padding-top:2px;}
+    .adm #adminTabs .admin-tab{display:flex;width:100%;gap:11px;padding:10px 12px;border:0;border-radius:11px;font-size:14px;color:var(--coffee);text-align:start;transition:background .15s,color .15s;}
+    .adm #adminTabs .admin-tab:hover{background:#F2EDE4;}
+    .adm #adminTabs .admin-tab.active{background:var(--ink);color:#F7F2EA;}
+    .adm #adminTabs .admin-tab.active .at-badge{background:#F7F2EA;color:var(--ink);}
+    .adm-side-shop{display:flex;align-items:center;gap:12px;margin-top:auto;padding:14px;border:0;border-radius:14px;background:linear-gradient(140deg,#4A3B30,var(--ink));color:#F7F2EA;font:inherit;text-align:start;cursor:pointer;box-shadow:0 10px 24px -12px rgba(58,47,38,.6);}
+    .adm-side-shop svg{width:22px;height:22px;flex:none;fill:none;stroke:#E2C08A;stroke-width:1.7;}
+    .adm-side-shop b{display:block;font-size:13.5px;}
+    .adm-side-shop small{display:block;font-size:11.5px;color:#CDBBA6;}
+    .adm .product-body{grid-column:2;max-width:1180px!important;width:100%;margin:0 auto;padding:28px 36px 60px;}
+    .adm-top h1{font-size:26px;}
+    .adm #adminProductsList{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;}
+    .adm #adminProductsList .admin-prod-row{grid-template-columns:1fr;align-items:stretch;margin:0;padding:10px;gap:10px;}
+    .adm #adminProductsList .ap-img{width:100%;height:auto;aspect-ratio:4/3;border-radius:11px;}
+    .adm #adminProductsList .admin-prod-actions{display:flex;flex-direction:row;gap:8px;}
+  }
   .adm .product-body{padding:18px 16px 60px;}
   .adm .admin-tab-panel{animation:admIn .25s ease;}
   @keyframes admIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
@@ -2168,18 +2230,23 @@
       <div><b>پنل مدیریت</b><small id="admToday"></small></div>
     </div>
     <div class="admin-tabs" id="adminTabs">
-      <button class="admin-tab active" data-tab="orders">سفارش‌ها</button>
-      <button class="admin-tab" data-tab="products">محصولات</button>
-      <button class="admin-tab" data-tab="stats">آمار</button>
-      <button class="admin-tab" data-tab="reviews">نظرات</button>
-      <button class="admin-tab" data-tab="customers">مشتری‌ها</button>
-      <button class="admin-tab" data-tab="coupons">کدهای تخفیف</button>
-      <button class="admin-tab" data-tab="logs">لاگ فعالیت</button>
-      <button class="admin-tab" data-tab="admins">مدیرها</button>
-      <button class="admin-tab" data-tab="announce">اطلاعیه سایت</button>
+      <span class="adm-grp">فروشگاه</span>
+      <button class="admin-tab active" data-tab="orders"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12"/></svg><span>سفارش‌ها</span><i class="at-badge" id="sideOrdersBadge" hidden></i></button>
+      <button class="admin-tab" data-tab="products"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5c.8 5.4 3.4 8 8.8 8.8-5.4.8-8 3.4-8.8 8.8-.8-5.4-3.4-8-8.8-8.8 5.4-.8 8-3.4 8.8-8.8z"/></svg><span>محصولات</span></button>
+      <button class="admin-tab" data-tab="stats"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>آمار</span></button>
+      <span class="adm-grp">مشتری‌ها</span>
+      <button class="admin-tab" data-tab="customers"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>مشتری‌ها</span></button>
+      <button class="admin-tab" data-tab="reviews"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>نظرات</span></button>
+      <button class="admin-tab" data-tab="coupons"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/></svg><span>کدهای تخفیف</span></button>
+      <span class="adm-grp">تنظیمات</span>
+      <button class="admin-tab" data-tab="announce"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg><span>اطلاعیه سایت</span></button>
+      <button class="admin-tab" data-tab="admins"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/></svg><span>مدیرها</span></button>
+      <button class="admin-tab" data-tab="logs"><svg class="at-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg><span>لاگ فعالیت</span></button>
+      <button type="button" class="adm-side-shop" onclick="document.getElementById('adminBackBtn').click()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l-1 12H7L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span><b>مشاهده‌ی فروشگاه</b><small>برگشت به سایت حنا گالری</small></span></button>
     </div>
   </div>
   <div class="product-body" style="max-width:900px;">
+    <div class="adm-top"><h1 id="admSecTitle">سفارش‌ها</h1><p id="admSecSub">پیگیری، تایید و ارسال سفارش‌ها</p></div>
 
     <div id="adminTabOrders" class="admin-tab-panel">
       <div id="adminTodo" class="admin-todo"></div>
@@ -5127,7 +5194,15 @@ function openAdminPage(){
   switchAdminTab('orders');
 }
 
+const ADM_SECTIONS = {
+  orders: ['سفارش‌ها', 'پیگیری، تایید و ارسال سفارش‌ها'], products: ['محصولات', 'کاتالوگ، قیمت و موجودی'],
+  stats: ['آمار', 'بازدید، فروش و منابع ورودی'], customers: ['مشتری‌ها', 'خریدارها و سفارش‌هاشون'],
+  reviews: ['نظرات', 'تایید و مدیریت نظر خریدارها'], coupons: ['کدهای تخفیف', 'ساخت و مدیریت کدهای تخفیف'],
+  announce: ['اطلاعیه سایت', 'نوار اطلاعیه‌ی بالای سایت'], admins: ['مدیرها', 'وضعیت و زمان آنلاین بودن مدیرها'], logs: ['لاگ فعالیت', 'کارهایی که مدیرها انجام دادن'],
+};
 function switchAdminTab(tab){
+  const sec = ADM_SECTIONS[tab];
+  if(sec){ document.getElementById('admSecTitle').textContent = sec[0]; document.getElementById('admSecSub').textContent = sec[1]; }
   const moreBtn = document.getElementById('admMoreBtn');
   if(moreBtn) moreBtn.classList.toggle('on', ['reviews', 'coupons', 'announce', 'logs', 'admins'].includes(tab));
   document.getElementById('adminPage').classList.toggle('on-products', tab === 'products');
@@ -5211,13 +5286,17 @@ function renderAdminTodo(rows){
   const waiting = adminOrdersCache.filter(o => o.status === PAY_PENDING).length;
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const sold = adminOrdersCache.filter(o => new Date(o.created_at) >= today && o.status !== 'لغو شده' && o.status !== PAY_PENDING && !o.pay_sandbox);
-  const tile = (key, n, text, hot) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><b>${toFa(n)}</b><span>${text}</span></button>`;
+  const KICO = { sales: '<path d="M3 7h18v12H3z"/><path d="M16 13h2M3 10h18"/>', confirm: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    ship: '<path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"/><circle cx="7" cy="17.5" r="1.6"/><circle cx="17.5" cy="17.5" r="1.6"/>', wait: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>' };
+  const tile = (key, n, text, hot, ico) => `<button type="button" class="kpi${hot && n ? ' hot' : ''}" ${key ? `onclick="${key}"` : 'disabled'}><i class="kpi-ico k-${ico}"><svg viewBox="0 0 24 24" aria-hidden="true">${KICO[ico]}</svg></i><b>${toFa(n)}</b><span>${text}</span></button>`;
   const spark = admSalesSpark();
   document.getElementById('adminTodo').innerHTML =
-    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`).replace('</button>', `${spark.delta}${spark.svg}</button>`)
-    + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true)
-    + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true)
-    + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری');
+    tile('', sold.reduce((a, o) => a + (o.total || 0), 0), `فروش امروز به تومان، از ${toFa(sold.length)} سفارش`, false, 'sales').replace('</button>', `${spark.delta}${spark.svg}</button>`)
+    + tile("setAdminOrderFilter('todo-confirm')", confirm, 'منتظر تایید', true, 'confirm')
+    + tile("setAdminOrderFilter('todo-ship')", ship, 'منتظر ارسال', true, 'ship')
+    + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری', false, 'wait');
+  const sb = document.getElementById('sideOrdersBadge');
+  if(sb){ sb.textContent = toFa(confirm + ship); sb.hidden = !(confirm + ship); }
 }
 
 function admMore(open){
@@ -5316,7 +5395,16 @@ function renderAdminOrders(){
           </div>
         </div>`;
     }).join('');
-    return `<div class="admin-card tone-${tone}">
+    const first = (o.items || [])[0];
+    const more = (o.items || []).length - 1;
+    const nm = (o.customer_name || '-').trim();
+    return `<details class="ao tone-${tone}" data-id="${o.id}" ${adminOpenOrders.has(String(o.id)) ? 'open' : ''}>
+      <summary class="ao-sum">
+        <span class="ao-av" style="--h:${[28, 14, 40, 352, 200][nm.charCodeAt(0) % 5]}">${escapeHtml(nm.charAt(0))}</span>
+        <span class="ao-main"><b>${escapeHtml(nm)}</b><small><span class="ao-code">#${escapeHtml(o.tracking_code || o.id)}</span> · ${first ? escapeHtml(first.name) + (more > 0 ? ` و ${toFa(more)} مورد دیگه` : '') : ''}</small></span>
+        <span class="ao-end"><em class="ao-pill">${escapeHtml(o.status)}</em><b>${toFa(o.total)}<small> تومان</small></b><i class="ao-when">${admWhen(o.created_at)}</i></span>
+      </summary>
+      <div class="admin-card ao-body tone-${tone}">
       <div class="admin-card-top">
         <div class="ao-who"><b>${escapeHtml(o.customer_name) || '-'}</b><span>${admWhen(o.created_at)}${o.tracking_code ? ` — کد <span class="ao-code">${escapeHtml(o.tracking_code)}</span>` : ''}</span></div>
         <select class="admin-status-select tone-${tone}" onchange="updateOrderStatus('${o.id}', this.value)">${statusOptions}</select>
@@ -5337,9 +5425,15 @@ function renderAdminOrders(){
         <span class="ship-note">مشتری کد رو در «سفارش‌های من» می‌بینه.</span>
       </div>`}
       <button class="adm-danger-link" onclick="deleteAdminOrder(${o.id})">حذف سفارش</button>
-    </div>`;
+    </div></details>`;
   }).join('');
 }
+// which orders are expanded survives a re-render (new order, status change, search)
+const adminOpenOrders = new Set();
+document.getElementById('adminOrdersList').addEventListener('toggle', e => {
+  const d = e.target.closest && e.target.closest('details.ao');
+  if(d) d.open ? adminOpenOrders.add(d.dataset.id) : adminOpenOrders.delete(d.dataset.id);
+}, true);
 document.getElementById('adminOrderSearch').addEventListener('input', renderAdminOrders);
 
 function isAbandonedOrder(o){
