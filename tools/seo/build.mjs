@@ -64,9 +64,9 @@ function normalize(p) {
   };
 }
 
-// as stated on the store (ارسال، مرجوعی و نگهداری): returns within 48 hours of delivery when the item doesn't match the order
+// as stated on the terms page (/terms/): 7 working days to withdraw after delivery, per articles 37-38 of the e-commerce law
 const RETURNS = { '@type': 'MerchantReturnPolicy', applicableCountry: 'IR', returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-  merchantReturnDays: 2, returnMethod: 'https://schema.org/ReturnByMail', merchantReturnLink: SITE + '/#shipping' };
+  merchantReturnDays: 7, returnMethod: 'https://schema.org/ReturnByMail', merchantReturnLink: SITE + '/terms/#withdrawal' };
 
 const crumbLd = (items) => ({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: items.map((it, i) => ({ '@type': 'ListItem', position: i + 1, name: it.name, item: it.url })) });
 
@@ -178,6 +178,7 @@ const inStock = [...products].sort((a, b) => (b.stock > 0) - (a.stock > 0) || b.
 const pics = (list, n) => list.flatMap((p) => p.images.slice(0, 1)).slice(0, n);
 const urls = [
   { loc: SITE + '/', mod: latest, pr: '1.0', imgs: pics(inStock, 20) },
+  { loc: SITE + '/terms/', mod: '2026-10-31', pr: '0.3', imgs: [] },
   ...cats.map((k) => ({ loc: `${SITE}/c/${k}/`, mod: latest, pr: '0.8', imgs: pics(inStock.filter((p) => p.cat === k), 20) })),
   ...products.map((p) => ({ loc: `${SITE}/p/${p.id}/`, mod: p.updated, pr: '0.6', imgs: p.images.slice(0, 10) })),
 ];
