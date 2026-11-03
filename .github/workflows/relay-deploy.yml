@@ -1,0 +1,37 @@
+name: Deploy the Supabase relay to Liara
+
+# proxy/ is a small Node server on Liara (Iran) that passes the store's requests on to Supabase,
+# so visitors in Iran without a VPN still reach products, photos, sign-in and payments.
+# Needs, in Settings → Secrets and variables → Actions:
+#   secret   LIARA_API_TOKEN  (Liara console → API)
+#   variable LIARA_APP        (the app's name on Liara, e.g. hana-api)
+
+on:
+  push:
+    branches: [main]
+    paths: ['proxy/**', '.github/workflows/relay-deploy.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: relay-deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Deploy proxy/ to Liara
+        env:
+          LIARA_TOKEN: ${{ secrets.LIARA_API_TOKEN }}
+          LIARA_APP: ${{ vars.LIARA_APP }}
+        run: |
+          if [ -z "$LIARA_TOKEN" ] || [ -z "$LIARA_APP" ]; then
+            echo "::notice::LIARA_API_TOKEN secret or LIARA_APP variable not set yet; skipping the deploy."
+            exit 0
+          fi
+          npm install -g @liara/cli@9
+          liara deploy --path proxy --app "$LIARA_APP" --platform node --port 3000 --api-token "$LIARA_TOKEN" --no-app-logs

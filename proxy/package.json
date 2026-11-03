@@ -1,0 +1,9 @@
+{
+  "name": "hana-api-relay",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Iranian relay in front of the Hana Gallery Supabase project",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}
