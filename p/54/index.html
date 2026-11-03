@@ -69,7 +69,7 @@
 <script>
 // covers the store until the site is fully back; works without the database. Turn off with SITE_NOTICE = false.
 (function(){
-  var SITE_NOTICE = true;
+  var SITE_NOTICE = false;
   if(!SITE_NOTICE || /[?&]preview\b/.test(location.search)) return; // ?preview: check the store behind the notice
   document.getElementById('siteNotice').hidden = false;
   document.documentElement.style.overflow = 'hidden';
