@@ -31,7 +31,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="https://hanagalleryy.ir/">
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
-<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
 <style>
   :root{
     --cream:#F7F2EA;
@@ -1732,7 +1733,6 @@
   ]
 }
 </script>
-<script src="/vendor/supabase-2.118.0.js"></script>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -2632,6 +2632,8 @@
   <div class="product-body" id="orderDetailBody"></div>
 </div>
 
+<!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
+<script src="/vendor/supabase-2.118.0.js"></script>
 <script>
 const SUPABASE_URL = 'https://goykyskctygnciwttfqj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
