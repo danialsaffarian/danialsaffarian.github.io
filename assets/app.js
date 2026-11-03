@@ -7,10 +7,20 @@ const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
 let useRelay = true;
 const viaRelay = u => (useRelay && typeof u === 'string') ? u.replace(SUPABASE_DIRECT, SUPABASE_RELAY) : u;
 const toDirect = u => typeof u === 'string' ? u.replace(SUPABASE_RELAY, SUPABASE_DIRECT) : u;
+// pick the faster road once per visit: Supabase directly (abroad, or wherever it isn't blocked) or the Iranian relay.
+// Both tiny health checks race; whichever answers first wins. If neither answers in 4 s the relay is used.
+const routeReady = (async () => {
+  const ok = (url, opts) => fetch(url, { cache: 'no-store', ...opts }).then(r => { if(!r.ok) throw 0; return true; });
+  const direct = ok(SUPABASE_DIRECT + '/auth/v1/health', { headers: { apikey: SUPABASE_KEY } }).then(() => false);
+  const relay = ok(SUPABASE_RELAY + '/__relay/health').then(() => true);
+  const timeout = new Promise(res => setTimeout(() => res(true), 4000));
+  try{ useRelay = await Promise.race([Promise.any([direct, relay]), timeout]); }catch(e){ useRelay = true; }
+})();
 async function relayFetch(input, init){
   let url = typeof input === 'string' ? input : input.url;
-  const direct = () => SUPABASE_DIRECT + url.slice(SUPABASE_RELAY.length);
   if(!url.startsWith(SUPABASE_RELAY)) return fetch(input, init);
+  await routeReady;
+  const direct = () => SUPABASE_DIRECT + url.slice(SUPABASE_RELAY.length);
   if(!useRelay) return fetch(direct(), init);
   try{
     const r = await fetch(url, init);

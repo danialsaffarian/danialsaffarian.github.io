@@ -20,6 +20,10 @@ async function handle(request) {
   if (url.pathname === '/__relay/health') return new Response('ok', { headers: { 'content-type': 'text/plain', ...cors(request) } });
   const headers = new Headers(request.headers);
   for (const h of ['host', 'connection', 'keep-alive', 'transfer-encoding', 'upgrade', 'origin', 'referer']) headers.delete(h);
+  // the visitor's own address, for the «geo» check (Supabase otherwise sees this edge server's address)
+  const ip = request.headers.get('ar-real-ip') || request.headers.get('x-real-ip') || request.headers.get('true-client-ip')
+    || (request.headers.get('x-forwarded-for') || '').split(',')[0].trim();
+  if (ip) headers.set('x-hg-client-ip', ip);
   const init = { method: request.method, headers, redirect: 'manual' };
   if (request.method !== 'GET' && request.method !== 'HEAD') init.body = await request.arrayBuffer();
   try {
