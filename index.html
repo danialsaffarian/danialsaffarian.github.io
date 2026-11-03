@@ -1778,21 +1778,16 @@
     <div class="sn-bar" aria-hidden="true"><i></i></div>
     <div class="sn-actions">
       <a class="sn-ig" href="https://instagram.com/hana_gallery_____" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>سفارش از دایرکت اینستاگرام</a>
-      <button type="button" class="sn-close" id="snClose">متوجه شدم</button>
     </div>
   </div>
 </div>
 <script>
-// shown once per visit while SITE_NOTICE is on; works without the database
+// covers the store until the site is fully back; works without the database. Turn off with SITE_NOTICE = false.
 (function(){
   var SITE_NOTICE = true;
   if(!SITE_NOTICE) return;
-  try{ if(sessionStorage.getItem('hg-notice-seen')) return; }catch(e){}
-  var n = document.getElementById('siteNotice');
-  n.hidden = false;
-  function close(){ n.hidden = true; try{ sessionStorage.setItem('hg-notice-seen', '1'); }catch(e){} }
-  document.getElementById('snClose').addEventListener('click', close);
-  n.addEventListener('click', function(e){ if(e.target === n) close(); });
+  document.getElementById('siteNotice').hidden = false;
+  document.documentElement.style.overflow = 'hidden';
 })();
 </script>
 
