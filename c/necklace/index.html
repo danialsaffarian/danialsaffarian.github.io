@@ -29,7 +29,8 @@
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
 <link rel="canonical" href="https://hanagalleryy.ir/c/necklace/">
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
-<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
 <style>
   :root{
     --cream:#F7F2EA;
@@ -1669,7 +1670,6 @@
     .vpn-modal .auth-grip{display:block;margin:-14px auto 14px;}
   }
 </style>
-<script src="/vendor/supabase-2.118.0.js"></script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"گردنبندها دست‌ساز حنا گالری","url":"https://hanagalleryy.ir/c/necklace/","description":"گردنبندهای دست‌ساز حنا گالری؛ از چوکرهای منجوقی و صدفی تا گردنبندهای مروارید و پلاک استیل با رنگ ثابت.","mainEntity":{"@type":"ItemList","numberOfItems":31,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://hanagalleryy.ir/p/86/","name":"گردنبند نگین نامرئی"},{"@type":"ListItem","position":2,"url":"https://hanagalleryy.ir/p/84/","name":"گردنبند سگ بادکنکی استیل"},{"@type":"ListItem","position":3,"url":"https://hanagalleryy.ir/p/83/","name":"گردنبند پاپیون"},{"@type":"ListItem","position":4,"url":"https://hanagalleryy.ir/p/82/","name":"گردنبند نگین قلب"},{"@type":"ListItem","position":5,"url":"https://hanagalleryy.ir/p/67/","name":"ست گردنبند قلب"},{"@type":"ListItem","position":6,"url":"https://hanagalleryy.ir/p/66/","name":"چوکر ستاره"},{"@type":"ListItem","position":7,"url":"https://hanagalleryy.ir/p/65/","name":"گردنبند بابونه"},{"@type":"ListItem","position":8,"url":"https://hanagalleryy.ir/p/63/","name":"گردنبند پاییزی"},{"@type":"ListItem","position":9,"url":"https://hanagalleryy.ir/p/62/","name":"گردنبند فلفل با نخ"},{"@type":"ListItem","position":10,"url":"https://hanagalleryy.ir/p/61/","name":"گردنبند فیل با نخ"},{"@type":"ListItem","position":11,"url":"https://hanagalleryy.ir/p/60/","name":"دم وال با نخ"},{"@type":"ListItem","position":12,"url":"https://hanagalleryy.ir/p/57/","name":"گردنبند منجوق قرمز و ستاره"},{"@type":"ListItem","position":13,"url":"https://hanagalleryy.ir/p/56/","name":"ست گردنبند زرد آبی"},{"@type":"ListItem","position":14,"url":"https://hanagalleryy.ir/p/54/","name":"گردنبند دم وال"},{"@type":"ListItem","position":15,"url":"https://hanagalleryy.ir/p/53/","name":"گردنبند سرخابی"},{"@type":"ListItem","position":16,"url":"https://hanagalleryy.ir/p/52/","name":"گردنبند ست واشری صورتی"},{"@type":"ListItem","position":17,"url":"https://hanagalleryy.ir/p/47/","name":"ست صورتی گردنبند"},{"@type":"ListItem","position":18,"url":"https://hanagalleryy.ir/p/44/","name":"پک گردنبند نارنجی"},{"@type":"ListItem","position":19,"url":"https://hanagalleryy.ir/p/38/","name":"گردنبند منجوق قرمز"},{"@type":"ListItem","position":20,"url":"https://hanagalleryy.ir/p/37/","name":"چوکر صدف"},{"@type":"ListItem","position":21,"url":"https://hanagalleryy.ir/p/29/","name":"گردنبند صدف واشری"},{"@type":"ListItem","position":22,"url":"https://hanagalleryy.ir/p/28/","name":"گردنبند نامرئی ستاره"},{"@type":"ListItem","position":23,"url":"https://hanagalleryy.ir/p/27/","name":"گردنبند موز"},{"@type":"ListItem","position":24,"url":"https://hanagalleryy.ir/p/26/","name":"گردنبند فلفل"},{"@type":"ListItem","position":25,"url":"https://hanagalleryy.ir/p/25/","name":"گردنبند میوه ای"},{"@type":"ListItem","position":26,"url":"https://hanagalleryy.ir/p/21/","name":"گردنبند قلب"},{"@type":"ListItem","position":27,"url":"https://hanagalleryy.ir/p/16/","name":"گردنبند دریایی استیل"},{"@type":"ListItem","position":28,"url":"https://hanagalleryy.ir/p/13/","name":"گردنبند چشم"},{"@type":"ListItem","position":29,"url":"https://hanagalleryy.ir/p/11/","name":"گردنبند لیمو"},{"@type":"ListItem","position":30,"url":"https://hanagalleryy.ir/p/2/","name":"گردنبند قلب و مروارید"},{"@type":"ListItem","position":31,"url":"https://hanagalleryy.ir/p/30/","name":"گردنبند ماهی"}]}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"حنا گالری","item":"https://hanagalleryy.ir/"},{"@type":"ListItem","position":2,"name":"گردنبندها","item":"https://hanagalleryy.ir/c/necklace/"}]}</script>
 </head>
@@ -2576,6 +2576,8 @@
   <div class="product-body" id="orderDetailBody"></div>
 </div>
 
+<!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
+<script src="/vendor/supabase-2.118.0.js"></script>
 <script>
 const SUPABASE_URL = 'https://goykyskctygnciwttfqj.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
