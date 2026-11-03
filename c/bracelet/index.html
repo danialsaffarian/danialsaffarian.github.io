@@ -1725,7 +1725,7 @@
 // covers the store until the site is fully back; works without the database. Turn off with SITE_NOTICE = false.
 (function(){
   var SITE_NOTICE = true;
-  if(!SITE_NOTICE) return;
+  if(!SITE_NOTICE || /[?&]preview\b/.test(location.search)) return; // ?preview: check the store behind the notice
   document.getElementById('siteNotice').hidden = false;
   document.documentElement.style.overflow = 'hidden';
 })();
@@ -2622,9 +2622,31 @@
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
 <script>
-const SUPABASE_URL = 'https://goykyskctygnciwttfqj.supabase.co';
+// supabase.co is blocked in Iran: requests go through our relay on Arvan's edge (api.hanagalleryy.ir, proxy/edge.js);
+// if the relay can't be reached this visit falls back to Supabase directly, so VPN users are never worse off
+const SUPABASE_DIRECT = 'https://goykyskctygnciwttfqj.supabase.co';
+const SUPABASE_RELAY = 'https://api.hanagalleryy.ir';
+const SUPABASE_URL = SUPABASE_RELAY;
 const SUPABASE_KEY = 'sb_publishable_ZUgUSquwnM1YNMsL6OKgQQ_lS5EmsuG';
+let useRelay = true;
+const viaRelay = u => (useRelay && typeof u === 'string') ? u.replace(SUPABASE_DIRECT, SUPABASE_RELAY) : u;
+const toDirect = u => typeof u === 'string' ? u.replace(SUPABASE_RELAY, SUPABASE_DIRECT) : u;
+async function relayFetch(input, init){
+  let url = typeof input === 'string' ? input : input.url;
+  const direct = () => SUPABASE_DIRECT + url.slice(SUPABASE_RELAY.length);
+  if(!url.startsWith(SUPABASE_RELAY)) return fetch(input, init);
+  if(!useRelay) return fetch(direct(), init);
+  try{
+    const r = await fetch(url, init);
+    if(r.status !== 502) return r;
+    const t = await r.clone().text();
+    if(!t.includes('relay:')) return r;
+  }catch(e){}
+  useRelay = false;
+  return fetch(direct(), init);
+}
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  global: { fetch: relayFetch },
   auth: {
     persistSession: true,
     autoRefreshToken: true,
@@ -2633,6 +2655,8 @@ const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     storageKey: 'hana-gallery-auth',
   },
 });
+// live order alerts (admin) keep a direct WebSocket; the relay forwards plain HTTP
+try{ const rt = db.realtime, sock = (rt.socketAdapter && (rt.socketAdapter.socket || rt.socketAdapter)) || rt.socket; sock.endPoint = SUPABASE_DIRECT.replace('https:', 'wss:') + '/realtime/v1/websocket'; }catch(e){}
 
 /* ================= آمار بازدید محصولات =================
    بازدید سایت، دیدن هر محصول و افزودن به سبد، یک بار در روز برای هر مرورگر شمرده می‌شه.
@@ -2695,8 +2719,8 @@ async function fetchProducts(){
     description: p.description || '',
     stock: p.stock,
     isNew: p.is_new,
-    imageUrl: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0] || null : null,
-    images: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean) : [],
+    imageUrl: p.image_url ? viaRelay(p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean)[0]) || null : null,
+    images: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean).map(viaRelay) : [],
     thumbs: p.image_url ? p.image_url.split(/[,،]/).map(s => s.trim()).filter(Boolean).map(thumbUrl) : [],
     variants: p.variants ? p.variants.split(/[,،]/).map(v => v.trim()).filter(Boolean).map(v => {
       const parts = v.split(':');
@@ -2821,7 +2845,7 @@ function saleEndsText(iso){
 // if a copy is missing, the <img> falls back to the full photo by itself (onerror)
 const IMG_FULL = '/storage/v1/object/public/image/products/';
 const IMG_THUMB = '/storage/v1/object/public/image/thumbs/';
-function thumbUrl(url){ return typeof url === 'string' && url.includes(IMG_FULL) ? url.replace(IMG_FULL, IMG_THUMB) : url; }
+function thumbUrl(url){ url = viaRelay(url); return typeof url === 'string' && url.includes(IMG_FULL) ? url.replace(IMG_FULL, IMG_THUMB) : url; }
 function thumbFallback(img){ if(img.src.includes(IMG_THUMB)) img.src = img.src.replace(IMG_THUMB, IMG_FULL); }
 
 let wishBurstId = null;
@@ -5675,7 +5699,7 @@ function renderAdminProdImagePreview(){
   const imgs = getAdminProdImages();
   const doneHtml = imgs.map((url, i) => `
     <div class="admin-img-thumb">
-      <img src="${escapeHtml(url)}" loading="lazy">
+      <img src="${escapeHtml(viaRelay(url))}" loading="lazy">
       <button type="button" onclick="removeAdminProdImage(${i})">×</button>
     </div>
   `).join('');
@@ -5756,7 +5780,7 @@ async function handleAdminImageFiles(files){
     if(small) await uploadThumbFor(path, file);
     const { data: pub } = db.storage.from('image').getPublicUrl(path);
     const imgs = getAdminProdImages();
-    imgs.push(pub.publicUrl);
+    imgs.push(toDirect(pub.publicUrl));
     setAdminProdImages(imgs);
   }
   statusEl.textContent = '';
@@ -5823,7 +5847,7 @@ async function optimizeExistingProductImages(){
         const up = await db.storage.from('image').upload(path, small, { cacheControl: '31536000', upsert: false, contentType: 'image/jpeg' });
         if(up.error) throw up.error;
         if(await uploadThumbFor(path, small)) thumbsMade++;
-        out.push(db.storage.from('image').getPublicUrl(path).data.publicUrl);
+        out.push(toDirect(db.storage.from('image').getPublicUrl(path).data.publicUrl));
         savedBytes += blob.size - small.size;
         shrunk++;
         changed = true;
