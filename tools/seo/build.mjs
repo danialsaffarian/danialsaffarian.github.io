@@ -25,7 +25,7 @@ const plain = (s) => String(s || '').replace(/\p{Extended_Pictographic}|️/gu, 
 async function loadProducts() {
   const file = process.argv[2];
   if (file) return JSON.parse(fs.readFileSync(file, 'utf8'));
-  const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const html = fs.readFileSync(path.join(ROOT, 'assets/app.js'), 'utf8');
   const url = (html.match(/const SUPABASE_DIRECT = '([^']+)'/) || html.match(/const SUPABASE_URL = '([^']+)'/))[1];
   const key = html.match(/const SUPABASE_KEY = '([^']+)'/)[1];
   const res = await fetch(`${url}/rest/v1/products?select=*&order=id`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });
@@ -38,7 +38,7 @@ async function loadReviews() {
   const file = process.argv[3];
   if (process.argv[2]) return file ? JSON.parse(fs.readFileSync(file, 'utf8')) : [];
   try {
-    const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    const html = fs.readFileSync(path.join(ROOT, 'assets/app.js'), 'utf8');
     const url = (html.match(/const SUPABASE_DIRECT = '([^']+)'/) || html.match(/const SUPABASE_URL = '([^']+)'/))[1];
     const key = html.match(/const SUPABASE_KEY = '([^']+)'/)[1];
     const res = await fetch(`${url}/rest/v1/reviews?select=product_id,author_name,rating,comment,created_at&approved=eq.true&order=created_at.desc`, { headers: { apikey: key, Authorization: `Bearer ${key}` } });

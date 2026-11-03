@@ -7,7 +7,7 @@ on:
   workflow_dispatch: # اجرای دستی از تب Actions، مثلاً بعد از اضافه کردن محصول جدید
   push:
     branches: [main]
-    paths: ['tools/seo/**', 'index.html']
+    paths: ['tools/seo/**', 'index.html', 'assets/**']
 
 permissions:
   contents: write
