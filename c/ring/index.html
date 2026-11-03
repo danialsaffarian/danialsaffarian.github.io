@@ -145,6 +145,27 @@
   .section-eyebrow{font-size:12.5px;letter-spacing:2.5px;color:var(--gold);margin-bottom:14px;font-weight:600;}
   .section-title{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:600;
     font-size:clamp(30px,4vw,42px);color:var(--coffee);direction:ltr;unicode-bidi:isolate;}
+  /* temporary notice while the site's data is moved to the Iranian relay (remove with SITE_NOTICE = false) */
+  .site-notice{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(46,32,22,.42);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:snIn .35s ease both;}
+  .site-notice[hidden]{display:none;}
+  @keyframes snIn{from{opacity:0;}}
+  .sn-card{width:min(420px,100%);text-align:center;padding:34px 26px 26px;border-radius:26px;background:radial-gradient(90% 70% at 50% 20%,#FFFDF9,#F4ECE0);box-shadow:0 30px 70px -20px rgba(46,32,22,.55);animation:snUp .45s cubic-bezier(.2,.9,.25,1) both;}
+  @keyframes snUp{from{opacity:0;transform:translateY(18px) scale(.97);}}
+  .sn-mark{display:block;width:64px;height:64px;margin:0 auto;}
+  .sn-wm{font-family:'Cormorant Garamond',serif;font-weight:500;font-size:22px;letter-spacing:.28em;padding-left:.28em;direction:ltr;color:#3A2F26;margin-top:8px;}
+  .sn-div{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 18px;}
+  .sn-div i{width:40px;height:1px;background:#C9A46A;}.sn-div b{width:6px;height:6px;background:#C9A46A;transform:rotate(45deg);}
+  .sn-card h2{font-size:24px;text-wrap:balance;font-weight:800;color:#33281F;line-height:1.6;margin:0;}
+  .sn-card h2 em{font-style:normal;color:#A0743F;}
+  .sn-card p{font-size:15px;color:#6B5647;line-height:2;margin:8px 0 0;}
+  .sn-bar{width:180px;height:6px;border-radius:99px;background:rgba(58,47,38,.1);margin:18px auto 0;overflow:hidden;position:relative;}
+  .sn-bar i{position:absolute;top:0;bottom:0;right:0;width:40%;border-radius:99px;background:linear-gradient(90deg,#E6CB97,#A0743F);animation:snBar 1.8s ease-in-out infinite;}
+  @keyframes snBar{0%{right:-40%;}100%{right:100%;}}
+  .sn-actions{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
+  .sn-ig{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:16px;background:#3A2F26;color:#F7F1E8;font-size:15px;font-weight:700;text-decoration:none;}
+  .sn-ig svg{width:20px;height:20px;}
+  .sn-close{padding:12px;border-radius:16px;border:1px solid rgba(169,133,94,.4);background:rgba(255,255,255,.6);color:#6B5647;font:inherit;font-size:14px;font-weight:600;cursor:pointer;}
+  @media(prefers-reduced-motion:reduce){.site-notice,.sn-card,.sn-bar i{animation:none;}}
   .section-title.fa{font-family:'Vazirmatn',sans-serif;font-style:normal;direction:rtl;font-weight:800;}
   /* product and collection addresses (/p/, /c/): that page's own text, readable by search engines as well as shoppers */
   .seo-info{padding:56px 0 64px;border-top:1px solid var(--line);}
@@ -1687,6 +1708,28 @@
     <path d="M57.4 77.4 C57.4 74.8 58.4 72.4 60 70.2" stroke="#F7F2EA" stroke-width="0.9" stroke-linecap="round" opacity="0.75" fill="none"/>
   </symbol>
 </defs></svg>
+<div class="site-notice" id="siteNotice" role="dialog" aria-modal="true" aria-labelledby="snTitle" hidden>
+  <div class="sn-card">
+    <svg class="sn-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
+    <div class="sn-wm">HANA GALLERY</div>
+    <div class="sn-div"><i></i><b></b><i></i></div>
+    <h2 id="snTitle">سایت در حال <em>به‌روزرسانی</em> است</h2>
+    <p>تا ساعاتی دیگر دوباره در خدمت شما هستیم.<br>ممنون از صبوری و همراهی‌تون 🤍</p>
+    <div class="sn-bar" aria-hidden="true"><i></i></div>
+    <div class="sn-actions">
+      <a class="sn-ig" href="https://instagram.com/hana_gallery_____" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>سفارش از دایرکت اینستاگرام</a>
+    </div>
+  </div>
+</div>
+<script>
+// covers the store until the site is fully back; works without the database. Turn off with SITE_NOTICE = false.
+(function(){
+  var SITE_NOTICE = true;
+  if(!SITE_NOTICE) return;
+  document.getElementById('siteNotice').hidden = false;
+  document.documentElement.style.overflow = 'hidden';
+})();
+</script>
 
 <div class="vpn-bar" id="vpnBar" hidden role="status">
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 9l6 6M15 9l-6 6"/></svg><span><b>فیلترشکنت روشنه!</b> برای تجربه‌ی بهتر از سایت و پرداخت آنلاین، فیلترشکن رو خاموش کن.</span>
