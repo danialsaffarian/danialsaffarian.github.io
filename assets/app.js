@@ -3083,16 +3083,30 @@ function setAdminProdImages(arr){
 }
 function renderAdminProdImagePreview(){
   const imgs = getAdminProdImages();
+  // order matters: the first photo is the cover on the store; the arrows move a photo one place, the star makes it the cover
   const doneHtml = imgs.map((url, i) => `
-    <div class="admin-img-thumb">
+    <div class="admin-img-thumb${i === 0 ? ' is-cover' : ''}">
       <img src="${escapeHtml(viaRelay(url))}" loading="lazy">
-      <button type="button" onclick="removeAdminProdImage(${i})">×</button>
+      <button type="button" class="ait-del" onclick="removeAdminProdImage(${i})" aria-label="حذف عکس">×</button>
+      ${i === 0 ? '<span class="ait-cover">کاور</span>' : `<button type="button" class="ait-star" onclick="moveAdminProdImage(${i}, 0)" aria-label="عکس اصلی بشه">★</button>`}
+      <span class="ait-nav">
+        <button type="button" onclick="moveAdminProdImage(${i}, ${i - 1})" ${i === 0 ? 'disabled' : ''} aria-label="یکی جلوتر">→</button>
+        <b>${toFa(i + 1)}</b>
+        <button type="button" onclick="moveAdminProdImage(${i}, ${i + 1})" ${i === imgs.length - 1 ? 'disabled' : ''} aria-label="یکی عقب‌تر">←</button>
+      </span>
     </div>
   `).join('');
   const pendingHtml = adminPendingUploads.map(() => `
     <div class="admin-img-thumb admin-img-thumb-pending"><div class="admin-img-spinner"></div></div>
   `).join('');
   document.getElementById('adminProdImagePreview').innerHTML = doneHtml + pendingHtml;
+}
+function moveAdminProdImage(from, to){
+  const imgs = getAdminProdImages();
+  if(to < 0 || to >= imgs.length || from === to) return;
+  const [it] = imgs.splice(from, 1);
+  imgs.splice(to, 0, it);
+  setAdminProdImages(imgs);
 }
 function removeAdminProdImage(i){
   const imgs = getAdminProdImages();
