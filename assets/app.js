@@ -69,7 +69,7 @@ trackEvent('visit');
 const LOW_STOCK_THRESHOLD = 2; // اگر موجودی مساوی یا کمتر از این عدد بود، هشدار «تعداد محدود» نشون داده می‌شه
 
 // چرخه‌ی آیکون و رنگ پس‌زمینه بر اساس دسته‌ی محصول (چون عکس واقعی هنوز نداریم)
-const ICON_BY_CAT = {necklace:['necklace','necklace2'], earring:['earring','earring2'], bracelet:['bracelet','bracelet2'], ring:['ring','ring2'], anklet:['anklet','anklet2']};
+const ICON_BY_CAT = {necklace:['necklace','necklace2'], earring:['earring','earring2'], bracelet:['bracelet','bracelet2'], ring:['ring','ring2'], anklet:['anklet','anklet2'], hair:['hair','hair']};
 const normCat = c => (c || '').toString().trim().toLowerCase();
 const BG_CYCLE = ['var(--blush)','var(--tan)'];
 
@@ -165,6 +165,7 @@ const icons = {
   ring2:`<svg viewBox="0 0 100 100" fill="none" style="stroke:var(--coffee)" stroke-width="1.8"><circle cx="50" cy="55" r="24"/><path d="M32 36 Q50 20 68 36"/></svg>`,
   anklet:`<svg viewBox="0 0 100 100" fill="none" style="stroke:var(--coffee)" stroke-width="1.8"><ellipse cx="50" cy="45" rx="34" ry="14"/><path d="M50 59 L50 75"/><circle cx="50" cy="81" r="5"/></svg>`,
   anklet2:`<svg viewBox="0 0 100 100" fill="none" style="stroke:var(--coffee)" stroke-width="1.8"><path d="M15 40 Q50 72 85 40"/><circle cx="25" cy="49" r="4"/><circle cx="38" cy="60" r="4"/><circle cx="50" cy="64" r="4"/><circle cx="62" cy="60" r="4"/><circle cx="75" cy="49" r="4"/></svg>`,
+  hair:`<svg viewBox="0 0 100 100" fill="none" style="stroke:var(--coffee)" stroke-width="1.8"><path d="M20 72C20 36 33 22 50 22S80 36 80 72"/><path d="M50 22L40 16V28ZM50 22L60 16V28Z"/><circle cx="50" cy="22" r="3"/></svg>`,
 };
 
 const toFa = n => (Number(n) || 0).toLocaleString('fa-IR'); // an empty field must not break the page
@@ -3316,7 +3317,7 @@ async function editAdminProduct(id){
   document.getElementById('adminProductForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-const CAT_LABELS = { necklace: 'گردنبند', earring: 'گوشواره', bracelet: 'دستبند', ring: 'انگشتر', anklet: 'پابند' };
+const CAT_LABELS = { necklace: 'گردنبند', earring: 'گوشواره', bracelet: 'دستبند', ring: 'انگشتر', anklet: 'پابند', hair: 'اکسسوری مو' };
 
 document.getElementById('adminProdSaveBtn').addEventListener('click', async () => {
   const errorEl = document.getElementById('adminProdError');
