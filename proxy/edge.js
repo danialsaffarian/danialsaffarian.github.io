@@ -16,12 +16,24 @@ function cors(request) {
 
 // hanagalleryy.ir itself: Arvan's link to GitHub Pages keeps timing out, so the pages come from Supabase's «site»
 // function, which reads them from the GitHub repo (Arvan reaches Supabase fine)
+// Supabase serves every function response as text/plain, so the real type comes from the file name here
+const TYPES = { html: 'text/html; charset=utf-8', css: 'text/css; charset=utf-8', js: 'text/javascript; charset=utf-8',
+  json: 'application/json', xml: 'application/xml; charset=utf-8', txt: 'text/plain; charset=utf-8', png: 'image/png',
+  jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp', gif: 'image/gif', svg: 'image/svg+xml', ico: 'image/x-icon',
+  woff2: 'font/woff2', woff: 'font/woff', webmanifest: 'application/manifest+json' };
+function typeOf(path, status) {
+  if (status === 404 || path.endsWith('/')) return TYPES.html;
+  const last = path.split('/').pop() || '';
+  return last.includes('.') ? (TYPES[last.split('.').pop().toLowerCase()] || 'application/octet-stream') : TYPES.html;
+}
+
 async function site(request, url) {
   if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
   try {
     const r = await fetch(TARGET + '/functions/v1/site' + url.pathname + url.search, { method: request.method, redirect: 'manual' });
     const out = new Headers();
-    for (const k of ['content-type', 'cache-control', 'location', 'x-content-type-options']) { const v = r.headers.get(k); if (v) out.set(k, v); }
+    for (const k of ['cache-control', 'location']) { const v = r.headers.get(k); if (v) out.set(k, v); }
+    out.set('content-type', typeOf(url.pathname, r.status));
     return new Response(r.body, { status: r.status, headers: out });
   } catch (e) {
     return new Response('<!doctype html><meta charset="utf-8"><p style="font-family:sans-serif;text-align:center;margin-top:20vh">سایت موقتاً در دسترس نیست. چند دقیقه دیگه دوباره امتحان کنید.</p>',
