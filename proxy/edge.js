@@ -14,8 +14,24 @@ function cors(request) {
   };
 }
 
+// hanagalleryy.ir itself: Arvan's link to GitHub Pages keeps timing out, so the pages come from Supabase's «site»
+// function, which reads them from the GitHub repo (Arvan reaches Supabase fine)
+async function site(request, url) {
+  if (request.method !== 'GET' && request.method !== 'HEAD') return new Response('Method not allowed', { status: 405 });
+  try {
+    const r = await fetch(TARGET + '/functions/v1/site' + url.pathname + url.search, { method: request.method, redirect: 'manual' });
+    const out = new Headers();
+    for (const k of ['content-type', 'cache-control', 'location', 'x-content-type-options']) { const v = r.headers.get(k); if (v) out.set(k, v); }
+    return new Response(r.body, { status: r.status, headers: out });
+  } catch (e) {
+    return new Response('<!doctype html><meta charset="utf-8"><p style="font-family:sans-serif;text-align:center;margin-top:20vh">سایت موقتاً در دسترس نیست. چند دقیقه دیگه دوباره امتحان کنید.</p>',
+      { status: 503, headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'no-store' } });
+  }
+}
+
 async function handle(request) {
   const url = new URL(request.url);
+  if (url.hostname !== 'api.hanagalleryy.ir') return site(request, url);
   if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(request) });
   if (url.pathname === '/__relay/health') return new Response('ok', { headers: { 'content-type': 'text/plain', ...cors(request) } });
   const headers = new Headers(request.headers);
