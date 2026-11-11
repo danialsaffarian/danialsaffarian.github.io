@@ -1895,7 +1895,7 @@
   :root{--ink:#3A2F26;--gold-a:#C9A46A;--gold-b:#E9D3A6;--champ:#F3E6CC;--foil:linear-gradient(90deg,transparent,#C9A46A 28%,#E9D3A6 50%,#C9A46A 72%,transparent);}
 
   /* header: glass with a gold hairline */
-  .header-bar{position:relative;border-top:0;border-bottom:0;background:rgba(251,248,243,.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+  .header-bar{position:relative;border-top:0;border-bottom:0;background:var(--cream-soft);}
   .header-bar::after{content:"";position:absolute;inset-inline:0;bottom:0;height:1px;background:var(--foil);opacity:.75;pointer-events:none;}
   .cart-count{background:linear-gradient(160deg,#4A3A2C,#2A2019);color:var(--champ);box-shadow:0 0 0 2px var(--cream-soft);}
 
