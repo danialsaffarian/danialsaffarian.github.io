@@ -33,7 +33,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=d3168657">
+<link rel="stylesheet" href="/assets/site.css?v=21b1e558">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -773,15 +773,15 @@
           <h4><i>۳</i>قیمت</h4>
           <div class="apf-two">
             <div class="form-field"><label for="adminProdPrice">قیمت (تومان)</label><input type="number" id="adminProdPrice" inputmode="numeric"><em class="apf-hint" id="apfPriceHint"></em></div>
-            <div class="form-field"><label for="adminProdSalePrice">قیمت حراج (اختیاری)</label><input type="number" id="adminProdSalePrice" inputmode="numeric"><em class="apf-hint" id="apfSaleHint"></em></div>
+            <div class="form-field"><label for="adminProdSalePrice">قیمت تخفیف‌خورده (اختیاری)</label><input type="number" id="adminProdSalePrice" inputmode="numeric"><em class="apf-hint" id="apfSaleHint"></em></div>
           </div>
-          <details class="apf-more" id="apfSaleWhen"><summary>زمان‌بندی حراج</summary>
+          <div class="apf-when" id="apfSaleWhen"><b class="apf-sub">زمان‌بندی حراج (اختیاری)</b>
             <div class="apf-two">
               <label class="apf-mini">شروع<input type="datetime-local" id="adminProdSaleStart"></label>
               <label class="apf-mini">پایان<input type="datetime-local" id="adminProdSaleEnd"></label>
             </div>
             <p class="apf-note">قیمت تخفیف‌خورده فقط بین این دو زمان اعمال می‌شه و بعدش خودکار به قیمت اصلی برمی‌گرده. خالی بذاری یعنی محدودیتی نداره.</p>
-          </details>
+          </div>
         </section>
 
         <section class="apf-sec">
@@ -1092,7 +1092,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=11730414"></script>
+<script src="/assets/app.js?v=c0b4a391"></script>
 
 </body>
 </html>

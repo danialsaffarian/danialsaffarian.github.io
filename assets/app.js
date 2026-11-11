@@ -3155,7 +3155,6 @@ function admFormSync(title){
   document.getElementById('apfCats').innerHTML = [...sel.options].map(o =>
     `<button type="button" class="${o.value === sel.value ? 'on' : ''}" onclick="document.getElementById('adminProdCat').value='${o.value}'; [...this.parentNode.children].forEach(b => b.classList.toggle('on', b === this));">${o.textContent}</button>`).join('');
   admRenderVars(admParseVars(document.getElementById('adminProdVariants').value));
-  document.getElementById('apfSaleWhen').open = !!(document.getElementById('adminProdSaleStart').value || document.getElementById('adminProdSaleEnd').value);
   admHints();
 }
 document.getElementById('apfVars').addEventListener('input', admVarsFromRows);

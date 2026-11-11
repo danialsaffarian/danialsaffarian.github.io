@@ -1884,3 +1884,9 @@
   .ap-vars i.out{background:#F6E3E1;color:#9B3F3F;}
   .apf-var-head{display:none;grid-template-columns:1.4fr .8fr 1fr 34px;gap:6px;margin-top:6px;font-size:11px;font-weight:700;color:var(--coffee-70);padding-inline:4px;}
   .apf-var-head:has(+ .apf-vars .apf-var){display:grid;}
+  .apf-when{margin-top:6px;padding-top:12px;border-top:1px dashed var(--adm-line);}
+  .apf-sub{display:block;margin-bottom:8px;font-size:12.5px;font-weight:700;color:var(--coffee);}
+  .apf-two > *{min-width:0;}
+  .apf-when .apf-two{grid-template-columns:1fr;}
+  @media(min-width:600px){.apf-when .apf-two{grid-template-columns:1fr 1fr;}}
+  .apf-mini input{min-width:0;max-width:100%;}
