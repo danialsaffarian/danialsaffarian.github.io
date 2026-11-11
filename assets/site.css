@@ -2019,3 +2019,30 @@
   .cfb-sort button.on{background:linear-gradient(160deg,#4A3A2C,#2A2019)!important;border-color:#2A2019!important;color:var(--champ)!important;}
   .cfb-name{color:var(--ink);}
   .cfb-count{background:linear-gradient(160deg,#D8BC85,#B8925A);}
+
+  /* ---------- Footer: deep mocha, champagne type, gold hairlines ---------- */
+  footer{padding:0 0 26px;background:radial-gradient(120% 90% at 88% 0%,#5A4636 0%,#3A2D22 44%,#241B15 100%);color:#CDBBA6;}
+  footer::before{opacity:1;height:1px;}
+  .footer-grid{position:relative;display:grid;grid-template-columns:minmax(340px,1.8fr) 1fr 1fr 1.5fr;gap:44px;padding:66px 0 46px;border-bottom:0;}
+  .footer-grid::after{content:"";position:absolute;inset-inline:0;bottom:0;height:1px;background:var(--foil);opacity:.45;}
+  .foot-lockup .bl-mark{--hg-ink:#F3E6CC;flex:none;}
+  .foot-lockup .bl-word{color:#F3E6CC;}
+  .foot-lockup .bl-tag{color:#C9A46A;}
+  .foot-lockup .bl-sep{background:rgba(233,211,166,.45);}
+  .footer-brand p{color:#BFAE99;line-height:2;max-width:300px;margin-top:18px;}
+  .footer-col h4{position:relative;color:#E9D3A6;font-size:13.5px;font-weight:700;padding-bottom:12px;margin-bottom:16px;}
+  .footer-col h4::after{content:"";position:absolute;inset-inline-start:0;bottom:0;width:26px;height:1px;background:#C9A46A;}
+  .footer-col a{color:#CDBBA6;transition:color .2s,transform .25s cubic-bezier(.2,.8,.2,1);}
+  .footer-col a:hover{color:#F3E6CC;transform:translateX(-4px);}
+  .footer-col a[href*="instagram"]{display:inline-flex;align-items:center;gap:6px;margin:4px 0 14px;padding:7px 16px;border:1px solid rgba(233,211,166,.5);border-radius:99px;color:#F3E6CC;}
+  .footer-col a[href*="instagram"]:hover{background:#F3E6CC;border-color:#F3E6CC;color:#2A2019;transform:none;}
+  .footer-addr{color:#BFAE99;}
+  .footer-bottom{padding-top:22px;color:#A39282;}
+  .footer-enamad a{display:inline-flex;padding:8px;border-radius:14px;background:#FBF8F3;box-shadow:inset 0 0 0 1px rgba(201,164,106,.55),0 14px 26px -14px rgba(0,0,0,.7);}
+  .footer-enamad img{display:block;}
+  @media(max-width:860px){
+    .footer-grid{grid-template-columns:1fr 1fr;gap:34px 24px;padding:52px 0 38px;}
+    .footer-brand{grid-column:1 / -1;text-align:center;}
+    .footer-brand p{margin-inline:auto;}
+    .footer-grid .footer-col:last-child{grid-column:1 / -1;}
+  }
