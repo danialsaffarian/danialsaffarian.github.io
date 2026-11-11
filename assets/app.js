@@ -2808,6 +2808,12 @@ document.querySelectorAll('#admMore [data-go]').forEach(b => b.addEventListener(
   // keep «بیشتر» lit while one of its sections is open
   document.getElementById('admMoreBtn').classList.add('on');
 }));
+document.querySelectorAll('#admQuick [data-q]').forEach(b => b.addEventListener('click', () => {
+  const q = b.dataset.q;
+  if(q === 'product'){ switchAdminTab('products'); document.getElementById('adminAddProductBtn').click(); }
+  else if(q === 'manual'){ adminPage.classList.remove('open'); showToast('محصول‌ها رو به سبد اضافه کن، موقع ثبت گزینه‌ی «سفارش دستی» رو بزن'); }
+  else switchAdminTab(q);
+}));
 document.getElementById('admFab').addEventListener('click', () => {
   document.getElementById('adminAddProductBtn').click();
   document.getElementById('adminPage').scrollTo({ top: 0, behavior: 'smooth' });
@@ -2893,20 +2899,23 @@ function renderAdminOrders(){
         </div>`;
     }).join('');
     return `<div class="admin-card tone-${tone}">
+      ${admSteps(o)}
       <div class="admin-card-top">
         <div class="ao-who"><b>${escapeHtml(o.customer_name) || '-'}</b><span>${admWhen(o.created_at)}${o.tracking_code ? ` — کد <span class="ao-code">${escapeHtml(o.tracking_code)}</span>` : ''}</span></div>
         <select class="admin-status-select tone-${tone}" onchange="updateOrderStatus('${o.id}', this.value)">${statusOptions}</select>
       </div>
       <dl class="ao-info">
         <dt>موبایل</dt><dd><a class="ao-phone" href="tel:${escapeHtml(o.customer_phone || '')}">${escapeHtml(o.customer_phone) || '-'}</a></dd>
-        <dt>آدرس</dt><dd>${escapeHtml(o.customer_address) || '-'}</dd>
+        <dt>آدرس</dt><dd>${escapeHtml(o.customer_address) || '-'}${o.customer_address ? ` <button type="button" class="ao-copy" data-copy="${escapeHtml([o.customer_name, o.customer_phone, o.customer_address].filter(Boolean).join('\n'))}" onclick="admCopy(this)">کپی برای برچسب پست</button>` : ''}</dd>
         ${o.customer_note ? `<dt>یادداشت</dt><dd>${escapeHtml(o.customer_note)}</dd>` : ''}
       </dl>
       <div class="admin-order-items">${itemsHtml}</div>
       ${adminPayLine(o)}
       ${o.coupon_code ? `<div class="admin-card-meta">کد تخفیف: ${escapeHtml(o.coupon_code)} (${toFa(o.discount_amount || 0)} تومان تخفیف)</div>` : ''}
       <div class="ao-total"><span>جمع سفارش</span><b>${toFa(o.total)} <small>تومان</small></b></div>
-      ${o.status === 'لغو شده' || o.status === PAY_PENDING ? '' : `<div class="ship-box">
+      ${admNextBtn(o)}
+      ${o.status === 'لغو شده' || o.status === PAY_PENDING || TODO_CONFIRM.includes(o.status) ? '' : `<div class="ship-box${TODO_SHIP.includes(o.status) ? ' next' : ''}">
+        ${TODO_SHIP.includes(o.status) ? '<b class="ship-next">قدم بعدی: کد رهگیری رو بزن تا سفارش «ارسال شده» بشه</b>' : ''}
         <select id="shipCarrier-${o.id}">${SHIP_CARRIERS.map(c => `<option${(o.post_carrier || 'پست') === c ? ' selected' : ''}>${c}</option>`).join('')}</select>
         <input id="shipCode-${o.id}" maxlength="60" placeholder="کد رهگیری مرسوله" value="${escapeHtml(o.post_tracking || '')}">
         <button onclick="saveShipping(${o.id})">${o.post_tracking ? 'ذخیره‌ی تغییر' : 'ثبت ارسال'}</button>
@@ -2917,6 +2926,32 @@ function renderAdminOrders(){
   }).join('');
 }
 document.getElementById('adminOrderSearch').addEventListener('input', renderAdminOrders);
+
+// where the order is on its way: placed → confirmed → shipped → delivered
+const ADM_STEPS = ['ثبت', 'تایید', 'ارسال', 'تحویل'];
+function admSteps(o){
+  const at = TODO_CONFIRM.includes(o.status) ? 0 : o.status === 'تایید شده' ? 1 : o.status === 'ارسال شده' ? 2 : o.status === 'تحویل داده شده' ? 3 : -1;
+  if(at < 0) return '';
+  return `<ol class="ao-steps" aria-label="مرحله‌ی سفارش">${ADM_STEPS.map((t, i) => `<li class="${i < at ? 'done' : i === at ? 'now' : ''}"><i></i><span>${t}</span></li>`).join('')}</ol>`;
+}
+// the one obvious next move for this order, one tap
+function admNextBtn(o){
+  const ico = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+  if(TODO_CONFIRM.includes(o.status)) return `<button type="button" class="ao-next" onclick="admAdvance('${o.id}', 'تایید شده', this)">${ico}تایید سفارش</button>`;
+  if(o.status === 'ارسال شده') return `<button type="button" class="ao-next soft" onclick="admAdvance('${o.id}', 'تحویل داده شده', this)">${ico}به دست مشتری رسید</button>`;
+  return '';
+}
+async function admAdvance(id, status, btn){
+  btn.disabled = true; btn.classList.add('busy');
+  await updateOrderStatus(id, status);
+  renderAdminOrders();
+}
+function admCopy(btn){
+  const text = btn.dataset.copy;
+  const done = () => { const t = btn.textContent; btn.textContent = 'کپی شد'; btn.classList.add('ok'); setTimeout(() => { btn.textContent = t; btn.classList.remove('ok'); }, 1600); };
+  if(navigator.clipboard) navigator.clipboard.writeText(text).then(done, () => showToast('کپی نشد'));
+  else showToast('کپی نشد');
+}
 
 function isAbandonedOrder(o){
   return o.status === PAY_PENDING || (o.status === 'لغو شده' && (o.cancel_reason === 'expired' || o.cancel_reason === 'replaced'));
@@ -3044,7 +3079,11 @@ function renderAdminProducts(){
       <div class="ap-info">
         <b>${escapeHtml(p.name)}</b>
         <span>${escapeHtml(p.category_label || p.category)}، ${toFa(p.price)} تومان${adminSaleTag(p)}</span>
-        <em class="ap-stock ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
+        <span class="ap-step ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">
+          <button type="button" onclick="admStock(${p.id}, -1)" aria-label="یکی کم کن" ${stock <= 0 ? 'disabled' : ''}>−</button>
+          <em>${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
+          <button type="button" onclick="admStock(${p.id}, 1)" aria-label="یکی اضافه کن">+</button>
+        </span>
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
@@ -3054,6 +3093,26 @@ function renderAdminProducts(){
   }).join('');
 }
 document.getElementById('adminProductSearch').addEventListener('input', renderAdminProducts);
+// +/- on a product row: the number changes at once, the save waits until the taps stop
+const admStockTimers = {};
+function admStock(id, d){
+  const p = adminProductsCache.find(x => x.id === id);
+  if(!p) return;
+  const cur = Number(p.stock) || 0, next = Math.max(0, cur + d);
+  if(next === cur) return;
+  if(!('_saved' in p)) p._saved = cur;
+  p.stock = next;
+  renderAdminProducts();
+  clearTimeout(admStockTimers[id]);
+  admStockTimers[id] = setTimeout(async () => {
+    const before = p._saved; delete p._saved;
+    if(before === p.stock) return;
+    const { error } = await db.from('products').update({ stock: p.stock }).eq('id', id);
+    if(error){ console.error(error); p.stock = before; renderAdminProducts(); showToast('موجودی ذخیره نشد، دوباره امتحان کن'); return; }
+    logAdminAction('تغییر موجودی', `${p.name}: ${toFa(before)} ← ${toFa(p.stock)}`);
+    showToast(`موجودی «${p.name}» شد ${toFa(p.stock)}`);
+  }, 700);
+}
 
 function resetAdminProductForm(){
   document.getElementById('adminProdId').value = '';

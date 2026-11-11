@@ -33,7 +33,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=76982473">
+<link rel="stylesheet" href="/assets/site.css?v=5cd7012a">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -695,7 +695,7 @@
     <button class="product-back" id="adminBackBtn" aria-label="بازگشت">→</button>
     <div class="adm-title">
       <svg class="adm-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
-      <div><b>پنل مدیریت</b><small id="admToday"></small></div>
+      <div><em class="adm-eyebrow">Hana Gallery · Atelier</em><b>پنل مدیریت</b><small id="admToday"></small></div>
     </div>
     <div class="admin-tabs" id="adminTabs">
       <button class="admin-tab active" data-tab="orders">سفارش‌ها</button>
@@ -713,6 +713,12 @@
 
     <div id="adminTabOrders" class="admin-tab-panel">
       <div id="adminTodo" class="admin-todo"></div>
+      <div class="adm-quick" id="admQuick">
+        <button type="button" data-q="product"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i>محصول جدید</button>
+        <button type="button" data-q="manual"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></i>سفارش دستی</button>
+        <button type="button" data-q="announce"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM15.5 8.5a5 5 0 0 1 0 7"/></svg></i>اطلاعیه</button>
+        <button type="button" data-q="coupons"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/></svg></i>کد تخفیف</button>
+      </div>
       <details class="pay-mode-box">
         <summary><span>پرداخت آنلاین (زیبال)</span><em id="payModeNow"></em></summary>
         <label><input type="radio" name="payMode" value="off"> <span>خاموش <small>— مثل قبل، کارت‌به‌کارت و هماهنگی تلفنی</small></span></label>
@@ -1056,7 +1062,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=bc80d081"></script>
+<script src="/assets/app.js?v=a632624b"></script>
 
 </body>
 </html>
