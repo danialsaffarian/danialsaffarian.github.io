@@ -2034,8 +2034,6 @@
   .footer-col h4::after{content:"";position:absolute;inset-inline-start:0;bottom:0;width:26px;height:1px;background:#C9A46A;}
   .footer-col a{color:#CDBBA6;transition:color .2s,transform .25s cubic-bezier(.2,.8,.2,1);}
   .footer-col a:hover{color:#F3E6CC;transform:translateX(-4px);}
-  .footer-col a[href*="instagram"]{display:inline-flex;align-items:center;gap:6px;margin:4px 0 14px;padding:7px 16px;border:1px solid rgba(233,211,166,.5);border-radius:99px;color:#F3E6CC;}
-  .footer-col a[href*="instagram"]:hover{background:#F3E6CC;border-color:#F3E6CC;color:#2A2019;transform:none;}
   .footer-addr{color:#BFAE99;}
   .footer-bottom{padding-top:22px;color:#A39282;}
   .footer-enamad a{display:inline-flex;padding:8px;border-radius:14px;background:#FBF8F3;box-shadow:inset 0 0 0 1px rgba(201,164,106,.55),0 14px 26px -14px rgba(0,0,0,.7);}
@@ -2046,3 +2044,15 @@
     .footer-brand p{margin-inline:auto;}
     .footer-grid .footer-col:last-child{grid-column:1 / -1;}
   }
+
+  /* footer contact: one tidy row per channel */
+  .footer-contact .fc-row{display:grid;grid-template-columns:40px 1fr;align-items:center;gap:12px;margin:0 0 8px;padding:9px 10px;border:0;border-radius:14px;background:rgba(243,230,204,.045);box-shadow:inset 0 0 0 1px rgba(233,211,166,.14);color:#F3E6CC;font-style:normal;line-height:1.5;transition:background .25s,box-shadow .25s;}
+  .footer-contact a.fc-row:hover{background:rgba(243,230,204,.1);box-shadow:inset 0 0 0 1px rgba(233,211,166,.45);color:#F3E6CC;transform:none;}
+  .footer-contact .fc-row i{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(233,211,166,.08);box-shadow:inset 0 0 0 1px rgba(233,211,166,.4);}
+  .footer-contact .fc-row svg{width:18px;height:18px;fill:none;stroke:#E9D3A6;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .footer-contact .fc-row span{min-width:0;display:flex;flex-direction:column;gap:1px;font-size:14px;}
+  .footer-contact .fc-row small{font-size:11px;color:#A8978A;}
+  .footer-contact .fc-row bdi{word-break:normal;overflow-wrap:anywhere;text-align:right;}
+  .footer-contact .fc-row em{font-style:normal;font-size:12.5px;color:#BFAE99;margin-top:2px;}
+  .footer-contact address.fc-row{align-items:start;margin-bottom:0;font-size:14px;}
+  @media(min-width:861px){.footer-grid{grid-template-columns:minmax(340px,1.6fr) .8fr .8fr minmax(290px,1.6fr);}}
