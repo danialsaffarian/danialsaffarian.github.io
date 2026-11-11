@@ -31,7 +31,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=37a57b44">
+<link rel="stylesheet" href="/assets/site.css?v=76982473">
 <meta name="product_id" content="55">
 <meta name="product_name" content="دستبند صدف دفرمه آبی">
 <meta name="product_price" content="690000">
@@ -778,13 +778,48 @@
     </div>
 
     <div id="adminTabAnnounce" class="admin-tab-panel" style="display:none;">
-      <p style="font-size:13px;color:var(--coffee-70);line-height:2;margin-bottom:14px;">یه نوار کوچیک بالای همه‌ی صفحه‌های سایت؛ مثلاً «تا جمعه ارسال رایگان» یا «کد INSTA20 برای ۲۰ نفر اول». هر وقت خاموشش کنی از سایت برداشته می‌شه.</p>
-      <div class="form-field"><label>متن اطلاعیه</label><textarea id="announceTextInput" rows="2" maxlength="160" placeholder="مثلاً: تا پایان هفته ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان"></textarea></div>
-      <div class="form-field"><label>لینک (اختیاری)</label><input type="text" id="announceLinkInput" maxlength="300" placeholder="https://instagram.com/... یا #shop" style="direction:ltr;text-align:left;"></div>
-      <div class="form-field"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="announceActiveInput" style="width:auto;"> نمایش روی سایت</label></div>
-      <div class="form-field"><label>پیش‌نمایش</label><div class="announce-bar announce-preview" id="announcePreview"></div></div>
-      <p class="form-error" id="announceError"></p>
-      <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="announceSaveBtn">ذخیره</button>
+      <div class="an-studio">
+        <div class="an-stage">
+          <div class="an-stage-top"><b>پیش‌نمایش زنده</b><label class="an-switch"><input type="checkbox" id="announceActiveInput"><i></i><span>نمایش روی سایت</span></label></div>
+          <div class="an-phone"><div class="an-phone-bar"><i></i><i></i><i></i></div><div class="announce-bar announce-preview" id="announcePreview"></div><div class="an-phone-head"><span></span><b>HANA GALLERY</b><span></span></div><div class="an-phone-body"><i></i><i></i><i></i></div></div>
+        </div>
+
+        <section class="an-sec">
+          <h4><span>۱</span>متن و لینک</h4>
+          <div class="form-field"><label>متن اطلاعیه</label><textarea id="announceTextInput" rows="2" maxlength="160" placeholder="مثلاً: تا پایان هفته ارسال رایگان برای خریدهای بالای ۵۰۰ هزار تومان"></textarea><small class="an-count" id="announceCount">۰ / ۱۶۰</small></div>
+          <div class="an-row">
+            <div class="form-field"><label>لینک (اختیاری)</label><input type="text" id="announceLinkInput" maxlength="300" placeholder="https://instagram.com/... یا #shop" style="direction:ltr;text-align:left;"></div>
+            <div class="form-field"><label>متن دکمه‌ی لینک</label><input type="text" id="announceLinkLabel" maxlength="20" placeholder="مشاهده"></div>
+          </div>
+        </section>
+
+        <section class="an-sec">
+          <h4><span>۲</span>استایل</h4>
+          <div class="an-presets" id="announcePresets"></div>
+          <details class="an-custom" id="announceCustom">
+            <summary>رنگ‌های دلخواه</summary>
+            <div class="an-colors">
+              <label><input type="color" id="annC1"><span>رنگ شروع زمینه</span></label>
+              <label><input type="color" id="annC2"><span>رنگ وسط زمینه</span></label>
+              <label><input type="color" id="annCt"><span>رنگ متن</span></label>
+              <label><input type="color" id="annCa"><span>رنگ درخشش و آیکون</span></label>
+            </div>
+          </details>
+        </section>
+
+        <section class="an-sec">
+          <h4><span>۳</span>انیمیشن</h4>
+          <div class="an-chips" id="announceAnims"></div>
+          <div class="an-row an-row-3">
+            <div class="form-field"><label>سرعت</label><div class="an-seg" id="announceSpeed"></div></div>
+            <div class="form-field"><label>آیکون کنار متن</label><div class="an-seg" id="announceIcons"></div></div>
+            <div class="form-field"><label>اندازه‌ی متن</label><div class="an-seg" id="announceSizes"></div></div>
+          </div>
+        </section>
+
+        <p class="form-error" id="announceError"></p>
+        <div class="an-actions"><button class="adm-primary an-save" id="announceSaveBtn">ذخیره اطلاعیه</button><button type="button" class="an-reset" id="announceResetBtn">بازگشت به پیش‌فرض</button></div>
+      </div>
     </div>
 
     <div id="adminTabLogs" class="admin-tab-panel" style="display:none;">
@@ -969,7 +1004,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=5e4ef13c"></script>
+<script src="/assets/app.js?v=bc80d081"></script>
 
 </body>
 </html>
