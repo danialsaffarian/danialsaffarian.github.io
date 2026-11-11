@@ -3722,29 +3722,90 @@ async function deleteCoupon(code){
 }
 
 /* ================= اطلاعیه‌ی بالای سایت ================= */
+// the bar's look is data (preset or custom colours, animation, speed, icon, size) saved with the text in site_settings;
+// colours are only ever set as validated #rrggbb custom properties, never as raw CSS
+const ANN_PRESETS = {
+  mocha:     { name: 'قهوه‌ای کلاسیک', c1: '#6F533F', c2: '#8E6E58', ct: '#F7F2EA', ca: '#E6C38A' },
+  champagne: { name: 'شامپاینی',       c1: '#E9D7BC', c2: '#F7EEDF', ct: '#5A4232', ca: '#B08A4E' },
+  noir:      { name: 'مشکی و طلا',     c1: '#141110', c2: '#2A231E', ct: '#F3E6CF', ca: '#D9B26A' },
+  rose:      { name: 'رزگلد',          c1: '#B97A6E', c2: '#D9A79A', ct: '#FFF6F1', ca: '#FCE2C8' },
+  ivory:     { name: 'کرم روشن',       c1: '#FBF6EE', c2: '#F1E6D6', ct: '#6B5647', ca: '#B8956F' },
+  emerald:   { name: 'زمردی',          c1: '#1F3B33', c2: '#2E5246', ct: '#F1EADA', ca: '#D6B97A' },
+};
+const ANN_ANIMS = { shine: 'درخشش طلایی', marquee: 'متن روان', pulse: 'تپش نرم', glow: 'هاله‌ی نور', drop: 'فقط ورود', none: 'بدون انیمیشن' };
+const ANN_SPEEDS = { slow: 'آرام', normal: 'معمولی', fast: 'سریع' };
+const ANN_SIZES = { sm: 'کوچک', md: 'متوسط', lg: 'بزرگ' };
+const ANN_SVG = {
+  spark: '<path d="M12 1.5C12.9 8 16 11.1 22.5 12 16 12.9 12.9 16 12 22.5 11.1 16 8 12.9 1.5 12 8 11.1 11.1 8 12 1.5Z"/>',
+  gift: '<path d="M4 11h16v10H4zM3 7h18v4H3zM12 7v14M12 7S10.5 3 8 3.6 7 7 12 7zM12 7s1.5-4 4-3.4S17 7 12 7z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>',
+  truck: '<path d="M2 7h11v9H2zM13 10h4.5l3.5 3.5V16h-8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="6" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="17" cy="17.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/>',
+  tag: '<path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="7" cy="7" r="1.6"/>',
+  heart: '<path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 5.3 3.2 1.7-2 3.2-3.2 5.3-3.2 3.7 0 5.8 3.9 4.3 7.3C19.5 16.4 12 21 12 21z"/>',
+};
+const ANN_ICONS = { spark: 'ستاره', gift: 'هدیه', truck: 'ارسال', tag: 'تخفیف', heart: 'قلب', none: 'بدون' };
+const ANN_DEFAULT = { preset: 'mocha', anim: 'shine', speed: 'normal', icon: 'spark', size: 'md' };
+const hexOk = c => typeof c === 'string' && /^#[0-9a-f]{6}$/i.test(c);
+function annStyle(v){
+  v = v || {};
+  const pick = (val, list, def) => Object.prototype.hasOwnProperty.call(list, val) ? val : def;
+  const preset = v.preset === 'custom' ? 'custom' : pick(v.preset, ANN_PRESETS, ANN_DEFAULT.preset);
+  const base = ANN_PRESETS[preset] || ANN_PRESETS.mocha;
+  const c = v.colors || {};
+  const colors = preset === 'custom'
+    ? { c1: hexOk(c.c1) ? c.c1 : base.c1, c2: hexOk(c.c2) ? c.c2 : base.c2, ct: hexOk(c.ct) ? c.ct : base.ct, ca: hexOk(c.ca) ? c.ca : base.ca }
+    : { c1: base.c1, c2: base.c2, ct: base.ct, ca: base.ca };
+  return { preset, colors, anim: pick(v.anim, ANN_ANIMS, ANN_DEFAULT.anim), speed: pick(v.speed, ANN_SPEEDS, ANN_DEFAULT.speed),
+    icon: pick(v.icon, ANN_ICONS, ANN_DEFAULT.icon), size: pick(v.size, ANN_SIZES, ANN_DEFAULT.size) };
+}
 function safeAnnounceLink(link){
   const l = String(link || '').trim();
   return /^https?:\/\//i.test(l) || /^#[\w-]*$/.test(l) ? l : '';
 }
 function fillAnnounceBar(bar, value, forPreview){
+  const st = annStyle(value);
   bar.innerHTML = '';
-  const spark = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1.5C12.9 8 16 11.1 22.5 12 16 12.9 12.9 16 12 22.5 11.1 16 8 12.9 1.5 12 8 11.1 11.1 8 12 1.5Z"/></svg>';
-  const inner = document.createElement('span');
-  inner.className = 'ann-inner';
-  const span = document.createElement('span');
-  span.className = 'ann-text';
-  span.textContent = value.text || '';
-  inner.insertAdjacentHTML('beforeend', `<span class="ann-spark">${spark}</span>`);
-  inner.appendChild(span);
-  inner.insertAdjacentHTML('beforeend', `<span class="ann-spark late">${spark}</span>`);
-  bar.appendChild(inner);
+  bar.className = `announce-bar${forPreview ? ' announce-preview' : ''} ann-a-${st.anim} ann-s-${st.speed} ann-z-${st.size} ann-i-${st.icon}`;
+  bar.style.setProperty('--ann-c1', st.colors.c1);
+  bar.style.setProperty('--ann-c2', st.colors.c2);
+  bar.style.setProperty('--ann-ct', st.colors.ct);
+  bar.style.setProperty('--ann-ca', st.colors.ca);
+  const icon = st.icon === 'none' ? '' : `<span class="ann-spark"><svg viewBox="0 0 24 24" aria-hidden="true">${ANN_SVG[st.icon]}</svg></span>`;
+  const iconLate = icon.replace('ann-spark', 'ann-spark late');
+  const piece = () => {
+    const inner = document.createElement('span');
+    inner.className = 'ann-inner';
+    const span = document.createElement('span');
+    span.className = 'ann-text';
+    span.textContent = value.text || '';
+    inner.insertAdjacentHTML('beforeend', icon);
+    inner.appendChild(span);
+    inner.insertAdjacentHTML('beforeend', iconLate);
+    return inner;
+  };
   const link = safeAnnounceLink(value.link);
-  if(link){
+  const linkEl = () => {
     const a = document.createElement('a');
-    a.href = link; a.textContent = 'مشاهده';
+    a.href = link; a.textContent = String(value.linkLabel || '').trim().slice(0, 20) || 'مشاهده';
     if(/^https?:/i.test(link)){ a.target = '_blank'; a.rel = 'noopener'; }
-    bar.appendChild(a);
+    if(forPreview) a.addEventListener('click', e => e.preventDefault());
+    return a;
+  };
+  if(st.anim === 'marquee'){
+    // two identical runs side by side so the loop has no gap; the second copy is hidden from screen readers
+    const track = document.createElement('span');
+    track.className = 'ann-track';
+    for(let k = 0; k < 2; k++){
+      const run = document.createElement('span');
+      run.className = 'ann-run';
+      if(k) run.setAttribute('aria-hidden', 'true');
+      for(let r = 0; r < 3; r++){ run.appendChild(piece()); if(link) run.appendChild(linkEl()); }
+      track.appendChild(run);
+    }
+    bar.appendChild(track);
+    return;
   }
+  bar.appendChild(piece());
+  if(link) bar.appendChild(linkEl());
 }
 async function loadAnnouncement(){
   const bar = document.getElementById('announceBar');
@@ -3757,36 +3818,89 @@ async function loadAnnouncement(){
 }
 loadAnnouncement();
 
-function renderAnnouncePreview(){
-  fillAnnounceBar(document.getElementById('announcePreview'), {
-    text: document.getElementById('announceTextInput').value.trim() || 'متن اطلاعیه این‌جا دیده می‌شه',
-    link: document.getElementById('announceLinkInput').value,
-  }, true);
+// ---- admin studio ----
+let annDraft = { ...ANN_DEFAULT };
+function annFormValue(){
+  return { ...annDraft,
+    text: document.getElementById('announceTextInput').value.trim(),
+    link: document.getElementById('announceLinkInput').value.trim(),
+    linkLabel: document.getElementById('announceLinkLabel').value.trim(),
+    active: document.getElementById('announceActiveInput').checked };
 }
+function renderAnnounceStudio(){
+  const st = annStyle(annDraft);
+  document.getElementById('announcePresets').innerHTML = Object.entries(ANN_PRESETS).map(([k, p]) =>
+    `<button type="button" class="an-preset${st.preset === k ? ' on' : ''}" data-preset="${k}"><i style="background:linear-gradient(90deg,${p.c1},${p.c2},${p.c1})"><em style="color:${p.ct}">Aa</em><s style="background:${p.ca}"></s></i><span>${p.name}</span></button>`).join('')
+    + `<button type="button" class="an-preset${st.preset === 'custom' ? ' on' : ''}" data-preset="custom"><i class="an-preset-custom" style="background:linear-gradient(90deg,${st.colors.c1},${st.colors.c2},${st.colors.c1})"><em style="color:${st.colors.ct}">Aa</em><s style="background:${st.colors.ca}"></s></i><span>سفارشی</span></button>`;
+  const chips = (id, list, cur, key) => { document.getElementById(id).innerHTML = Object.entries(list).map(([k, n]) =>
+    `<button type="button" class="${cur === k ? 'on' : ''}" data-${key}="${k}">${n}</button>`).join(''); };
+  chips('announceAnims', ANN_ANIMS, st.anim, 'anim');
+  chips('announceSpeed', ANN_SPEEDS, st.speed, 'speed');
+  chips('announceSizes', ANN_SIZES, st.size, 'size');
+  document.getElementById('announceIcons').innerHTML = Object.entries(ANN_ICONS).map(([k, n]) =>
+    `<button type="button" class="${st.icon === k ? 'on' : ''}" data-icon="${k}" title="${n}">${k === 'none' ? n : `<svg viewBox="0 0 24 24" aria-hidden="true">${ANN_SVG[k]}</svg>`}</button>`).join('');
+  document.getElementById('announceSpeed').closest('.form-field').classList.toggle('off', st.anim === 'none' || st.anim === 'drop');
+  [['annC1', 'c1'], ['annC2', 'c2'], ['annCt', 'ct'], ['annCa', 'ca']].forEach(([id, k]) => { document.getElementById(id).value = st.colors[k]; });
+  const text = document.getElementById('announceTextInput').value;
+  document.getElementById('announceCount').textContent = `${toFa(text.length)} / ۱۶۰`;
+  const v = annFormValue();
+  fillAnnounceBar(document.getElementById('announcePreview'), { ...v, text: v.text || 'متن اطلاعیه این‌جا دیده می‌شه' }, true);
+}
+function renderAnnouncePreview(){ renderAnnounceStudio(); }
 async function loadAdminAnnouncement(){
   const { data } = await db.from('site_settings').select('value').eq('key', 'announcement').maybeSingle();
   const v = (data && data.value) || {};
+  const st = annStyle(v);
+  annDraft = { preset: st.preset, colors: { ...st.colors }, anim: st.anim, speed: st.speed, icon: st.icon, size: st.size };
   document.getElementById('announceTextInput').value = v.text || '';
   document.getElementById('announceLinkInput').value = v.link || '';
+  document.getElementById('announceLinkLabel').value = v.linkLabel || '';
   document.getElementById('announceActiveInput').checked = !!v.active;
+  document.getElementById('announceCustom').open = st.preset === 'custom';
   document.getElementById('announceError').classList.remove('show');
-  renderAnnouncePreview();
+  renderAnnounceStudio();
 }
-['announceTextInput', 'announceLinkInput'].forEach(id => document.getElementById(id).addEventListener('input', renderAnnouncePreview));
+['announceTextInput', 'announceLinkInput', 'announceLinkLabel'].forEach(id => document.getElementById(id).addEventListener('input', renderAnnounceStudio));
+document.getElementById('announceActiveInput').addEventListener('change', renderAnnounceStudio);
+document.getElementById('adminTabAnnounce').addEventListener('click', e => {
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.preset){
+    if(b.dataset.preset === 'custom'){ annDraft.colors = { ...annStyle(annDraft).colors }; document.getElementById('announceCustom').open = true; }
+    annDraft.preset = b.dataset.preset;
+  }
+  else if(b.dataset.anim) annDraft.anim = b.dataset.anim;
+  else if(b.dataset.speed) annDraft.speed = b.dataset.speed;
+  else if(b.dataset.icon) annDraft.icon = b.dataset.icon;
+  else if(b.dataset.size) annDraft.size = b.dataset.size;
+  else return;
+  renderAnnounceStudio();
+});
+[['annC1', 'c1'], ['annC2', 'c2'], ['annCt', 'ct'], ['annCa', 'ca']].forEach(([id, k]) => document.getElementById(id).addEventListener('input', e => {
+  if(annDraft.preset !== 'custom'){ annDraft.colors = { ...annStyle(annDraft).colors }; annDraft.preset = 'custom'; }
+  annDraft.colors = { ...(annDraft.colors || {}), [k]: e.target.value };
+  renderAnnounceStudio();
+}));
+document.getElementById('announceResetBtn').addEventListener('click', () => {
+  annDraft = { ...ANN_DEFAULT };
+  document.getElementById('announceLinkLabel').value = '';
+  document.getElementById('announceCustom').open = false;
+  renderAnnounceStudio();
+});
 document.getElementById('announceSaveBtn').addEventListener('click', async () => {
   const errorEl = document.getElementById('announceError');
   errorEl.classList.remove('show');
-  const text = document.getElementById('announceTextInput').value.trim();
-  const link = document.getElementById('announceLinkInput').value.trim();
-  const active = document.getElementById('announceActiveInput').checked;
-  if(active && !text){ errorEl.textContent = 'برای نمایش، متن اطلاعیه رو بنویس.'; errorEl.classList.add('show'); return; }
-  if(link && !safeAnnounceLink(link)){ errorEl.textContent = 'لینک باید با https:// شروع بشه (یا مثل #shop باشه).'; errorEl.classList.add('show'); return; }
-  const { error } = await db.from('site_settings').upsert({ key: 'announcement', value: { active, text, link }, updated_at: new Date().toISOString() });
+  const v = annFormValue();
+  if(v.active && !v.text){ errorEl.textContent = 'برای نمایش، متن اطلاعیه رو بنویس.'; errorEl.classList.add('show'); return; }
+  if(v.link && !safeAnnounceLink(v.link)){ errorEl.textContent = 'لینک باید با https:// شروع بشه (یا مثل #shop باشه).'; errorEl.classList.add('show'); return; }
+  const st = annStyle(v);
+  const value = { active: v.active, text: v.text, link: v.link, linkLabel: v.linkLabel.slice(0, 20),
+    preset: st.preset, anim: st.anim, speed: st.speed, icon: st.icon, size: st.size, ...(st.preset === 'custom' ? { colors: st.colors } : {}) };
+  const { error } = await db.from('site_settings').upsert({ key: 'announcement', value, updated_at: new Date().toISOString() });
   if(error){ console.error(error); errorEl.textContent = 'ذخیره نشد، دوباره امتحان کن.'; errorEl.classList.add('show'); return; }
   try{ localStorage.removeItem('hg-announce-closed'); }catch(e){}
-  logAdminAction(active ? 'نمایش اطلاعیه' : 'خاموش کردن اطلاعیه', text);
+  logAdminAction(v.active ? 'نمایش اطلاعیه' : 'خاموش کردن اطلاعیه', v.text);
   loadAnnouncement();
-  showToast(active ? 'اطلاعیه روی سایت نمایش داده می‌شه' : 'اطلاعیه از سایت برداشته شد');
+  showToast(v.active ? 'اطلاعیه روی سایت نمایش داده می‌شه' : 'اطلاعیه از سایت برداشته شد');
 });
 
 /* ================= لاگ فعالیت مدیرها ================= */
