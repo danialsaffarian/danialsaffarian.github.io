@@ -31,7 +31,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=76982473">
+<link rel="stylesheet" href="/assets/site.css?v=21b1e558">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"گوشواره‌ها دست‌ساز حنا گالری","url":"https://hanagalleryy.ir/c/earring/","description":"گوشواره‌های حنا گالری؛ مدل‌های سنگی، مروارید، اشکی و ایرکاف، تکی یا پک، برای استایل روزمره و مهمونی.","mainEntity":{"@type":"ItemList","numberOfItems":17,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://hanagalleryy.ir/p/99/","name":"گوشواره پشمی"},{"@type":"ListItem","position":2,"url":"https://hanagalleryy.ir/p/96/","name":"ایرکاف اشک"},{"@type":"ListItem","position":3,"url":"https://hanagalleryy.ir/p/92/","name":"گوشواره قلب"},{"@type":"ListItem","position":4,"url":"https://hanagalleryy.ir/p/90/","name":"ایرکاف پاپیون"},{"@type":"ListItem","position":5,"url":"https://hanagalleryy.ir/p/89/","name":"پک گوشواره"},{"@type":"ListItem","position":6,"url":"https://hanagalleryy.ir/p/88/","name":"ایرکاف مینیمال"},{"@type":"ListItem","position":7,"url":"https://hanagalleryy.ir/p/81/","name":"نگین چسبی"},{"@type":"ListItem","position":8,"url":"https://hanagalleryy.ir/p/79/","name":"پک گوشواره گل"},{"@type":"ListItem","position":9,"url":"https://hanagalleryy.ir/p/50/","name":"گوشواره اشکی طلایی کوچک"},{"@type":"ListItem","position":10,"url":"https://hanagalleryy.ir/p/46/","name":"گوشواره قهوه ای مربع"},{"@type":"ListItem","position":11,"url":"https://hanagalleryy.ir/p/43/","name":"گوشواره مروارید و استیل"},{"@type":"ListItem","position":12,"url":"https://hanagalleryy.ir/p/33/","name":"گوشواره سنگی قهوه ای"},{"@type":"ListItem","position":13,"url":"https://hanagalleryy.ir/p/31/","name":"گوشواره سنگی صدفی"},{"@type":"ListItem","position":14,"url":"https://hanagalleryy.ir/p/80/","name":"ایرکاف فشن"},{"@type":"ListItem","position":15,"url":"https://hanagalleryy.ir/p/59/","name":"گوشواره صورتی"},{"@type":"ListItem","position":16,"url":"https://hanagalleryy.ir/p/58/","name":"پک گوشواره"},{"@type":"ListItem","position":17,"url":"https://hanagalleryy.ir/p/32/","name":"گوشواره سنگی صورتی"}]}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"حنا گالری","item":"https://hanagalleryy.ir/"},{"@type":"ListItem","position":2,"name":"گوشواره‌ها","item":"https://hanagalleryy.ir/c/earring/"}]}</script>
 </head>
@@ -639,7 +639,7 @@
     <button class="product-back" id="adminBackBtn" aria-label="بازگشت">→</button>
     <div class="adm-title">
       <svg class="adm-mark" viewBox="0 0 120 120" aria-hidden="true"><use href="#hg-mark"/></svg>
-      <div><b>پنل مدیریت</b><small id="admToday"></small></div>
+      <div><em class="adm-eyebrow">Hana Gallery · Atelier</em><b>پنل مدیریت</b><small id="admToday"></small></div>
     </div>
     <div class="admin-tabs" id="adminTabs">
       <button class="admin-tab active" data-tab="orders">سفارش‌ها</button>
@@ -657,6 +657,12 @@
 
     <div id="adminTabOrders" class="admin-tab-panel">
       <div id="adminTodo" class="admin-todo"></div>
+      <div class="adm-quick" id="admQuick">
+        <button type="button" data-q="product"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></i>محصول جدید</button>
+        <button type="button" data-q="manual"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg></i>سفارش دستی</button>
+        <button type="button" data-q="announce"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1zM15.5 8.5a5 5 0 0 1 0 7"/></svg></i>اطلاعیه</button>
+        <button type="button" data-q="coupons"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.6 13.4l-7.2 7.2a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8z"/><circle cx="7" cy="7" r="1.5"/></svg></i>کد تخفیف</button>
+      </div>
       <details class="pay-mode-box">
         <summary><span>پرداخت آنلاین (زیبال)</span><em id="payModeNow"></em></summary>
         <label><input type="radio" name="payMode" value="off"> <span>خاموش <small>— مثل قبل، کارت‌به‌کارت و هماهنگی تلفنی</small></span></label>
@@ -672,46 +678,76 @@
 
     <div id="adminTabProducts" class="admin-tab-panel" style="display:none;">
       <button class="hero-btn adm-primary" id="adminAddProductBtn">+ افزودن محصول جدید</button>
-      <div id="adminProductForm" style="display:none;margin-bottom:24px;padding:18px;border:1px solid var(--line);border-radius:6px;">
+      <div id="adminProductForm" class="apf" style="display:none;">
         <input type="hidden" id="adminProdId">
-        <div class="form-field"><label>نام محصول</label><input type="text" id="adminProdName"></div>
-        <div class="form-field"><label>دسته‌بندی</label>
-          <select id="adminProdCat" style="width:100%;padding:11px 12px;border:1px solid var(--line);background:var(--cream-soft);font-family:inherit;font-size:14px;">
-            <option value="necklace">گردنبند</option>
-            <option value="earring">گوشواره</option>
-            <option value="bracelet">دستبند</option>
-            <option value="ring">انگشتر</option>
-            <option value="anklet">پابند</option>
-            <option value="hair">اکسسوری مو</option>
-          </select>
-        </div>
-        <div class="form-field"><label>قیمت (تومان)</label><input type="number" id="adminProdPrice"></div>
-        <div class="form-field"><label>قیمت تخفیف‌خورده (اختیاری)</label><input type="number" id="adminProdSalePrice"></div>
-        <div class="form-field">
-          <label>زمان‌بندی حراج (اختیاری)</label>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <label style="flex:1;min-width:160px;font-size:12px;color:var(--coffee-70);">شروع<input type="datetime-local" id="adminProdSaleStart"></label>
-            <label style="flex:1;min-width:160px;font-size:12px;color:var(--coffee-70);">پایان<input type="datetime-local" id="adminProdSaleEnd"></label>
+        <div class="apf-head"><b id="apfTitle">محصول جدید</b><small>فقط اسم و قیمت الزامیه؛ بقیه رو هر وقت خواستی پر کن.</small></div>
+
+        <section class="apf-sec">
+          <h4><i>۱</i>اسم و دسته</h4>
+          <div class="form-field"><label for="adminProdName">نام محصول</label><input type="text" id="adminProdName" placeholder="مثلاً گردنبند مروارید"></div>
+          <div class="form-field"><label>دسته‌بندی</label>
+            <div class="apf-cats" id="apfCats"></div>
+            <select id="adminProdCat" hidden>
+              <option value="necklace">گردنبند</option>
+              <option value="earring">گوشواره</option>
+              <option value="bracelet">دستبند</option>
+              <option value="ring">انگشتر</option>
+              <option value="anklet">پابند</option>
+              <option value="hair">اکسسوری مو</option>
+            </select>
           </div>
-          <p style="font-size:12px;color:var(--coffee-70);margin:6px 0 0;line-height:1.9;">قیمت تخفیف‌خورده فقط بین این دو زمان اعمال می‌شه و بعدش خودکار به قیمت اصلی برمی‌گرده. خالی بذاری یعنی محدودیتی نداره.</p>
-        </div>
-        <div class="form-field"><label>موجودی</label><input type="number" id="adminProdStock"></div>
-        <div class="form-field">
-          <label>عکس‌های محصول</label>
+          <label class="apf-switch"><input type="checkbox" id="adminProdIsNew"><span></span>نشان «تازه» داشته باشه</label>
+        </section>
+
+        <section class="apf-sec">
+          <h4><i>۲</i>عکس‌ها</h4>
           <div class="admin-img-preview" id="adminProdImagePreview"></div>
           <label class="admin-img-upload-label" for="adminProdImageFile" id="adminImgDropZone">
-            📷 افزودن عکس از گالری یا بکشید و اینجا رها کنید
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3"/><circle cx="12" cy="12.5" r="3.5"/><path d="M8.5 5l1.5-2h4l1.5 2"/></svg>
+            <span><b>افزودن عکس</b><small>از گالری انتخاب کن یا بکش و اینجا رها کن؛ اولی عکس اصلیه</small></span>
             <input type="file" id="adminProdImageFile" accept="image/*" multiple>
           </label>
           <p class="admin-img-upload-status" id="adminProdImageUploadStatus"></p>
-          <input type="text" id="adminProdImage" placeholder="یا لینک عکس رو دستی بچسبون (با کاما جدا کن)" style="margin-top:10px;">
-        </div>
-        <div class="form-field"><label>رنگ/مدل‌ها (اختیاری — فرمت: نام:موجودی:قیمت — قیمت اختیاریه و اگه ننویسی، قیمت خودِ محصول رو می‌گیره. مثل: آبی:4:250000,صورتی:0,سفید:10)</label><input type="text" id="adminProdVariants"></div>
-        <div class="form-field"><label>توضیحات (اختیاری)</label><textarea id="adminProdDesc" rows="2"></textarea></div>
-        <div class="form-field"><label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--coffee);"><input type="checkbox" id="adminProdIsNew" style="width:auto;"> نشان «تازه» داشته باشه</label></div>
+          <details class="apf-more"><summary>چسباندن لینک عکس</summary>
+            <input type="text" id="adminProdImage" placeholder="لینک عکس‌ها رو با کاما جدا کن">
+          </details>
+        </section>
+
+        <section class="apf-sec">
+          <h4><i>۳</i>قیمت</h4>
+          <div class="apf-two">
+            <div class="form-field"><label for="adminProdPrice">قیمت (تومان)</label><input type="number" id="adminProdPrice" inputmode="numeric"><em class="apf-hint" id="apfPriceHint"></em></div>
+            <div class="form-field"><label for="adminProdSalePrice">قیمت تخفیف‌خورده (اختیاری)</label><input type="number" id="adminProdSalePrice" inputmode="numeric"><em class="apf-hint" id="apfSaleHint"></em></div>
+          </div>
+          <div class="apf-when" id="apfSaleWhen"><b class="apf-sub">زمان‌بندی حراج (اختیاری)</b>
+            <div class="apf-two">
+              <label class="apf-mini">شروع<input type="datetime-local" id="adminProdSaleStart"></label>
+              <label class="apf-mini">پایان<input type="datetime-local" id="adminProdSaleEnd"></label>
+            </div>
+            <p class="apf-note">قیمت تخفیف‌خورده فقط بین این دو زمان اعمال می‌شه و بعدش خودکار به قیمت اصلی برمی‌گرده. خالی بذاری یعنی محدودیتی نداره.</p>
+          </div>
+        </section>
+
+        <section class="apf-sec">
+          <h4><i>۴</i>موجودی و رنگ‌ها</h4>
+          <div class="form-field"><label for="adminProdStock">موجودی کل</label><input type="number" id="adminProdStock" inputmode="numeric"><em class="apf-hint" id="apfStockHint"></em></div>
+          <div class="apf-var-head" aria-hidden="true"><span>رنگ یا مدل</span><span>تعداد</span><span>قیمت جدا</span><span></span></div>
+          <div class="apf-vars" id="apfVars"></div>
+          <button type="button" class="apf-add" id="apfAddVar">+ افزودن رنگ یا مدل</button>
+          <p class="apf-note">هر رنگ موجودی خودش رو داره. قیمت رو فقط وقتی بنویس که با قیمت اصلی فرق داره.</p>
+          <input type="hidden" id="adminProdVariants">
+        </section>
+
+        <section class="apf-sec">
+          <h4><i>۵</i>توضیحات <small>(اختیاری)</small></h4>
+          <div class="form-field"><textarea id="adminProdDesc" rows="3" placeholder="جنس، سایز، نکته‌ی نگهداری…"></textarea></div>
+        </section>
+
         <p class="form-error" id="adminProdError"></p>
-        <button class="hero-btn" style="color:var(--coffee);border-color:var(--coffee);" id="adminProdSaveBtn">ذخیره</button>
-        <button class="hero-btn" style="color:var(--coffee-70);border-color:var(--line);" id="adminProdCancelBtn">انصراف</button>
+        <div class="apf-bar">
+          <button class="hero-btn apf-save" id="adminProdSaveBtn">ذخیره</button>
+          <button class="hero-btn apf-cancel" id="adminProdCancelBtn">انصراف</button>
+        </div>
       </div>
       <details class="admin-optimize pay-mode-box">
         <summary><span>بهینه‌سازی عکس‌ها</span><em>ابزار</em></summary>
@@ -1000,7 +1036,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=bc80d081"></script>
+<script src="/assets/app.js?v=c0b4a391"></script>
 
 </body>
 </html>
