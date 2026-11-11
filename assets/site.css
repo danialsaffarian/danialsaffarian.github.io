@@ -2016,3 +2016,6 @@
   .checkout-summary{border-color:#EADBC2;background:#FFFDF9;border-radius:3px;}
   .checkout-summary-total{color:var(--ink);border-top-color:var(--gold-a);}
   .drawer-item-info .price{color:var(--ink);font-variant-numeric:normal;}
+  .cfb-sort button.on{background:linear-gradient(160deg,#4A3A2C,#2A2019)!important;border-color:#2A2019!important;color:var(--champ)!important;}
+  .cfb-name{color:var(--ink);}
+  .cfb-count{background:linear-gradient(160deg,#D8BC85,#B8925A);}
