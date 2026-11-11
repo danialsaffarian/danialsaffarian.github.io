@@ -3079,11 +3079,7 @@ function renderAdminProducts(){
       <div class="ap-info">
         <b>${escapeHtml(p.name)}</b>
         <span>${escapeHtml(p.category_label || p.category)}، ${toFa(p.price)} تومان${adminSaleTag(p)}</span>
-        <span class="ap-step ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">
-          <button type="button" onclick="admStock(${p.id}, -1)" aria-label="یکی کم کن" ${stock <= 0 ? 'disabled' : ''}>−</button>
-          <em>${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
-          <button type="button" onclick="admStock(${p.id}, 1)" aria-label="یکی اضافه کن">+</button>
-        </span>
+        <em class="ap-stock ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
@@ -3093,26 +3089,6 @@ function renderAdminProducts(){
   }).join('');
 }
 document.getElementById('adminProductSearch').addEventListener('input', renderAdminProducts);
-// +/- on a product row: the number changes at once, the save waits until the taps stop
-const admStockTimers = {};
-function admStock(id, d){
-  const p = adminProductsCache.find(x => x.id === id);
-  if(!p) return;
-  const cur = Number(p.stock) || 0, next = Math.max(0, cur + d);
-  if(next === cur) return;
-  if(!('_saved' in p)) p._saved = cur;
-  p.stock = next;
-  renderAdminProducts();
-  clearTimeout(admStockTimers[id]);
-  admStockTimers[id] = setTimeout(async () => {
-    const before = p._saved; delete p._saved;
-    if(before === p.stock) return;
-    const { error } = await db.from('products').update({ stock: p.stock }).eq('id', id);
-    if(error){ console.error(error); p.stock = before; renderAdminProducts(); showToast('موجودی ذخیره نشد، دوباره امتحان کن'); return; }
-    logAdminAction('تغییر موجودی', `${p.name}: ${toFa(before)} ← ${toFa(p.stock)}`);
-    showToast(`موجودی «${p.name}» شد ${toFa(p.stock)}`);
-  }, 700);
-}
 
 function resetAdminProductForm(){
   document.getElementById('adminProdId').value = '';

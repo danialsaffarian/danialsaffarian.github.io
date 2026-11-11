@@ -1814,15 +1814,7 @@
   .adm .ship-box.next{background:linear-gradient(160deg,#FFF8EA,#F8EDD8);box-shadow:inset 0 0 0 1px #E8CC97;}
   .ship-next{display:block;flex-basis:100%;font-size:12.5px;font-weight:800;color:#8A5A12;margin-bottom:8px;}
 
-  /* product rows: tap +/- to change stock */
   #adminProductsList .admin-prod-row{border-radius:18px;}
-  .ap-step{display:inline-flex;align-items:center;margin-top:5px;border-radius:99px;background:#E6EFE1;color:#4C7046;}
-  .ap-step em{font-style:normal;font-size:11.5px;font-weight:800;padding:0 4px;min-width:62px;text-align:center;font-variant-numeric:tabular-nums;}
-  .ap-step button{width:28px;height:28px;border:0;border-radius:50%;background:transparent;font:inherit;font-size:16px;font-weight:700;line-height:1;color:inherit;cursor:pointer;}
-  .ap-step button:active{background:rgba(0,0,0,.06);}
-  .ap-step button:disabled{opacity:.3;cursor:default;}
-  .ap-step.low{background:#FBF0DC;color:#8A5A12;}
-  .ap-step.out{background:#F6E3E1;color:#9B3F3F;}
 
   /* dock: gold-tinted active pill */
   .adm-nav-btn.active .adm-nav-ico,.adm-nav-btn.on .adm-nav-ico{background:linear-gradient(160deg,#F6EBD6,#EAD9BC)!important;box-shadow:inset 0 0 0 1px rgba(201,164,106,.5);}
