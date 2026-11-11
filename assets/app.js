@@ -3080,6 +3080,7 @@ function renderAdminProducts(){
         <b>${escapeHtml(p.name)}</b>
         <span>${escapeHtml(p.category_label || p.category)}، ${toFa(p.price)} تومان${adminSaleTag(p)}</span>
         <em class="ap-stock ${stock <= 0 ? 'out' : stock <= 1 ? 'low' : ''}">${stock <= 0 ? 'ناموجود' : 'موجودی ' + toFa(stock)}</em>
+        ${p.variants ? `<span class="ap-vars">${admParseVars(p.variants).map(v => `<i class="${v.qty === '0' ? 'out' : ''}">${escapeHtml(v.name)}${v.qty !== '' ? ' ' + (v.qty === '0' ? 'تموم شده' : toFa(v.qty)) : ''}</i>`).join('')}</span>` : ''}
       </div>
       <div class="admin-prod-actions">
         <button onclick="editAdminProduct(${p.id})">ویرایش</button>
@@ -3106,7 +3107,65 @@ function resetAdminProductForm(){
   document.getElementById('adminProdError').classList.remove('show');
   adminPendingUploads = [];
   renderAdminProdImagePreview();
+  admFormSync('محصول جدید');
 }
+
+// ---- product form helpers: category chips, colour rows, live price hints ----
+function admParseVars(raw){
+  return (raw || '').split(/[,،]/).map(v => v.trim()).filter(Boolean).map(v => {
+    const [name, qty, price] = v.split(':').map(x => (x || '').trim());
+    return { name, qty: qty === 'ناموجود' ? '0' : (qty || ''), price: price || '' };
+  });
+}
+function admVarsFromRows(){
+  const clean = x => x.replace(/[,،:]/g, ' ').trim();
+  const rows = [...document.querySelectorAll('#apfVars .apf-var')].map(r => ({
+    name: clean(r.querySelector('[data-k=name]').value),
+    qty: latinDigits(r.querySelector('[data-k=qty]').value).replace(/\D/g, ''),
+    price: latinDigits(r.querySelector('[data-k=price]').value).replace(/\D/g, '') }));
+  document.getElementById('adminProdVariants').value = rows.filter(v => v.name)
+    .map(v => v.price ? `${v.name}:${v.qty}:${v.price}` : v.qty !== '' ? `${v.name}:${v.qty}` : v.name).join(',');
+  admHints();
+}
+function admRenderVars(list){ document.getElementById('apfVars').innerHTML = list.map(admVarRow).join(''); }
+function admVarRow(v){
+  return `<div class="apf-var">
+      <input data-k="name" placeholder="رنگ یا مدل" value="${escapeHtml(v.name)}">
+      <input data-k="qty" inputmode="numeric" placeholder="تعداد" value="${escapeHtml(v.qty)}">
+      <input data-k="price" inputmode="numeric" placeholder="قیمت جدا" value="${escapeHtml(v.price)}">
+      <button type="button" aria-label="حذف این رنگ" onclick="this.parentNode.remove(); admVarsFromRows();">×</button>
+    </div>`;
+}
+function admHints(){
+  const num = id => Number(latinDigits(document.getElementById(id).value || '')) || 0;
+  const price = num('adminProdPrice'), sale = num('adminProdSalePrice'), stock = num('adminProdStock');
+  document.getElementById('apfPriceHint').textContent = price ? toFa(price) + ' تومان' : '';
+  const sh = document.getElementById('apfSaleHint');
+  sh.textContent = sale && price ? (sale < price ? `${toFa(Math.round((1 - sale / price) * 100))}٪ تخفیف` : 'باید از قیمت اصلی کمتر باشه') : '';
+  sh.classList.toggle('bad', !!(sale && price && sale >= price));
+  const vars = admParseVars(document.getElementById('adminProdVariants').value).filter(v => v.qty !== '');
+  const sum = vars.reduce((a, v) => a + (Number(v.qty) || 0), 0);
+  const el = document.getElementById('apfStockHint');
+  el.innerHTML = vars.length && sum !== stock
+    ? `جمع رنگ‌ها ${toFa(sum)} تاست <button type="button" onclick="document.getElementById('adminProdStock').value=${sum}; admHints();">همین رو بذار</button>` : '';
+}
+function admFormSync(title){
+  document.getElementById('apfTitle').textContent = title;
+  const sel = document.getElementById('adminProdCat');
+  document.getElementById('apfCats').innerHTML = [...sel.options].map(o =>
+    `<button type="button" class="${o.value === sel.value ? 'on' : ''}" onclick="document.getElementById('adminProdCat').value='${o.value}'; [...this.parentNode.children].forEach(b => b.classList.toggle('on', b === this));">${o.textContent}</button>`).join('');
+  admRenderVars(admParseVars(document.getElementById('adminProdVariants').value));
+  document.getElementById('apfSaleWhen').open = !!(document.getElementById('adminProdSaleStart').value || document.getElementById('adminProdSaleEnd').value);
+  admHints();
+}
+document.getElementById('apfVars').addEventListener('input', admVarsFromRows);
+document.getElementById('apfAddVar').addEventListener('click', () => {
+  const box = document.getElementById('apfVars');
+  const tmp = document.createElement('div');
+  tmp.innerHTML = admVarRow({ name: '', qty: '', price: '' });
+  const row = tmp.firstElementChild; box.appendChild(row); row.querySelector('input').focus();
+});
+['adminProdPrice', 'adminProdSalePrice', 'adminProdStock'].forEach(id => document.getElementById(id).addEventListener('input', admHints));
 
 let adminPendingUploads = [];
 
@@ -3348,6 +3407,7 @@ async function editAdminProduct(id){
   document.getElementById('adminProdSaleStart').value = toLocalInputValue(p.sale_starts_at);
   document.getElementById('adminProdSaleEnd').value = toLocalInputValue(p.sale_ends_at);
   renderAdminProdImagePreview();
+  admFormSync('ویرایش: ' + (p.name || ''));
   document.getElementById('adminProductForm').style.display = 'block';
   document.getElementById('adminProductForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
