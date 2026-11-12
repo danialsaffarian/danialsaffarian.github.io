@@ -55,3 +55,12 @@ tools/monitor/run.sh        # prints only failures; exit 0 = all passed
 
 `store.js` covers layout at four widths, the category filter, add to cart, the product page and the cart drawer;
 `admin.js` covers order steps, quick actions and the product form against an in-memory database.
+
+## SMS alerts to the owner (runs by itself)
+
+The `health-alert` edge function runs every 10 minutes (`cron.job` `hg-health-alert`) and texts the owner's
+numbers when an order never reached the payment gateway, or when the site, the relay or the payment function
+fail three checks in a row. One text per problem, at most six a day. It sends through the approved
+"new order" SMS template with the alert in the name field (plain-text messages wait for the provider's
+manual approval, so they are no use for alerts); `health_state.sms_mode` switches between `pattern` and `simple`.
+What it sent is in `health_alerts` (`kind = 'sent'`), probe counters are in `health_state` (`probe-*`).
