@@ -2781,6 +2781,42 @@ function renderAdminTodo(rows){
     + tile('showUnpaidOrders()', waiting, 'منتظر پرداخت مشتری', false, 'wait');
   admCountUp();
 }
+// payment health at a glance, read from the orders themselves: who paid, who never got as far as the bank page
+function renderPayHealth(){
+  const el = document.getElementById('admPayHealth');
+  if(!el) return;
+  el.hidden = false;
+  el.onclick = null;
+  if(paymentMode !== 'live'){
+    el.className = 'pay-health off';
+    el.innerHTML = `<i></i><div><b>سلامت پرداخت</b><span>${paymentMode === 'test' ? 'پرداخت آنلاین آزمایشیه و فقط برای مدیر فعاله.' : 'پرداخت آنلاین خاموشه؛ سفارش‌ها بدون درگاه ثبت می‌شن.'}</span></div>`;
+    return;
+  }
+  const now = Date.now(), at = iso => new Date(iso).getTime();
+  const real = adminOrdersCache.filter(o => !o.pay_sandbox && !o.manual_pay);
+  const lastPaid = Math.max(0, ...real.filter(o => o.payment_status === 'paid' && o.paid_at).map(o => at(o.paid_at)));
+  const recent = real.filter(o => now - at(o.created_at) < 864e5);
+  const paid = recent.filter(o => o.payment_status === 'paid');
+  const unpaid = recent.filter(o => o.payment_status !== 'paid' && o.payment_status !== 'free' && now - at(o.created_at) > 10 * 60e3
+    && (o.status === PAY_PENDING || (o.status === 'لغو شده' && o.cancel_reason === 'expired')));
+  const never = unpaid.filter(o => !o.pay_started_at);
+  // red when several were turned away and nobody has got through since; amber when it may just be the customer
+  const lastNever = Math.max(0, ...never.map(o => at(o.created_at)));
+  const paidSince = paid.some(o => at(o.paid_at || o.created_at) > lastNever);
+  const tone = never.length >= 2 && !paidSince ? 'bad' : never.length ? 'warn' : 'ok';
+  const msg = tone === 'bad' ? `${toFa(never.length)} مشتری پشت سر هم به درگاه نرسیدن و بعدش پرداخت موفقی نبوده. یه پرداخت آزمایشی بزن.`
+    : tone === 'warn' ? `${toFa(never.length)} مشتری به درگاه نرسید؛ شاید فیلترشکنش روشن بوده یا منصرف شده.`
+    : 'در ۲۴ ساعت اخیر مشکلی دیده نشده.';
+  el.className = 'pay-health ' + tone;
+  el.innerHTML = `<i></i><div><b>سلامت پرداخت</b><span>${msg}</span>
+    <ul>
+      <li><em>${lastPaid ? admWhen(new Date(lastPaid).toISOString()) : 'هنوز نداشتیم'}</em>آخرین پرداخت موفق</li>
+      <li><em>${toFa(paid.length)}</em>موفق در ۲۴ ساعت</li>
+      <li><em>${toFa(never.length)}</em>به درگاه نرسید</li>
+      <li><em>${toFa(unpaid.length - never.length)}</em>رسید ولی پرداخت نکرد</li>
+    </ul></div>`;
+  if(unpaid.length) el.onclick = showUnpaidOrders;
+}
 // the KPI figures count up once each time the panel opens
 let admCounted = false;
 function admCountUp(){
@@ -2861,6 +2897,7 @@ function renderAdminOrders(){
   const visible = adminOrdersCache.filter(o => showUnpaid || !isAbandonedOrder(o));
   const hidden = adminOrdersCache.length - visible.length;
   renderAdminTodo(visible);
+  renderPayHealth();
 
   // status chips with counts
   const counts = {};
@@ -2987,6 +3024,7 @@ document.querySelectorAll('input[name="payMode"]').forEach(r => r.addEventListen
   if(error){ console.error(error); showToast('ذخیره نشد، دوباره امتحان کن'); syncPayModeRadios(); return; }
   paymentMode = mode;
   updatePayLabels();
+  renderPayHealth();
   logAdminAction('تغییر پرداخت آنلاین', { off: 'خاموش', test: 'آزمایشی', live: 'فعال' }[mode]);
   showToast(mode === 'live' ? 'پرداخت آنلاین برای همه فعال شد' : mode === 'test' ? 'حالت آزمایشی فعال شد؛ فقط مدیرها با درگاه آزمایشی پرداخت می‌کنن' : 'پرداخت آنلاین خاموش شد');
 }));

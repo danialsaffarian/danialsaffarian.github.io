@@ -49,12 +49,14 @@ A few 401s (logged-out visitors) are normal. Repeated 403/5xx on `payment`, `not
 ## 4. Browser checks on the working copy
 
 ```bash
-git fetch origin main && git checkout -B claude/modest-faraday-nyyivj origin/main   # only when the tree is clean
+git fetch origin main && git merge origin/main   # never reset the branch: it may hold a test the owner has not published yet
 tools/monitor/run.sh        # prints only failures; exit 0 = all passed
 ```
 
 `store.js` covers layout at four widths, the category filter, add to cart, the product page and the cart drawer;
-`admin.js` covers order steps, quick actions and the product form against an in-memory database.
+`admin.js` covers order steps, the payment health card, quick actions and the product form against an in-memory database.
+
+If the branch is ahead of `main`, those commits are a test waiting for the owner's «منتشر کن»: check them, do not publish them.
 
 ## SMS alerts to the owner (runs by itself)
 

@@ -2056,3 +2056,22 @@
   .footer-contact .fc-row em{font-style:normal;font-size:12.5px;color:#BFAE99;margin-top:2px;}
   .footer-contact address.fc-row{align-items:start;margin-bottom:0;font-size:14px;}
   @media(min-width:861px){.footer-grid{grid-template-columns:minmax(340px,1.6fr) .8fr .8fr minmax(290px,1.6fr);}}
+
+  /* admin: payment health card */
+  .pay-health{display:grid;grid-template-columns:12px 1fr;gap:12px;align-items:start;margin:0 0 12px;padding:14px;border-radius:16px;background:var(--adm-card);box-shadow:var(--adm-shadow);}
+  .pay-health[onclick],.pay-health.warn,.pay-health.bad{cursor:pointer;}
+  .pay-health > i{width:12px;height:12px;margin-top:5px;border-radius:50%;background:#5E9A57;box-shadow:0 0 0 4px rgba(94,154,87,.16);}
+  .pay-health.warn > i{background:#D69A2D;box-shadow:0 0 0 4px rgba(214,154,45,.18);}
+  .pay-health.bad > i{background:#C24A4A;box-shadow:0 0 0 4px rgba(194,74,74,.18);}
+  .pay-health.off > i{background:#BDB0A2;box-shadow:0 0 0 4px rgba(189,176,162,.2);}
+  .pay-health.bad{box-shadow:inset 0 0 0 1px #E6B9B9,var(--adm-shadow);background:#FFF8F7;}
+  .pay-health.warn{box-shadow:inset 0 0 0 1px #EBCF9E,var(--adm-shadow);}
+  @media(prefers-reduced-motion:no-preference){.pay-health.bad > i{animation:phPulse 1.6s ease-in-out infinite;}}
+  @keyframes phPulse{50%{box-shadow:0 0 0 8px rgba(194,74,74,.08);}}
+  .pay-health b{display:block;font-size:14px;font-weight:800;color:var(--ink);}
+  .pay-health span{display:block;font-size:12.5px;line-height:1.8;color:var(--coffee-70);}
+  .pay-health.bad span{color:#9B3F3F;font-weight:600;}
+  .pay-health ul{list-style:none;display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0 0;padding:0;}
+  .pay-health li{display:flex;flex-direction:column;gap:1px;padding:8px 10px;border-radius:10px;background:#FAF6F0;font-size:11.5px;color:var(--coffee-70);}
+  .pay-health li em{font-style:normal;font-size:14px;font-weight:800;color:var(--ink);}
+  @media(min-width:700px){.pay-health ul{grid-template-columns:repeat(4,1fr);}}

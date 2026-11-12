@@ -85,6 +85,14 @@ let fails = 0; const ok = (c, m) => { console.log((c ? 'PASS ' : 'FAIL ') + m); 
   ok(/\n/.test(clip) && clip.includes('0912') || clip.includes('0935'), 'copy-for-label puts name/phone/address on clipboard: ' + JSON.stringify(clip));
   ok(await E(() => document.querySelector('.ao-copy')?.textContent) === 'کپی شد', 'copy button says کپی شد');
 
+  // payment health card
+  const health = async (mode, extra) => { await p.evaluate(([mode, extra]) => { paymentMode = mode; const H = 36e5, now = Date.now(); adminOrdersCache = adminOrdersCache.filter(o => !o._h).concat(extra.map((e, i) => ({ id: 900 + i, _h: 1, customer_name: 'ه', items: [], total: 1, created_at: new Date(now - e.h * H).toISOString(), status: e.status, payment_status: e.ps || null, paid_at: e.ps === 'paid' ? new Date(now - e.h * H).toISOString() : null, pay_started_at: e.started ? new Date(now - e.h * H).toISOString() : null, cancel_reason: e.cr || null }))); renderPayHealth(); }, [mode, extra]); return p.evaluate(() => ({ cls: admPayHealth.className, nums: [...admPayHealth.querySelectorAll('li em')].map(e => e.textContent).slice(1).join('/') })); };
+  let ph = await health('off', []); ok(ph.cls === 'pay-health off', 'health card: grey when online payment is off');
+  ph = await health('live', [{ h: 2, status: 'پرداخت شده', ps: 'paid' }]); ok(ph.cls === 'pay-health ok' && ph.nums === '۱/۰/۰', 'health card: green with one paid ' + JSON.stringify(ph));
+  ph = await health('live', [{ h: 3, status: 'پرداخت شده', ps: 'paid' }, { h: 1, status: 'لغو شده', cr: 'expired' }, { h: 2, status: 'لغو شده', cr: 'expired', started: 1, ps: 'pending' }]); ok(ph.cls === 'pay-health warn' && ph.nums === '۱/۱/۱', 'health card: amber when one never reached the gateway ' + JSON.stringify(ph));
+  ph = await health('live', [{ h: 5, status: 'پرداخت شده', ps: 'paid' }, { h: 1, status: 'در انتظار پرداخت' }, { h: 2, status: 'لغو شده', cr: 'expired' }]); ok(ph.cls === 'pay-health bad' && ph.nums === '۱/۲/۰', 'health card: red when two in a row never reached it ' + JSON.stringify(ph));
+  ph = await health('live', [{ h: 0.05, status: 'در انتظار پرداخت' }]); ok(ph.cls === 'pay-health ok', 'health card: an order placed a moment ago is not counted yet');
+  await p.evaluate(() => { adminOrdersCache = adminOrdersCache.filter(o => !o._h); paymentMode = 'off'; renderAdminOrders(); });
   // quick actions
   await E(() => document.querySelector('#admQuick [data-q=announce]').click()); await p.waitForTimeout(200);
   ok(await E(() => document.getElementById('adminTabAnnounce').style.display) === 'block', 'quick: اطلاعیه opens announce tab');
