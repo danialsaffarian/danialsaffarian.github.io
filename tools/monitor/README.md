@@ -66,3 +66,10 @@ fail three checks in a row. One text per problem, at most six a day. It sends th
 "new order" SMS template with the alert in the name field (plain-text messages wait for the provider's
 manual approval, so they are no use for alerts); `health_state.sms_mode` switches between `pattern` and `simple`.
 What it sent is in `health_alerts` (`kind = 'sent'`), probe counters are in `health_state` (`probe-*`).
+
+## Known noise
+
+- A single `POST | 503` on `payment` at the top of an hour comes from the alert function's own probe meeting a cold
+  start (seen 16:00 and 20:00 UTC on 2026-11-12, next call fine). It takes three in a row to text the owner.
+  Worth a closer look only if it starts happening on customer calls or several times an hour.
+- `404`s on `site/.env`, `site/.git/...` are bots probing; the site function only serves files from the repo.
