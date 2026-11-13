@@ -60,7 +60,7 @@ If the branch is ahead of `main`, those commits are a test waiting for the owner
 
 ## SMS alerts to the owner (runs by itself)
 
-The `health-alert` edge function runs every 10 minutes (`cron.job` `hg-health-alert`) and texts the owner's
+The `health-alert` edge function runs every 10 minutes, off the hour mark (`cron.job` `hg-health-alert`) and texts the owner's
 numbers when an order never reached the payment gateway, or when the site, the relay or the payment function
 fail three checks in a row. One text per problem, at most six a day. It sends through the approved
 "new order" SMS template with the alert in the name field (plain-text messages wait for the provider's
@@ -69,7 +69,9 @@ What it sent is in `health_alerts` (`kind = 'sent'`), probe counters are in `hea
 
 ## Known noise
 
-- A single `POST | 503` on `payment` at the top of an hour comes from the alert function's own probe meeting a cold
-  start (seen 16:00 and 20:00 UTC on 2026-11-12, next call fine). It takes three in a row to text the owner.
-  Worth a closer look only if it starts happening on customer calls or several times an hour.
+- `POST | 503` on `payment` at exactly :00 of an hour (four times on 2026-11-12/13, each answered in a few
+  milliseconds with no function id, i.e. turned away before any worker ran) came from the alert function's own
+  probe landing in the top-of-the-hour rush, when its whole run also took twice as long. The alert job was moved
+  to minutes 3, 13, 23... (`3-59/10 * * * *`) on 2026-11-13. If 503s on `payment` still show up after that,
+  or on calls that carry a customer's token, look again.
 - `404`s on `site/.env`, `site/.git/...` are bots probing; the site function only serves files from the repo.
