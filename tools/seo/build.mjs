@@ -10,13 +10,47 @@ const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../.
 const SITE = 'https://hanagalleryy.ir';
 
 const CATS = {
-  necklace: { label: 'گردنبند', plural: 'گردنبندها', intro: 'گردنبندهای دست‌ساز حنا گالری؛ از چوکرهای منجوقی و صدفی تا گردنبندهای مروارید و پلاک استیل با رنگ ثابت.' },
-  bracelet: { label: 'دستبند', plural: 'دستبندها', intro: 'دستبندها و بنگل‌های حنا گالری؛ استیل با آبکاری طلا و نقره، دستبندهای صدفی و نخی، مناسب استفاده‌ی هر روز.' },
-  earring: { label: 'گوشواره', plural: 'گوشواره‌ها', intro: 'گوشواره‌های حنا گالری؛ مدل‌های سنگی، مروارید، اشکی و ایرکاف، تکی یا پک، برای استایل روزمره و مهمونی.' },
-  ring: { label: 'انگشتر', plural: 'انگشترها', intro: 'انگشترهای استیل حنا گالری با آبکاری طلا و نقره و نگین‌های ظریف؛ رنگ ثابت و مناسب استفاده‌ی همیشگی.' },
-  anklet: { label: 'پابند', plural: 'پابندها', intro: 'پابندهای دست‌ساز حنا گالری؛ ستاره، صدف، دم وال و چشم نظر با منجوق‌های رنگی.' },
-  hair: { label: 'اکسسوری مو', plural: 'اکسسوری‌های مو', intro: 'اکسسوری‌های موی حنا گالری؛ تل مو، شال مو و گوش‌گیر، برای استایل روزمره و روزهای سرد.' },
+  necklace: { label: 'گردنبند', plural: 'گردنبندها', intro: 'گردنبندهای دست‌ساز حنا گالری؛ از چوکرهای منجوقی و صدفی تا گردنبندهای مروارید و پلاک استیل با رنگ ثابت.',
+    guide: ['هر گردنبند حنا گالری با دست و در تعداد محدود ساخته می‌شه؛ برای همین وقتی موجودی یه مدل تموم بشه، ممکنه دوباره عین همون ساخته نشه.',
+      'برای استفاده‌ی هر روز، گردنبندهای ظریف و تک‌پلاک کنار هر لباسی می‌شینن؛ چوکرها و گردنبندهای منجوقی و صدفی برای استایل تابستونی و مهمونی‌های دوستانه انتخاب خوبی‌ان. اگه چند گردنبند رو با هم می‌ندازی، طول‌های متفاوت رو کنار هم بذار تا لایه‌ها از هم جدا دیده بشن.'],
+    faq: [['گردنبند رو چطور نگه دارم که رنگش نره؟', 'قبل از دوش، استخر، ورزش و زدن عطر درش بیار و بعد از استفاده با یه پارچه‌ی نرم و خشک تمیزش کن. جداگونه و دور از رطوبت نگهش دار تا زنجیرش گره نخوره.'],
+      ['برای هدیه چه گردنبندی انتخاب کنم؟', 'اگه سلیقه‌ی طرف رو دقیق نمی‌دونی، یه گردنبند ظریف با پلاک کوچیک یا مروارید تقریباً به هر استایلی می‌خوره و انتخاب کم‌ریسکیه.']] },
+  bracelet: { label: 'دستبند', plural: 'دستبندها', intro: 'دستبندها و بنگل‌های حنا گالری؛ استیل با آبکاری طلا و نقره، دستبندهای صدفی و نخی، مناسب استفاده‌ی هر روز.',
+    guide: ['دستبندهای حنا گالری دست‌ساز و در تعداد محدودن؛ از بنگل‌های فلزی که کنار ساعت هم خوش می‌شینن تا دستبندهای صدفی و نخی که حال‌وهوای تابستونی دارن.',
+      'دستبند چون همیشه در معرض دست شستن و تماسه، زودتر از بقیه‌ی زیورها کدر می‌شه؛ موقع شستن دست، کارهای خونه و ورزش درش بیار تا رنگ و درخششش بیشتر بمونه.'],
+    faq: [['اندازه‌ی دستبند رو چطور انتخاب کنم؟', 'دور مچت رو با یه متر خیاطی یا یه نخ اندازه بگیر و حدود یک تا دو سانت برای راحتی اضافه کن. اگه درباره‌ی اندازه‌ی یه مدل سؤال داشتی، قبل از خرید از طریق تلفن یا اینستاگرام بپرس.'],
+      ['دستبند با ساعت ست می‌شه؟', 'بله؛ یه بنگل یا دستبند ظریف فلزی کنار ساعت، مخصوصاً هم‌رنگ با بدنه‌ی ساعت، ترکیب قشنگی می‌سازه.']] },
+  earring: { label: 'گوشواره', plural: 'گوشواره‌ها', intro: 'گوشواره‌های حنا گالری؛ مدل‌های سنگی، مروارید، اشکی و ایرکاف، تکی یا پک، برای استایل روزمره و مهمونی.',
+    guide: ['گوشواره‌های حنا گالری از مدل‌های ریز و روزمره تا آویزهای سنگی و اشکی برای مهمونی رو شامل می‌شه؛ بعضی مدل‌ها تکی‌ان و بعضی به‌صورت پک چندتایی عرضه می‌شن.',
+      'ایرکاف‌ها بدون نیاز به سوراخ روی لاله‌ی گوش می‌شینن و برای کسی که گوشش سوراخ نیست یا می‌خواد کنار گوشواره‌ی اصلی‌اش یه لایه‌ی دیگه اضافه کنه، انتخاب خوبی‌ان.'],
+    faq: [['گوشواره رو می‌شه مرجوع کرد؟', 'بله؛ تا ۷ روز کاری بعد از تحویل، به شرط اینکه سالم، استفاده‌نشده و با بسته‌بندی اولیه برگرده. جزئیات در صفحه‌ی قوانین و مقررات آمده.'],
+      ['ایرکاف چیه؟', 'ایرکاف گوشواره‌ایه که بدون سوراخ، روی لبه‌ی گوش گیر می‌کنه؛ هم تنها استفاده می‌شه و هم کنار گوشواره‌های دیگه.']] },
+  ring: { label: 'انگشتر', plural: 'انگشترها', intro: 'انگشترهای استیل حنا گالری با آبکاری طلا و نقره و نگین‌های ظریف؛ رنگ ثابت و مناسب استفاده‌ی همیشگی.',
+    guide: ['انگشترهای حنا گالری ظریف و سبک‌ان و برای استفاده‌ی هر روز ساخته شدن؛ چند انگشتر نازک رو می‌شه کنار هم روی یه انگشت یا انگشت‌های مختلف انداخت.',
+      'انگشتر بیشتر از هر زیوری با آب و صابون و مواد شوینده تماس داره؛ موقع شستن ظرف، استفاده از کرم دست و مواد ضدعفونی درش بیار تا آبکاری‌اش دیرتر کم‌رنگ بشه.'],
+    faq: [['سایز انگشتر رو چطور بفهمم؟', 'یه نخ دور انگشتت بپیچ، محل رسیدن دو سرش رو علامت بزن و طولش رو با خط‌کش اندازه بگیر؛ این عدد محیط انگشته. اگه سایز یه مدل رو نمی‌دونستی، قبل از خرید بپرس.'],
+      ['انگشتر چند تا با هم بندازم؟', 'قانون ثابتی نداره؛ معمولاً دو سه انگشتر نازک با رنگ یکسان یا یه انگشتر نگین‌دار تنها، تمیزتر از تعداد زیاد دیده می‌شه.']] },
+  anklet: { label: 'پابند', plural: 'پابندها', intro: 'پابندهای دست‌ساز حنا گالری؛ ستاره، صدف، دم وال و چشم نظر با منجوق‌های رنگی.',
+    guide: ['پابندهای حنا گالری با منجوق، صدف و آویزهای کوچیک دست‌ساز می‌شن و حال‌وهوای تابستون و سفرهای دریایی رو دارن.',
+      'پابند بیشتر از بقیه‌ی زیورها با آب، شن و تعریق تماس داره؛ بعد از دریا یا استخر با آب شیرین آبکشی و خشکش کن و برای نگهداری جدا بذارش که منجوق‌ها خراش نخورن.'],
+    faq: [['پابند رو با چی ست کنم؟', 'با صندل و کفش‌های باز، شلوار کوتاه یا دامن بلند؛ پابند ظریف با یه دستبند هم‌حال‌وهوا ست قشنگی می‌سازه.'],
+      ['پابند تو آب دریا خراب می‌شه؟', 'آب شور و شن به مرور به رنگ و نخ آسیب می‌زنن؛ بهتره قبل از شنا درش بیاری یا بعدش با آب شیرین آبکشی و خشکش کنی.']] },
+  hair: { label: 'اکسسوری مو', plural: 'اکسسوری‌های مو', intro: 'اکسسوری‌های موی حنا گالری؛ تل مو، شال مو و گوش‌گیر، برای استایل روزمره و روزهای سرد.',
+    guide: ['اکسسوری‌های موی حنا گالری شامل تل مو، شال مو و گوش‌گیره؛ هم برای مرتب نگه داشتن مو در طول روز و هم برای گرم نگه داشتن سر و گوش در روزهای سرد.',
+      'اکسسوری پارچه‌ای رو با دست و آب ولرم بشور، فشار نده و روی سطح صاف خشکش کن تا فرمش حفظ بشه.'],
+    faq: [['تل مو اذیت نمی‌کنه؟', 'اگه بعد از مدتی پشت گوش رو فشار داد، لحظه‌ای درش بیار و دوباره کمی عقب‌تر بذار؛ تل‌های پهن‌تر و نرم‌تر فشار رو پخش‌تر می‌کنن.'],
+      ['گوش‌گیر رو چطور بشورم؟', 'با دست و آب ولرم و کمی شوینده‌ی ملایم بشور و بدون پیچوندن، در سایه خشکش کن.']] },
 };
+// true for every order, from the terms page and the shop's own FAQ
+const SHOP_FAQ = [
+  ['ارسال چقدر طول می‌کشه؟', 'سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و با پست یا تیپاکس به سراسر ایران فرستاده می‌شن؛ هزینه‌ی ارسال موقع تحویل پرداخت می‌شه.'],
+  ['می‌شه از خرید انصراف داد؟', 'بله؛ تا ۷ روز کاری بعد از تحویل و بدون ذکر دلیل، به شرط سالم و استفاده‌نشده بودن کالا. طرح‌هایی که سفارشی ساخته می‌شن شامل این شرط نیستن.'],
+  ['پرداخت چطوریه؟', 'پرداخت آنلاین از طریق درگاه امن زیبال انجام می‌شه و اطلاعات کارت فقط در صفحه‌ی بانک وارد می‌شه.'],
+];
+const GUIDES = [
+  { url: '/guide/care/', title: 'راهنمای نگهداری از زیورآلات' },
+  { url: '/guide/gift/', title: 'راهنمای انتخاب هدیه' },
+];
 
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fa = (n) => String(n).replace(/\d/g, (d) => '۰۱۲۳۴۵۶۷۸۹'[d]);
@@ -120,13 +154,28 @@ function productPage(base, p, all) {
       reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5, worstRating: 1 }, ...(plain(r.comment) ? { reviewBody: plain(r.comment) } : {}) }));
   }
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, ...(cat ? [{ name: cat.plural, url: `${SITE}/c/${p.cat}/` }] : []), { name: p.name, url }]);
-  const others = all.filter((x) => x.cat === p.cat && x.id !== p.id).slice(0, 8);
+  // the products either side of this one in its collection, so every product is linked from a few others
+  const same = all.filter((x) => x.cat === p.cat).sort((a, b) => a.id - b.id);
+  const at = same.findIndex((x) => x.id === p.id);
+  const others = same.length > 1 ? [...new Set([1, -1, 2, -2, 3, -3, 4, -4].map((d) => same[(at + d + same.length * 10) % same.length]))].filter((x) => x.id !== p.id).slice(0, 8) : [];
+  const names = [...new Set(p.variants.map((v) => v.name).filter(Boolean))];
+  const otherCats = Object.keys(CATS).filter((k) => k !== p.cat && all.some((x) => x.cat === k));
   const noscript = `<h1>${esc(p.name)}</h1><p>${p.stock > 0 ? `${money(p.now)} تومان` : 'ناموجود'}</p>${p.images[0] ? `<img src="${esc(p.images[0])}" alt="${esc(p.name)}" width="400">` : ''}${p.lines.map((l) => `<p>${esc(l)}</p>`).join('')}${others.length ? `<p>${others.map((o) => `<a href="/p/${o.id}/">${esc(o.name)}</a>`).join(' · ')}</p>` : ''}`;
   const section = `<nav class="seo-crumbs" aria-label="مسیر"><a href="/">حنا گالری</a><span>›</span>${cat ? `<a href="/c/${p.cat}/">${esc(cat.plural)}</a><span>›</span>` : ''}<b>${esc(p.name)}</b></nav>`
     + `<h1>${esc(p.name)}</h1><p class="seo-price">${p.stock > 0 ? `${money(p.now)} تومان${p.sale !== null ? ` <s>${money(p.price)}</s>` : ''}` : 'فعلاً ناموجود'}</p>`
-    + (p.lines.length ? `<ul class="seo-lines">${p.lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>` : `<p>${esc(p.name)} دست‌ساز حنا گالری.</p>`)
+    + (p.lines.length ? `<ul class="seo-lines">${p.lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul>`
+      : `<p>${esc(p.name)}، از ${cat ? esc(cat.plural) + 'ی' : 'محصولات'} دست‌ساز حنا گالری${names.length > 1 ? ` در ${fa(names.length)} رنگ و مدل` : ''}. ${cat ? esc(cat.intro) : ''}</p>`)
+    + `<dl class="seo-specs"><dt>دسته</dt><dd>${cat ? `<a href="/c/${p.cat}/">${esc(cat.label)}</a>` : esc(p.catLabel)}</dd>`
+    + (names.length ? `<dt>رنگ و مدل</dt><dd>${names.map(esc).join('، ')}</dd>` : '')
+    + `<dt>موجودی</dt><dd>${p.stock > 0 ? (p.stock <= 2 ? `فقط ${fa(p.stock)} عدد` : 'موجود') : 'فعلاً ناموجود'}</dd>`
+    + `<dt>ساخت</dt><dd>دست‌ساز، در تعداد محدود</dd>`
+    + `<dt>ارسال</dt><dd>۲ تا ۴ روز کاری، با پست یا تیپاکس به سراسر ایران</dd>`
+    + `<dt>انصراف از خرید</dt><dd>تا ۷ روز کاری بعد از تحویل (<a href="/terms/#withdrawal">شرایط</a>)</dd>`
+    + `<dt>کد محصول</dt><dd>${fa(p.id)}</dd></dl>`
     + `<p><a class="seo-open" href="#p${p.id}">دیدن عکس‌ها و خرید</a></p>`
-    + (others.length ? `<h2>${cat ? `${esc(cat.plural)}ی دیگه` : 'محصولات دیگه'}</h2><ul class="seo-links">${others.map((o) => `<li><a href="/p/${o.id}/">${esc(o.name)}</a></li>`).join('')}</ul>` : '');
+    + (others.length ? `<h2>${cat ? `${esc(cat.plural)}ی دیگه` : 'محصولات دیگه'}</h2><ul class="seo-links">${others.map((o) => `<li><a href="/p/${o.id}/">${esc(o.name)}</a></li>`).join('')}</ul>` : '')
+    + (otherCats.length ? `<h2>کالکشن‌های دیگه</h2><ul class="seo-links">${otherCats.map((k) => `<li><a href="/c/${k}/">${esc(CATS[k].plural)}</a></li>`).join('')}</ul>` : '')
+    + `<p class="seo-guides">${GUIDES.map((g) => `<a href="${g.url}">${esc(g.title)}</a>`).join(' · ')}</p>`;
   // price-comparison crawlers (ترب و ...) read these; prices in toman
   const meta = [
     `<meta name="product_id" content="${p.id}">`,
@@ -146,12 +195,19 @@ function categoryPage(base, key, items) {
     mainEntity: { '@type': 'ItemList', numberOfItems: sorted.length, itemListElement: sorted.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE}/p/${p.id}/`, name: p.name })) } };
   const crumbs = crumbLd([{ name: 'حنا گالری', url: SITE + '/' }, { name: c.plural, url }]);
   const noscript = `<h1>خرید ${esc(c.label)} دست‌ساز</h1><p>${esc(c.intro)}</p><ul>${sorted.map((p) => `<li><a href="/p/${p.id}/">${esc(p.name)}</a></li>`).join('')}</ul>`;
+  const qa = [...c.faq, ...SHOP_FAQ];
+  const faqLd = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: qa.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) };
+  const otherCats = Object.keys(CATS).filter((k) => k !== key);
   const section = `<nav class="seo-crumbs" aria-label="مسیر"><a href="/">حنا گالری</a><span>›</span><b>${esc(c.plural)}</b></nav><h1>خرید ${esc(c.label)} دست‌ساز</h1><p>${esc(c.intro)}</p>`
-    + `<ul class="seo-links">${sorted.map((p) => `<li><a href="/p/${p.id}/">${esc(p.name)}</a>${p.stock > 0 ? ` <small>${money(p.now)} تومان</small>` : ' <small>ناموجود</small>'}</li>`).join('')}</ul>`;
+    + c.guide.map((g) => `<p>${esc(g)}</p>`).join('')
+    + `<h2>${fa(sorted.length)} مدل ${esc(c.label)}</h2><ul class="seo-links">${sorted.map((p) => `<li><a href="/p/${p.id}/">${esc(p.name)}</a>${p.stock > 0 ? ` <small>${money(p.now)} تومان</small>` : ' <small>ناموجود</small>'}</li>`).join('')}</ul>`
+    + `<h2>سؤال‌های رایج درباره‌ی ${esc(c.plural)}</h2><div class="seo-faq">${qa.map(([q, a]) => `<h3>${esc(q)}</h3><p>${esc(a)}</p>`).join('')}</div>`
+    + `<h2>کالکشن‌های دیگه</h2><ul class="seo-links">${otherCats.map((k) => `<li><a href="/c/${k}/">${esc(CATS[k].plural)}</a></li>`).join('')}</ul>`
+    + `<p class="seo-guides">${GUIDES.map((g) => `<a href="${g.url}">${esc(g.title)}</a>`).join(' · ')}</p>`;
   return storePage(base, {
     title: `خرید ${c.label} دست‌ساز | ${c.plural}ی حنا گالری`,
     description: `${c.intro} ${fa(sorted.length)} مدل${prices.length ? ` از ${money(Math.min(...prices))} تا ${money(Math.max(...prices))} تومان` : ''}، با ارسال به سراسر ایران.`,
-    url, image: sorted[0] && sorted[0].images[0], jsonld: [list, crumbs], noscript, section,
+    url, image: sorted[0] && sorted[0].images[0], jsonld: [list, crumbs, faqLd], noscript, section,
   });
 }
 
@@ -180,6 +236,7 @@ const pics = (list, n) => list.flatMap((p) => p.images.slice(0, 1)).slice(0, n);
 const urls = [
   { loc: SITE + '/', mod: latest, pr: '1.0', imgs: pics(inStock, 20) },
   { loc: SITE + '/terms/', mod: '2026-10-31', pr: '0.3', imgs: [] },
+  ...GUIDES.map((g) => ({ loc: SITE + g.url, mod: '2026-11-13', pr: '0.5', imgs: [] })),
   ...cats.map((k) => ({ loc: `${SITE}/c/${k}/`, mod: latest, pr: '0.8', imgs: pics(inStock.filter((p) => p.cat === k), 20) })),
   ...products.map((p) => ({ loc: `${SITE}/p/${p.id}/`, mod: p.updated, pr: '0.6', imgs: p.images.slice(0, 10) })),
 ];
