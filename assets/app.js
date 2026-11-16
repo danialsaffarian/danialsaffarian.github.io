@@ -1777,6 +1777,15 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.classList.add('show');
     return;
   }
+  // first name and last name, so the parcel reaches the right person: two words of at least two letters
+  const nameParts = name.replace(/[\u200c\-]/g, '').split(/\s+/).filter(w => /^[\p{L}]{2,}$/u.test(w));
+  if(nameParts.length < 2){
+    document.getElementById('custNameField').classList.add('invalid');
+    errorEl.textContent = 'نام و نام خانوادگی رو کامل بنویس (مثل سارا محمدی)؛ برای ارسال مرسوله لازمه.';
+    errorEl.classList.add('show');
+    document.getElementById('custName').focus();
+    return;
+  }
   if(!normalizeIranMobile(phone)){
     document.getElementById('custPhoneField').classList.add('invalid');
     errorEl.textContent = 'شماره موبایل رو درست وارد کن (مثل ۰۹۱۲۳۴۵۶۷۸۹).';
