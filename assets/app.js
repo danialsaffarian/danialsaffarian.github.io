@@ -1315,8 +1315,10 @@ function openCheckoutPage(){
   if(currentProfile){
     document.getElementById('custName').value = currentProfile.full_name || '';
     const nm = (currentProfile.full_name || '').trim().split(/\s+/);
-    document.getElementById('custFirst').value = nm[0] || '';
-    document.getElementById('custLast').value = nm.slice(1).join(' ');
+    if(document.getElementById('custFirst')){
+      document.getElementById('custFirst').value = nm[0] || '';
+      document.getElementById('custLast').value = nm.slice(1).join(' ');
+    }
     document.getElementById('custAddress').value = currentProfile.address || '';
   }
   document.getElementById('custPhone').value = (currentProfile && currentProfile.phone && normalizeIranMobile(currentProfile.phone))
@@ -1766,8 +1768,10 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.classList.add('show');
     return;
   }
-  const first = document.getElementById('custFirst').value.replace(/\s+/g, ' ').trim();
-  const last = document.getElementById('custLast').value.replace(/\s+/g, ' ').trim();
+  // an old page (one input) splits the single name; the new form has two fields
+  const oneName = document.getElementById('custFirst') ? null : document.getElementById('custName').value.replace(/\s+/g, ' ').trim().split(' ');
+  const first = oneName ? oneName[0] || '' : document.getElementById('custFirst').value.replace(/\s+/g, ' ').trim();
+  const last = oneName ? oneName.slice(1).join(' ') : document.getElementById('custLast').value.replace(/\s+/g, ' ').trim();
   const name = [first, last].filter(Boolean).join(' ');
   document.getElementById('custName').value = name;
   const phone = document.getElementById('custPhone').value.trim();
@@ -1789,7 +1793,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     document.getElementById('custNameField').classList.add('invalid');
     errorEl.textContent = !realWord(first) ? 'نام رو درست بنویس.' : 'نام خانوادگی رو کامل بنویس؛ برای ارسال مرسوله لازمه.';
     errorEl.classList.add('show');
-    document.getElementById(!realWord(first) ? 'custFirst' : 'custLast').focus();
+    (document.getElementById(!realWord(first) ? 'custFirst' : 'custLast') || document.getElementById('custName')).focus();
     return;
   }
   if(!normalizeIranMobile(phone)){
@@ -1879,7 +1883,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   }
   const trackingCode = placed.tracking_code;
   const totalNote = Number(placed.total) !== shownTotal ? ` مبلغ نهایی: ${toFa(Number(placed.total))} تومان.` : '';
-  ['custName', 'custFirst', 'custLast', 'custPhone', 'custAddress', 'custNote'].forEach(id => { document.getElementById(id).value = ''; });
+  ['custName', 'custFirst', 'custLast', 'custPhone', 'custAddress', 'custNote'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
 
   if(placed.needs_payment){
     // the order holds its items while the customer pays; SMS goes out once the payment is confirmed
@@ -1920,7 +1924,8 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     document.getElementById(id + 'Field').classList.remove('invalid');
   });
 });
-['custFirst', 'custLast'].forEach(id => document.getElementById(id).addEventListener('input', () => document.getElementById('custNameField').classList.remove('invalid')));
+// optional chaining: a product page built before these fields existed still loads until it is rebuilt
+['custFirst', 'custLast'].forEach(id => document.getElementById(id)?.addEventListener('input', () => document.getElementById('custNameField').classList.remove('invalid')));
 
 /* ================= حساب کاربری (ورود / ثبت‌نام) ================= */
 
