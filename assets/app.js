@@ -2048,6 +2048,11 @@ function showProfileSetup(forgot){
     nameField.style.display = 'block';
     addressField.style.display = 'block';
     document.getElementById('authSetupName').value = currentProfile ? (currentProfile.full_name || '') : '';
+    if(document.getElementById('authSetupFirst')){
+      const nm = (currentProfile && currentProfile.full_name || '').trim().split(/\s+/);
+      document.getElementById('authSetupFirst').value = nm[0] || '';
+      document.getElementById('authSetupLast').value = nm.slice(1).join(' ');
+    }
     document.getElementById('authSetupAddress').value = currentProfile ? (currentProfile.address || '') : '';
   }
   lockAuthSetup(true);
@@ -2290,14 +2295,22 @@ document.getElementById('authSetupSubmitBtn').addEventListener('click', async ()
   const errorEl = document.getElementById('authSetupError');
   errorEl.classList.remove('show');
   const isForgot = authOtpPurpose === 'forgot';
-  const name = document.getElementById('authSetupName').value.trim();
+  // two fields (a page built before the split still has one, which is split here)
+  const clean = v => v.replace(/\s+/g, ' ').trim();
+  const one = document.getElementById('authSetupFirst') ? null : clean(document.getElementById('authSetupName').value).split(' ');
+  const firstN = one ? one[0] || '' : clean(document.getElementById('authSetupFirst').value);
+  const lastN = one ? one.slice(1).join(' ') : clean(document.getElementById('authSetupLast').value);
+  const name = [firstN, lastN].filter(Boolean).join(' ');
+  document.getElementById('authSetupName').value = name;
   const address = document.getElementById('authSetupAddress').value.trim();
   const password = document.getElementById('authSetupPassword').value;
   const password2 = document.getElementById('authSetupPassword2').value;
 
-  if(!isForgot && !name){
-    errorEl.textContent = 'نام و نام خانوادگی رو وارد کن.';
+  const realWord = w => /\p{L}.*\p{L}/u.test(w) && !/\d/.test(w);
+  if(!isForgot && (!realWord(firstN) || !realWord(lastN))){
+    errorEl.textContent = !firstN && !lastN ? 'نام و نام خانوادگی رو وارد کن.' : !realWord(firstN) ? 'نام رو درست بنویس.' : 'نام خانوادگی رو هم بنویس.';
     errorEl.classList.add('show');
+    (document.getElementById(!realWord(firstN) ? 'authSetupFirst' : 'authSetupLast') || document.getElementById('authSetupName')).focus();
     return;
   }
   if(!password || password.length < 6){

@@ -2087,3 +2087,4 @@
   /* checkout: first and last name side by side */
   .name-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .name-pair > div{min-width:0;}
+  .name-pair .input-icon-wrap:not(:has(.input-icon)) input{padding-inline-start:14px;}
