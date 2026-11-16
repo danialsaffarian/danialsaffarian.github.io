@@ -1314,6 +1314,9 @@ function openCheckoutPage(){
   updatePayLabels();
   if(currentProfile){
     document.getElementById('custName').value = currentProfile.full_name || '';
+    const nm = (currentProfile.full_name || '').trim().split(/\s+/);
+    document.getElementById('custFirst').value = nm[0] || '';
+    document.getElementById('custLast').value = nm.slice(1).join(' ');
     document.getElementById('custAddress').value = currentProfile.address || '';
   }
   document.getElementById('custPhone').value = (currentProfile && currentProfile.phone && normalizeIranMobile(currentProfile.phone))
@@ -1763,27 +1766,30 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
     errorEl.classList.add('show');
     return;
   }
-  const name = document.getElementById('custName').value.trim();
+  const first = document.getElementById('custFirst').value.replace(/\s+/g, ' ').trim();
+  const last = document.getElementById('custLast').value.replace(/\s+/g, ' ').trim();
+  const name = [first, last].filter(Boolean).join(' ');
+  document.getElementById('custName').value = name;
   const phone = document.getElementById('custPhone').value.trim();
   const address = document.getElementById('custAddress').value.trim();
   const note = document.getElementById('custNote').value.trim();
 
-  document.getElementById('custNameField').classList.toggle('invalid', !name);
+  document.getElementById('custNameField').classList.toggle('invalid', !first || !last);
   document.getElementById('custPhoneField').classList.toggle('invalid', !phone);
   document.getElementById('custAddressField').classList.toggle('invalid', !address);
 
-  if(!name || !phone || !address){
-    errorEl.textContent = 'لطفاً فیلدهای ستاره‌دار (نام، شماره تماس و آدرس) رو پر کن.';
+  if(!first || !last || !phone || !address){
+    errorEl.textContent = 'لطفاً فیلدهای ستاره‌دار (نام، نام خانوادگی، شماره تماس و آدرس) رو پر کن.';
     errorEl.classList.add('show');
     return;
   }
-  // first name and last name, so the parcel reaches the right person: two words of at least two letters
-  const nameParts = name.replace(/[\u200c\-]/g, '').split(/\s+/).filter(w => /^[\p{L}]{2,}$/u.test(w));
-  if(nameParts.length < 2){
+  // first name and last name, so the parcel reaches the right person: each at least two letters
+  const realWord = w => /\p{L}.*\p{L}/u.test(w) && !/\d/.test(w);
+  if(!realWord(first) || !realWord(last)){
     document.getElementById('custNameField').classList.add('invalid');
-    errorEl.textContent = 'نام و نام خانوادگی رو کامل بنویس (مثل سارا محمدی)؛ برای ارسال مرسوله لازمه.';
+    errorEl.textContent = !realWord(first) ? 'نام رو درست بنویس.' : 'نام خانوادگی رو کامل بنویس؛ برای ارسال مرسوله لازمه.';
     errorEl.classList.add('show');
-    document.getElementById('custName').focus();
+    document.getElementById(!realWord(first) ? 'custFirst' : 'custLast').focus();
     return;
   }
   if(!normalizeIranMobile(phone)){
@@ -1873,7 +1879,7 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   }
   const trackingCode = placed.tracking_code;
   const totalNote = Number(placed.total) !== shownTotal ? ` مبلغ نهایی: ${toFa(Number(placed.total))} تومان.` : '';
-  ['custName', 'custPhone', 'custAddress', 'custNote'].forEach(id => { document.getElementById(id).value = ''; });
+  ['custName', 'custFirst', 'custLast', 'custPhone', 'custAddress', 'custNote'].forEach(id => { document.getElementById(id).value = ''; });
 
   if(placed.needs_payment){
     // the order holds its items while the customer pays; SMS goes out once the payment is confirmed
@@ -1909,11 +1915,12 @@ document.getElementById('submitOrderBtn').addEventListener('click', async () => 
   fetchProducts(); // stock changed
 });
 
-['custName', 'custPhone', 'custAddress'].forEach(id => {
+['custPhone', 'custAddress'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
     document.getElementById(id + 'Field').classList.remove('invalid');
   });
 });
+['custFirst', 'custLast'].forEach(id => document.getElementById(id).addEventListener('input', () => document.getElementById('custNameField').classList.remove('invalid')));
 
 /* ================= حساب کاربری (ورود / ثبت‌نام) ================= */
 

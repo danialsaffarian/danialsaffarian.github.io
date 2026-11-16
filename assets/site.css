@@ -2083,3 +2083,7 @@
   .seo-faq h3{font-size:14.5px;font-weight:800;color:var(--ink);margin:16px 0 4px;}
   .seo-guides{margin-top:22px;font-size:13px;}
   .seo-guides a{color:var(--coffee);}
+
+  /* checkout: first and last name side by side */
+  .name-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .name-pair > div{min-width:0;}
