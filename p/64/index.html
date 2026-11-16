@@ -31,7 +31,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=b4ccb327">
+<link rel="stylesheet" href="/assets/site.css?v=2c73f28a">
 <meta name="product_id" content="64">
 <meta name="product_name" content="ست پابند چشم نظر">
 <meta name="product_price" content="470000">
@@ -539,11 +539,18 @@
     <div id="authStepSetup" style="display:none;">
       <p id="authSetupIntro" style="font-size:13px;color:var(--coffee-70);margin-bottom:16px;"></p>
       <div class="form-field" id="authSetupNameField">
-        <label for="authSetupName">نام و نام خانوادگی</label>
-        <div class="input-icon-wrap">
-          <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          <input type="text" id="authSetupName" placeholder="مثلاً سارا محمدی">
+        <div class="name-pair">
+          <div><label for="authSetupFirst">نام</label>
+            <div class="input-icon-wrap">
+              <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <input type="text" id="authSetupFirst" placeholder="مثلاً سارا" maxlength="50" autocomplete="given-name">
+            </div></div>
+          <div><label for="authSetupLast">نام خانوادگی</label>
+            <div class="input-icon-wrap">
+              <input type="text" id="authSetupLast" placeholder="مثلاً محمدی" maxlength="50" autocomplete="family-name">
+            </div></div>
         </div>
+        <input type="hidden" id="authSetupName">
       </div>
       <div class="form-field" id="authSetupAddressField">
         <label for="authSetupAddress">آدرس</label>
@@ -1048,7 +1055,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=90e90949"></script>
+<script src="/assets/app.js?v=baa5eee3"></script>
 
 </body>
 </html>
