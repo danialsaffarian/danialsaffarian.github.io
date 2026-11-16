@@ -31,7 +31,7 @@
 <!-- fonts and the Supabase client are served from this site: CDNs like jsdelivr and Google Fonts are often blocked in Iran -->
 <link rel="preload" href="/fonts/fonts.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="/fonts/fonts.css"></noscript>
-<link rel="stylesheet" href="/assets/site.css?v=5845f00d">
+<link rel="stylesheet" href="/assets/site.css?v=b4ccb327">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"پابندها دست‌ساز حنا گالری","url":"https://hanagalleryy.ir/c/anklet/","description":"پابندهای دست‌ساز حنا گالری؛ ستاره، صدف، دم وال و چشم نظر با منجوق‌های رنگی.","mainEntity":{"@type":"ItemList","numberOfItems":5,"itemListElement":[{"@type":"ListItem","position":1,"url":"https://hanagalleryy.ir/p/64/","name":"ست پابند چشم نظر"},{"@type":"ListItem","position":2,"url":"https://hanagalleryy.ir/p/51/","name":"پابند ستاره سفید آبی"},{"@type":"ListItem","position":3,"url":"https://hanagalleryy.ir/p/49/","name":"پابند ستاره آبی"},{"@type":"ListItem","position":4,"url":"https://hanagalleryy.ir/p/48/","name":"پابند ستاره و صدف"},{"@type":"ListItem","position":5,"url":"https://hanagalleryy.ir/p/24/","name":"پابند دم وال"}]}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"حنا گالری","item":"https://hanagalleryy.ir/"},{"@type":"ListItem","position":2,"name":"پابندها","item":"https://hanagalleryy.ir/c/anklet/"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"پابند رو با چی ست کنم؟","acceptedAnswer":{"@type":"Answer","text":"با صندل و کفش‌های باز، شلوار کوتاه یا دامن بلند؛ پابند ظریف با یه دستبند هم‌حال‌وهوا ست قشنگی می‌سازه."}},{"@type":"Question","name":"پابند تو آب دریا خراب می‌شه؟","acceptedAnswer":{"@type":"Answer","text":"آب شور و شن به مرور به رنگ و نخ آسیب می‌زنن؛ بهتره قبل از شنا درش بیاری یا بعدش با آب شیرین آبکشی و خشکش کنی."}},{"@type":"Question","name":"ارسال چقدر طول می‌کشه؟","acceptedAnswer":{"@type":"Answer","text":"سفارش‌ها معمولاً طی ۲ تا ۴ روز کاری آماده و با پست یا تیپاکس به سراسر ایران فرستاده می‌شن؛ هزینه‌ی ارسال موقع تحویل پرداخت می‌شه."}},{"@type":"Question","name":"می‌شه از خرید انصراف داد؟","acceptedAnswer":{"@type":"Answer","text":"بله؛ تا ۷ روز کاری بعد از تحویل و بدون ذکر دلیل، به شرط سالم و استفاده‌نشده بودن کالا. طرح‌هایی که سفارشی ساخته می‌شن شامل این شرط نیستن."}},{"@type":"Question","name":"پرداخت چطوریه؟","acceptedAnswer":{"@type":"Answer","text":"پرداخت آنلاین از طریق درگاه امن زیبال انجام می‌شه و اطلاعات کارت فقط در صفحه‌ی بانک وارد می‌شه."}}]}</script>
@@ -959,8 +959,13 @@
         <span class="mt-box"><b>ثبت دستی — سفارش از دایرکت</b><small>بدون درگاه پرداخت و بدون اطلاعات مشتری؛ فقط مدیرها این گزینه رو می‌بینن</small></span>
       </label>
       <div class="form-field" id="custNameField">
-        <label for="custName">نام و نام خانوادگی<span class="required-mark">*</span></label>
-        <input type="text" id="custName" placeholder="نام و نام خانوادگی، مثلاً سارا محمدی" maxlength="100" autocomplete="name" required>
+        <div class="name-pair">
+          <div><label for="custFirst">نام<span class="required-mark">*</span></label>
+            <input type="text" id="custFirst" placeholder="مثلاً سارا" maxlength="50" autocomplete="given-name" required></div>
+          <div><label for="custLast">نام خانوادگی<span class="required-mark">*</span></label>
+            <input type="text" id="custLast" placeholder="مثلاً محمدی" maxlength="50" autocomplete="family-name" required></div>
+        </div>
+        <input type="hidden" id="custName">
       </div>
       <div class="form-field" id="custPhoneField">
         <label for="custPhone">شماره تماس<span class="required-mark">*</span></label>
@@ -1040,7 +1045,7 @@
 
 <!-- the page is drawn before this loads, so a slow connection shows the store instead of a blank screen -->
 <script src="/vendor/supabase-2.118.0.js"></script>
-<script src="/assets/app.js?v=bc3208fc"></script>
+<script src="/assets/app.js?v=3e6d128e"></script>
 
 </body>
 </html>
