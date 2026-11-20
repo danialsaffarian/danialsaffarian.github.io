@@ -126,7 +126,10 @@ async function fetchProducts(){
         const priceNum = Number(parts[2].trim());
         if(!isNaN(priceNum) && priceNum > 0) price = priceNum;
       }
-      return { name, qty, available, price };
+      // optional 4th field: the number of the product photo that shows this colour (1 = first photo)
+      const imgN = parts[3] !== undefined ? parseInt(parts[3].trim(), 10) : NaN;
+      const img = !isNaN(imgN) && imgN >= 1 ? imgN - 1 : null;
+      return { name, qty, available, price, img };
     }) : [],
     icon: (ICON_BY_CAT[normCat(p.category)] || ['necklace'])[p.id % 2],
     bg: BG_CYCLE[i % 2],
@@ -306,6 +309,17 @@ function onVariantChange(productId, el){
   btn.disabled = !chosen.available;
   btn.textContent = chosen.available ? 'افزودن به سبد خرید' : 'ناموجود';
   if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'card-price');
+  const vi = variantImg(p, chosen);
+  if(vi !== null) setCardImage(p.id, vi);
+}
+/** index of the photo linked to a variant (colour), or null */
+function variantImg(p, v){
+  return v && v.img !== null && v.img !== undefined && p.images && v.img < p.images.length ? v.img : null;
+}
+/** cart line photo: the chosen colour's photo when it has one */
+function variantImageUrl(p, v){
+  const vi = variantImg(p, v);
+  return vi !== null ? p.images[vi] : p.imageUrl;
 }
 
 let cardImageIndex = {};
@@ -433,7 +447,7 @@ function renderProductDetail(){
             <span class="pd-counter" id="pdCounter">${toFa(detailImageIndex + 1)} / ${toFa(images.length)}</span>
           ` : ''}
         </div>
-        ${hasMultiImages ? `<div class="pd-thumbs">${images.map((src, i) => `<button type="button" class="pd-thumb${i === detailImageIndex ? ' on' : ''}" onclick="setDetailImage(${i})" aria-label="عکس ${toFa(i + 1)}"><img src="${escapeHtml(thumbUrl(src))}" alt="" loading="lazy" onerror="thumbFallback(this)"></button>`).join('')}</div>` : ''}
+        ${hasMultiImages ? `<div class="pd-thumbs">${images.map((src, i) => `<button type="button" class="pd-thumb${i === detailImageIndex ? ' on' : ''}" onclick="pickDetailImage(${i})" aria-label="عکس ${toFa(i + 1)}"><img src="${escapeHtml(thumbUrl(src))}" alt="" loading="lazy" onerror="thumbFallback(this)"></button>`).join('')}</div>` : ''}
       </div>
       <div class="pd-info">
         <span class="detail-cat">${escapeHtml(p.catLabel)}</span>
@@ -595,7 +609,7 @@ function openProductDetail(id){
   const p = products.find(p => p.id === id);
   if(!p) return;
   currentDetailProduct = p;
-  detailImageIndex = 0;
+  detailImageIndex = (p.variants && p.variants.length ? variantImg(p, p.variants[0]) : null) ?? 0;
   preloadImages(p.images);
   renderProductDetail();
   loadProductReviews(id);
@@ -675,6 +689,18 @@ function onDetailVariantChange(){
   btn.disabled = !chosen.available;
   btn.textContent = chosen.available ? 'افزودن به سبد خرید' : 'ناموجود';
   if(priceEl) priceEl.outerHTML = priceHtml(p, chosen, 'detail-price', 'detail-price-el');
+  const vi = variantImg(p, chosen);
+  if(vi !== null && vi !== detailImageIndex) setDetailImage(vi);
+}
+/** a tapped thumbnail that belongs to exactly one colour selects that colour too */
+function pickDetailImage(idx){
+  setDetailImage(idx);
+  const p = currentDetailProduct;
+  if(!p || !p.variants) return;
+  const owners = p.variants.filter(v => variantImg(p, v) === idx);
+  if(owners.length !== 1) return;
+  const chip = [...document.querySelectorAll('.pd-chip')].find(c => c.dataset.v === owners[0].name);
+  if(chip && !chip.classList.contains('on')) pickDetailVariant(chip);
 }
 
 function addToCartDetail(){
@@ -691,7 +717,7 @@ function addToCartDetail(){
   if(!canAddOne(p, variant)) return;
   const existing = cart.find(i=>i.id===p.id && i.variant===variant);
   if(existing){ existing.qty++; }
-  else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
+  else { cart.push({...p, imageUrl: variantImageUrl(p, chosen), price: priceForVariant(p, chosen), qty:1, variant}); }
   trackEvent('cart', p.id);
   cartJustAdded = p.id + '|' + variant;
   // the customer stays on the product page; a bar confirms it and opens the cart if they want
@@ -1052,7 +1078,7 @@ function addToCart(id, el){
   if(!p || !canAddOne(p, variant)){ if(p) openDrawer(); return; }
   const existing = cart.find(i=>i.id===id && i.variant===variant);
   if(existing){ existing.qty++; }
-  else { cart.push({...p, price: priceForVariant(p, chosen), qty:1, variant}); }
+  else { cart.push({...p, imageUrl: variantImageUrl(p, chosen), price: priceForVariant(p, chosen), qty:1, variant}); }
   trackEvent('cart', p.id);
   cartJustAdded = id + '|' + variant;
   const card = el && el.closest('.card');
@@ -3185,8 +3211,8 @@ function resetAdminProductForm(){
 // ---- product form helpers: category chips, colour rows, live price hints ----
 function admParseVars(raw){
   return (raw || '').split(/[,،]/).map(v => v.trim()).filter(Boolean).map(v => {
-    const [name, qty, price] = v.split(':').map(x => (x || '').trim());
-    return { name, qty: qty === 'ناموجود' ? '0' : (qty || ''), price: price || '' };
+    const [name, qty, price, img] = v.split(':').map(x => (x || '').trim());
+    return { name, qty: qty === 'ناموجود' ? '0' : (qty || ''), price: price || '', img: /^\d+$/.test(img || '') ? img : '' };
   });
 }
 function admVarsFromRows(){
@@ -3194,19 +3220,43 @@ function admVarsFromRows(){
   const rows = [...document.querySelectorAll('#apfVars .apf-var')].map(r => ({
     name: clean(r.querySelector('[data-k=name]').value),
     qty: latinDigits(r.querySelector('[data-k=qty]').value).replace(/\D/g, ''),
-    price: latinDigits(r.querySelector('[data-k=price]').value).replace(/\D/g, '') }));
+    price: latinDigits(r.querySelector('[data-k=price]').value).replace(/\D/g, ''),
+    img: r.dataset.img || '' }));
   document.getElementById('adminProdVariants').value = rows.filter(v => v.name)
-    .map(v => v.price ? `${v.name}:${v.qty}:${v.price}` : v.qty !== '' ? `${v.name}:${v.qty}` : v.name).join(',');
+    .map(v => v.img ? `${v.name}:${v.qty}:${v.price}:${v.img}` : v.price ? `${v.name}:${v.qty}:${v.price}` : v.qty !== '' ? `${v.name}:${v.qty}` : v.name).join(',');
   admHints();
 }
 function admRenderVars(list){ document.getElementById('apfVars').innerHTML = list.map(admVarRow).join(''); }
 function admVarRow(v){
-  return `<div class="apf-var">
+  return `<div class="apf-var" data-img="${escapeHtml(v.img || '')}">
       <input data-k="name" placeholder="رنگ یا مدل" value="${escapeHtml(v.name)}">
       <input data-k="qty" inputmode="numeric" placeholder="تعداد" value="${escapeHtml(v.qty)}">
       <input data-k="price" inputmode="numeric" placeholder="قیمت جدا" value="${escapeHtml(v.price)}">
       <button type="button" aria-label="حذف این رنگ" onclick="this.parentNode.remove(); admVarsFromRows();">×</button>
+      <div class="apf-var-pics">${admVarPics(v.img || '')}</div>
     </div>`;
+}
+/** the product's photos as small buttons under a colour: tap one to show it when the customer picks this colour */
+function admVarPics(sel){
+  const imgs = getAdminProdImages();
+  if(!imgs.length) return '<span class="apf-var-nopic">اول عکس محصول رو اضافه کن تا بتونی عکس این رنگ رو انتخاب کنی</span>';
+  return '<span class="apf-var-lbl">عکس این رنگ:</span>' + imgs.map((url, i) =>
+    `<button type="button" class="apf-var-pic${String(i + 1) === String(sel) ? ' on' : ''}" onclick="admPickVarPic(this, ${i + 1})" aria-label="عکس ${toFa(i + 1)}"><img src="${escapeHtml(thumbUrl(viaRelay(url)))}" alt="" loading="lazy" onerror="thumbFallback(this)"><b>${toFa(i + 1)}</b></button>`).join('');
+}
+function admPickVarPic(btn, n){
+  const row = btn.closest('.apf-var');
+  row.dataset.img = row.dataset.img === String(n) ? '' : String(n); // tap again to unlink
+  row.querySelector('.apf-var-pics').innerHTML = admVarPics(row.dataset.img);
+  admVarsFromRows();
+}
+/** photos moved / removed / added: keep every colour pointing at the same photo and redraw the pickers */
+function admRemapVarPics(map){
+  document.querySelectorAll('#apfVars .apf-var').forEach(row => {
+    if(map && row.dataset.img){ const n = map(Number(row.dataset.img)); row.dataset.img = n ? String(n) : ''; }
+    const box = row.querySelector('.apf-var-pics');
+    if(box) box.innerHTML = admVarPics(row.dataset.img);
+  });
+  if(map) admVarsFromRows();
 }
 function admHints(){
   const num = id => Number(latinDigits(document.getElementById(id).value || '')) || 0;
@@ -3233,7 +3283,7 @@ document.getElementById('apfVars').addEventListener('input', admVarsFromRows);
 document.getElementById('apfAddVar').addEventListener('click', () => {
   const box = document.getElementById('apfVars');
   const tmp = document.createElement('div');
-  tmp.innerHTML = admVarRow({ name: '', qty: '', price: '' });
+  tmp.innerHTML = admVarRow({ name: '', qty: '', price: '', img: '' });
   const row = tmp.firstElementChild; box.appendChild(row); row.querySelector('input').focus();
 });
 ['adminProdPrice', 'adminProdSalePrice', 'adminProdStock'].forEach(id => document.getElementById(id).addEventListener('input', admHints));
@@ -3266,17 +3316,22 @@ function renderAdminProdImagePreview(){
     <div class="admin-img-thumb admin-img-thumb-pending"><div class="admin-img-spinner"></div></div>
   `).join('');
   document.getElementById('adminProdImagePreview').innerHTML = doneHtml + pendingHtml;
+  admRemapVarPics(null);
 }
 function moveAdminProdImage(from, to){
   const imgs = getAdminProdImages();
   if(to < 0 || to >= imgs.length || from === to) return;
   const [it] = imgs.splice(from, 1);
   imgs.splice(to, 0, it);
+  // photo numbers are 1-based; the moved photo goes from+1 -> to+1, the ones between shift by one
+  const f = from + 1, tt = to + 1;
+  admRemapVarPics(n => n === f ? tt : (f < tt && n > f && n <= tt) ? n - 1 : (tt < f && n >= tt && n < f) ? n + 1 : n);
   setAdminProdImages(imgs);
 }
 function removeAdminProdImage(i){
   const imgs = getAdminProdImages();
   imgs.splice(i, 1);
+  admRemapVarPics(n => n === i + 1 ? 0 : n > i + 1 ? n - 1 : n);
   setAdminProdImages(imgs);
 }
 document.getElementById('adminProdImage').addEventListener('input', renderAdminProdImagePreview);

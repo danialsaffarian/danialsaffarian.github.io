@@ -7,4 +7,5 @@ trap 'kill $SRV 2>/dev/null' EXIT
 sleep 1
 node tools/monitor/store.js "$PORT" | grep -v '^PASS'; A=${PIPESTATUS[0]}
 node tools/monitor/admin.js "$PORT" | grep -v '^PASS'; B=${PIPESTATUS[0]}
-[ "$A" = 0 ] && [ "$B" = 0 ]
+node tools/monitor/colorpic.js "$PORT" | grep -v '^PASS'; C=${PIPESTATUS[0]}
+[ "$A" = 0 ] && [ "$B" = 0 ] && [ "$C" = 0 ]
